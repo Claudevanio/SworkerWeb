@@ -58,7 +58,7 @@ const Sidebar: React.FC<{
     router.replace('/login');
   }
 
-  const isLoginPage = currentPage === '/login' || currentPage === "/esqueci-senha"
+  // const isLoginPage = currentPage === '/login' || currentPage === "/esqueci-senha"
 
   const [accordionExpanded, setAccordionExpanded] = useState(currentPage === '/ordens-servico' || currentPage === '/cadastro-usuario' || currentPage === '/dashboard');
 
@@ -66,7 +66,7 @@ const Sidebar: React.FC<{
     setIsCollapsed(true);
   }, [currentPage]);
 
-  if(!user || isLoginPage) return <></>
+  if(currentPage === '/login' || currentPage === "/esqueci-senha") return <></>
 
   return (
     <Box
@@ -143,12 +143,12 @@ const Sidebar: React.FC<{
               <h2
                 className='text-primary-50 text-[20px] font-bold'
               >
-                {user.companyName}
+                {user?.companyName}
               </h2>
               <p
                 className='text-base-4 text-xs font-medium'
               >
-                {user.name}
+                {user?.name}
               </p>
             </div>
 
