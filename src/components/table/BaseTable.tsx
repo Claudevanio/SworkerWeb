@@ -128,7 +128,7 @@ export function BaseTable({ rows, columns, actions, onExpand, onClickRow, isLoad
         <TableBody>
           {
             isLoading && (
-              new Array(4).fill(0).map((_, index) => (
+              new Array(3).fill(0).map((_, index) => (
                 <StyledTableRow key={index}>
                   {desktopColumns.map((column) => (
                     <StyledTableCell align="left"
@@ -149,8 +149,19 @@ export function BaseTable({ rows, columns, actions, onExpand, onClickRow, isLoad
               )) 
             )
           }
-          
-          {!isLoading && rows.map((row) => (
+          {
+            !isLoading && rows.length === 0 && (
+              <StyledTableRow>
+                <StyledTableCell
+                  colSpan={desktopColumns.length + 1}
+                  align="center"
+                >
+                  Nenhum registro encontrado
+                </StyledTableCell>
+              </StyledTableRow>
+            )
+          }
+          {!isLoading && rows.length > 0 && rows.map((row) => (
             <StyledTableRow key={row.name}
               style={
                 onClickRow && {

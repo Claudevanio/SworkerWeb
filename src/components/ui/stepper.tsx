@@ -7,6 +7,7 @@ import {
   Step,
   StepLabel,
   StepIconProps,
+  useMediaQuery,
 } from "@mui/material";
 
 export type StepperProps = {
@@ -18,6 +19,9 @@ export type StepperProps = {
 };
 
 export const Stepper = ({ steps, currentStep }: StepperProps) => {
+
+  const isMobile = useMediaQuery('(max-width:768px)');
+
   const QontoConnector = styled(StepConnector)(({ theme }) => ({
     [`&.${stepConnectorClasses.alternativeLabel}`]: {
       top: 10,
@@ -103,7 +107,7 @@ export const Stepper = ({ steps, currentStep }: StepperProps) => {
 
   return (
     <BaseStepper alternativeLabel activeStep={currentStep - 1} connector={<QontoConnector />}
-      className='w-full' 
+      className='w-full'  
     >
       {steps.map((value, index) => (
         <Step key={index}>

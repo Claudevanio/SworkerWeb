@@ -12,6 +12,7 @@ export interface IEquipment {
   manufactureDate: string;
   status: boolean;
   equipmentClassification: IEquipmentClassification;
+  classification: IEquipmentClassification;
 }
 
 export interface IEquipmentType {
@@ -23,6 +24,7 @@ export interface IEquipmentType {
 export interface IEquipmentClassification {
   id?: string;
   typeId: string;
+  type?: IEquipmentType;
   name: string;
   code: string;
   description: string;

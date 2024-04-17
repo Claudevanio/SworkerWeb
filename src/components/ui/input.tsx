@@ -30,7 +30,7 @@ export interface IRules {
 
 export interface IInput extends InputHTMLAttributes<HTMLInputElement> {
     label?: string;
-    name: string;
+    name?: string;
     id?: string;
     type?: string;
     disabled?: boolean;
@@ -42,6 +42,7 @@ export interface IInput extends InputHTMLAttributes<HTMLInputElement> {
     defaultValue?: string;
     disabledClean?: boolean
     required?: boolean;
+    value?: string;
     onClean?: () => void;
     pseudoDisabled?: boolean;
     error?: any;
@@ -86,6 +87,91 @@ export const Input: React.FC<IInput> = ({
 
         ref && ref(inputRef.current);
     }, [inputRef]);
+
+    if(!name){
+        return (
+            <div className={`relative ${!invisible ? 'flex' : 'hidden'} w-full flex-col gap-2 ${errorText ? 'error' : ''} !${inter.className}`}>
+                    {label && <label
+                        htmlFor={id}
+                        className='text-primary font-semibold'
+                    >
+                        {label}
+                        {required && <span
+                            className='text-[#EC0000]'
+                        >
+                                *
+                            </span>}
+                    </label>}
+                    <TextField
+                        value={defaultValue}
+                        ref={inputRef}
+                        onFocus={() => setIsFocused(true)}
+                        onBlur={() => setIsFocused(false)}
+                        error={!!error}
+                        // onChange={(e) => {
+                        //     if (pseudoDisabled) return;
+                        //     if (mask) {
+                        //         // field.onChange(mask(e.target.value));
+                        //         return;
+                        //     } 
+                        //     field.onChange(e.target.value);
+                            
+                        // }}
+                        {...rest as any}
+                        disabled={rest.disabled} 
+                        variant='outlined' 
+                        type={rest.type === 'password' ? (localIsPassword ? 'password' : 'text') : rest.type} 
+                        sx={{
+                            '& .MuiOutlinedInput-root': {
+                                '& fieldset': {
+                                    borderColor: '#00000070',
+                                    borderRadius: '.5rem',
+                                }, 
+                                '& input': {
+                                    padding: '0.5rem', 
+                                    fontWeight: 300,
+                                    color: '#404E67',
+                                    '&:disabled': {
+                                        color: '#020617 !important',
+                                        '-webkit-text-fill-color': 'unset',
+
+                                    }
+                                },
+                                '& textarea': {
+                                    padding: '0.5rem', 
+                                    fontWeight: 300,
+                                    color: '404E67',
+                                },
+                                p:0,
+                                '.Mui-disabled': {
+                                    backgroundColor: '#E2E8F0',
+                                    borderRadius: '.5rem',
+                                }
+                            },
+                        }}
+                        InputProps={{
+                            endAdornment: rest.type === 'password' && (
+                                <IconButton
+                                    onClick={
+                                        () => {
+                                            setLocalIsPassword(!localIsPassword);
+                                        }
+                                    } 
+                                    size='small'
+                                    tabIndex={-1}
+                                >
+                                    {localIsPassword ? <VisibilityOutlined /> : <VisibilityOffOutlined />}
+                                </IconButton>
+                            ),
+                            ...inputProps,
+                        }}
+                    /> 
+                    {error && error?.message !=='' && (
+                        <p className="text-xs text-red-500 absolute bottom-[-1.2rem] left-0">{error.message}</p>
+                    )}
+                </div>
+        )
+    }
 
     return (
         <Controller

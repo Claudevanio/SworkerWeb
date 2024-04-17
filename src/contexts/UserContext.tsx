@@ -19,7 +19,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
   React.useEffect(() => {
     const token = Cookies.get('token');
-    debugger;
+    
     if (token && typeof token === 'string') {
       const decodedToken = jwtDecode(token) as IUser;
       setUser(decodedToken);

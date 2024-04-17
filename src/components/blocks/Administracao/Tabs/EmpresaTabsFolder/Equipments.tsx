@@ -8,9 +8,10 @@ import { useDialog } from '@/hooks/use-dialog';
 import { equipmentService } from '@/services/Administrator/equipmentService';
 import { ICompany, IEquipmentClassification } from '@/types';
 import { masks } from '@/utils';
-import { DeleteOutline, EditOutlined } from '@mui/icons-material';
+import { DeleteOutline, EditOutlined, Restore } from '@mui/icons-material';
 import { useState } from 'react'; 
 import { ModalFiltroEquipament } from '../../Overlay/ModalFiltroEquipament';
+import { ModalEquipmentsHistory } from '../../Overlay/ModalEquipamentoHistory';
 
 export function EquipmentsTab() { 
 
@@ -95,6 +96,7 @@ export function EquipmentsTab() {
 
   const [isFilterModalOpen, openFilterModal, closeFilterModal] = useModal()
 
+  const [isHistoryModalOpen, openHistoryModal, closeHistoryModal] = useModal()
 
   return (
     <>  
@@ -108,20 +110,21 @@ export function EquipmentsTab() {
           value={equipments.filters.term}
           onChange={(v) => equipments.setFilter(prev => ({
             ...prev,
-            term: v,
-            page: 0
+            term: v === '' ? undefined : v,
+            page: 0,
+            pageSize: v !== '' ? 40 : prev.pageSize
           })
           )}
         />
       </div>
       <div
-        className='flex justify-between items-center w-full'
+        className='flex justify-end md:justify-between items-center w-full'
       >
         <FiltroButton onClick={openFilterModal}
           className=' !h-12'
         />
         <ExportButton onClick={handleExportQrCode}
-          className=' !h-12'
+          className=' !h-12 hidden md:flex'
           disabled={selected.length === 0}
           /> 
       </div> 
@@ -129,7 +132,10 @@ export function EquipmentsTab() {
     </div>
       <BaseTable
         columns={columns}
-        onExpand={(row) => console.log(row)}
+        onExpand={(row) => {
+          equipments.selectCurrent(row as any, true)
+          modal.open()
+        }}
         isLoading ={equipments.isLoading}
         // onClickRow={
         // }
@@ -153,6 +159,14 @@ export function EquipmentsTab() {
             onConfirmText: 'Excluir'
           }),
           icon: <DeleteOutline/>
+        },
+        {
+          label: 'Histórico',
+          onClick: (data) => {
+            equipments.selectCurrent(data)
+            openHistoryModal()
+          },
+          icon: <Restore/>
         }
       ]}
         rows={rows}
@@ -173,6 +187,10 @@ export function EquipmentsTab() {
         onClose={closeFilterModal}
         isOpen={isFilterModalOpen}
       /> 
+      <ModalEquipmentsHistory
+        onClose={closeHistoryModal}
+        isOpen={isHistoryModalOpen}
+      />
     </>
   );
 }

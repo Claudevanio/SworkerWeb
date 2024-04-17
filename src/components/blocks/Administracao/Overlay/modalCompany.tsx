@@ -92,10 +92,7 @@ export function ModalCompany({
       }
       width='550px'
       onSubmit={() => methods.handleSubmit(onSubmit)()}
-    >
-      {
-        JSON.stringify(methods.formState.errors)
-      }
+    > 
        <Form onSubmit={(data) => onSubmit(data as FormFields)}
             className='flex flex-col gap-4 pb-4'
             {...methods}
