@@ -241,13 +241,20 @@ export const equipmentService = {
     return response.data;
   },
 
-  async getQrcodes (qrCodeList: string[]): Promise<any> {
-    const query = qrCodeList.map(qrCode => `uis=${qrCode}`).join('&');
-    const response = await api.get<any>('/equipaments/qrcode?' + query, {
+  async getQrcodes (qrCodeList: string[]): Promise<void> {
+    if (!qrCodeList || !qrCodeList.length) return;
+    const data = {}
+    debugger
+    const response = await api.get<any>('/equipaments/qrcode', {
+      params: {
+        uis: qrCodeList.join('&'),
+      },
       headers: {
         Accept: '*/*',
+        "Content-Type": "application/json-patch+json",
       },
-      responseType: "arraybuffer"
+      data,
+      responseType: 'arraybuffer',
     });
 
     if (response.data) {

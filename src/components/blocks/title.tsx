@@ -6,7 +6,7 @@ interface PageTitleProps {
   title: string;
   subtitle?: string;
   onBack?: () => void;
-  button: {
+  button?: {
     label: string;
     onClick: () => void;
     isAdd?: boolean;
@@ -19,46 +19,28 @@ export function PageTitle(
 ) {
   return (
     <>
-    <div
-      className='hidden flex-col gap-2 md:flex'
-    >
-      <div
-        className=' md:flex items-center justify-between w-full'
-      >
-        <h1
-          className='text-base-8 text-2xl font-bold'
-        >
-          {title}
-        </h1>
-        
-      <Button
-        onClick={
-          () => button.onClick()
-        }
-      >
-        {button.isAdd && <AddOutlined/>}
-        {button.label}
-      </Button>
-      </div>
+      <div className="hidden flex-col gap-2 md:flex">
+        <div className=" md:flex items-center justify-between w-full">
+          <h1 className="text-base-8 text-2xl font-bold">{title}</h1>
+          {button && (
+            <Button onClick={() => button.onClick()}>
+              {button.isAdd && <AddOutlined />}
+              {button.label}
+            </Button>
+          )}
+        </div>
         {subtitle && (
-          <p
-            className='text-base-5 text-base font-medium'
-          >
-            {subtitle}
-          </p>
+          <p className="text-base-5 text-base font-medium">{subtitle}</p>
         )}
-    </div>
-      {
-        !button.hideOnMobile &&
+      </div>
+      {button && !button?.hideOnMobile && (
         <IconButton
-          onClick={button.onClick}
-          className='bg-primary-700 text-primary-50 md:hidden focus:!bg-primary-600 hover:!bg-primary-600 fixed right-8 bottom-[20%] z-[2] w-14 h-14'
+          onClick={button?.onClick}
+          className="bg-primary-700 text-primary-50 md:hidden focus:!bg-primary-600 hover:!bg-primary-600 fixed right-8 bottom-[20%] z-[2] w-14 h-14"
         >
-          <AddOutlined
-            fontSize='large'
-          />
+          <AddOutlined fontSize="large" />
         </IconButton>
-      }
+      )}
     </>
-  )
+  );
 }

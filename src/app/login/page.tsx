@@ -128,8 +128,9 @@ export default function Login(){
             </div>
 
                 <Button 
-                    type='submit'
-                    className=''
+                  isLoading={methods.formState.isSubmitting}
+                  type='submit'
+                  className=''
                 >
                   Entrar
                 </Button>

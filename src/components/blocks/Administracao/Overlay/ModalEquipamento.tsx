@@ -302,7 +302,7 @@ export function ModalEquipments({
                 label='Data de fabricação'
                 name='manufactureDate'
                 required
-                mask={masks.DATEMaskStart}
+                mask={masks.DATE}
               />
             </div>
             <Input

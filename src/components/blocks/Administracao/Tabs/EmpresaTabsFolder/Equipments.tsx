@@ -90,8 +90,8 @@ export function EquipmentsTab() {
   ] 
 
   async function handleExportQrCode() {
-   const response = await equipmentService.getQrcodes(selected)
-   console.log(response)
+   await equipmentService.getQrcodes(selected)
+  //  console.log(response)
   }
 
   const [isFilterModalOpen, openFilterModal, closeFilterModal] = useModal()
