@@ -1,6 +1,6 @@
 import { Button, Dropdown, Form, Input } from "@/components";
 import { useDialog } from "@/hooks/use-dialog";
-import { generateService } from "@/services/Ocurrences";
+import { ocurrenceService } from "@/services/Ocurrences";
 import { IOcurrence } from "@/types/models/Ocurrences/IOcurrence";
 import { IOcurrenceClassification } from "@/types/models/Ocurrences/IOcurrenceClassification";
 import { IOcurrenceRecognize } from "@/types/models/Ocurrences/IOcurrenceRecognize";
@@ -68,7 +68,7 @@ export default function ModalRecognize({
       supervisorId: 1,
     } as IOcurrenceRecognize;
     try {
-      await generateService.recognizeOcurrenceAsync(newOcurrenceRecognize);
+      await ocurrenceService.recognizeOcurrenceAsync(newOcurrenceRecognize);
     } catch (e) {
       confirmDialog({
         title: "Houve um erro ao reconhecer a ocorrência",

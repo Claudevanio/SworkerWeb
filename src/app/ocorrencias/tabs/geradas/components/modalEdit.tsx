@@ -1,6 +1,6 @@
 import { Button, Dropdown, Form, Input } from "@/components";
 import { useDialog } from "@/hooks/use-dialog";
-import { generateService } from "@/services/Ocurrences";
+import { ocurrenceService } from "@/services/Ocurrences";
 import { IOcurrence } from "@/types/models/Ocurrences/IOcurrence";
 import { masks } from "@/utils";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -51,7 +51,7 @@ export default function ModalEdit({
     currentOcurrence.description = data.description;
 
     try {
-      await generateService.updateOcurrenceAsync(currentOcurrence);
+      await ocurrenceService.updateOcurrenceAsync(currentOcurrence);
     } catch (e) {
       confirmDialog({
         title: "Houve um erro ao editar a ocorrência",

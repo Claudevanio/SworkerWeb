@@ -6,7 +6,7 @@ import React, { createContext } from 'react';
 import Cookies from 'js-cookie';
 import { api, Authservice } from '@/services';
 import { useDialog } from '@/hooks/use-dialog'; 
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 
 
@@ -36,16 +36,16 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
             onCloseText: ' ',
             onConfirm: () => {
               router.push('/login');
-              //     Authservice.login({
-              //       userName: 'ivoxps@gmail.com',
-              //       password: '#3dP3R@5wk0R',
-              //     }).then(response => {
-              //       if(typeof response.data === 'string'){
-              //         Cookies.set('token', response.data);
-              //         router.refresh();
-              //         return;
-              //       }
-              //     });
+                  // Authservice.login({
+                  //   userName: 'ivoxps@gmail.com',
+                  //   password: '#3dP3R@5wk0R',
+                  // }).then(response => {
+                  //   if(typeof response.data === 'string'){
+                  //     Cookies.set('token', response.data);
+                  //     router.refresh();
+                  //     return;
+                  //   }
+                  // });
             }
           });
         }
@@ -56,6 +56,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const token = Cookies.get('token');
+  const pathName = usePathname();
 
   React.useEffect(() => {
     if(!!user) return;
@@ -65,7 +66,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       const user = jwtDecode(token) as IUser;
       setUser(user);
     }
-  }, [user, token]);
+  }, [user, token, pathName]);
   
   return (
     <UserContext.Provider value= {{ user, 

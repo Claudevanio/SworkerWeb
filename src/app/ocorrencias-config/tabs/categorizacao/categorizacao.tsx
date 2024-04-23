@@ -1,11 +1,5 @@
 "use client";
-import {
-  CheckBox,
-  ExportButton,
-  FiltroButton,
-  Modal,
-  SearchInput,
-} from "@/components";
+import { CheckBox, FiltroButton, Modal, SearchInput } from "@/components";
 import { BaseTable } from "@/components/table/BaseTable";
 import Pagination from "@/components/ui/pagination";
 import { ocurrrenceClassificationService } from "@/services/Ocurrences";
@@ -17,7 +11,7 @@ import {
 import { DeleteOutline, EditOutlined } from "@mui/icons-material";
 import { Stack } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
-import { SetStateAction, useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import { IOcurrenceType } from "@/types/models/Ocurrences/IOcurrenceType";
 import { IOcurrenceCharacterization } from "@/types/models/Ocurrences/IOcurrenceCharacterization";
 import { IFilterCharacterization } from "@/types/models/Ocurrences/IFilterCharacterization";
@@ -25,6 +19,7 @@ import ModalFilter from "./components/modalFilter";
 import ModalAddAndUpdate from "./components/modalAddAndUpdate";
 import { useDialog } from "@/hooks/use-dialog";
 import { ocurrenceCharacterizationService } from "@/services/Ocurrences/ocurrenceCharacterizationsService";
+import { ExportButton } from "@/components/ui/exportButton";
 
 export function Categorizacao({
   isMobile,
@@ -48,12 +43,18 @@ export function Categorizacao({
     term: "",
   });
 
+  const [exportCharacterizations, setExportCharacterizations] = useState<
+    string[][]
+  >([]);
+
   const [characterizationSelected, setCharacterizationSelected] =
     useState<IOcurrenceCharacterization>({} as IOcurrenceCharacterization);
 
-  const { isLoading, data: characterizations, refetch } = useQuery<
-    basePagination<IOcurrenceCharacterization> | undefined
-  >({
+  const {
+    isLoading,
+    data: characterizations,
+    refetch,
+  } = useQuery<basePagination<IOcurrenceCharacterization> | undefined>({
     queryKey: ["conf-caracterizacao", { filterCharacterizations, filter }],
     queryFn: () =>
       ocurrenceCharacterizationService.getCharacterizationsWithPagination(
@@ -115,6 +116,28 @@ export function Categorizacao({
 
   const rows = characterizations?.items ?? [];
 
+  const handleChangeExportCharacterizations = () => {
+    const arrayCharacterizations = characterizations?.items?.filter((item) => {
+      return selected.includes(item.id);
+    });
+
+    const csvData = [
+      ["Categoria", "Tipo de ocorrência"],
+      ...(arrayCharacterizations?.map((characterization) => {
+        return [
+          characterization.description ?? "",
+          characterization.type?.typeName ?? "",
+        ];
+      }) ?? []),
+    ];
+
+    setExportCharacterizations(csvData);
+  };
+
+  useEffect(() => {
+    handleChangeExportCharacterizations();
+  }, [selected]);
+
   const { openDialog, confirmDialog } = useDialog();
 
   return (
@@ -151,7 +174,15 @@ export function Categorizacao({
             />
           </Stack>
         </Stack>
-        {!isMobile && <ExportButton onClick={() => {}} isMobile={isMobile} />}
+        {!isMobile && (
+          <ExportButton
+            disabled={selected.length < 1}
+            fileName="categorias.csv"
+            csvData={exportCharacterizations}
+            onClick={() => {}}
+            hidden={isMobile}
+          />
+        )}
       </Stack>
       <div className="flex flex-col gap-4 w-full">
         <BaseTable
@@ -170,7 +201,7 @@ export function Categorizacao({
                       await ocurrrenceClassificationService.deleteClassification(
                         data.id
                       );
-                      refetch()
+                      refetch();
                     } catch (e) {
                       confirmDialog({
                         title: "Houve um erro ao excluir a categoria",
@@ -232,9 +263,9 @@ export function Categorizacao({
           title={openModalAdd ? "Nova categorização" : "Editar categorização"}
         >
           <ModalAddAndUpdate
-          refetch={refetch}
+            refetch={refetch}
             handleClose={() => {
-              setCharacterizationSelected({} as IOcurrenceCharacterization)
+              setCharacterizationSelected({} as IOcurrenceCharacterization);
               handleCloseModalAdd();
               setOpenModalUpdate(false);
             }}

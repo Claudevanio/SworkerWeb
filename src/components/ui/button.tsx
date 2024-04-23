@@ -74,18 +74,3 @@ export const FiltroButton: React.FC<FiltroButtonProps> = ({ onClick, className =
     </Button>
   )
 }
-
-export const ExportButton: React.FC<FiltroButtonProps> = ({ onClick, className='', disabled }) => {
-  return (
-    <Button
-      onClick={onClick}
-      variant={disabled ? 'secondary' : 'primary'} 
-      className={className}
-      > 
-      <QrCode
-        className='text-[1.5rem]'
-      />
-        Exportar
-    </Button>
-  )
-}

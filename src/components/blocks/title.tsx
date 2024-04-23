@@ -36,7 +36,7 @@ export function PageTitle(
       {button && !button?.hideOnMobile && (
         <IconButton
           onClick={button?.onClick}
-          className="bg-primary-700 text-primary-50 md:hidden focus:!bg-primary-600 hover:!bg-primary-600 fixed right-8 bottom-[20%] z-[2] w-14 h-14"
+          className="bg-primary-700 text-primary-50 md:hidden focus:!bg-primary-600 hover:!bg-primary-600 fixed right-8 bottom-12 z-[2] w-14 h-14"
         >
           <AddOutlined fontSize="large" />
         </IconButton>

@@ -1,7 +1,6 @@
 "use client";
 import {
   CheckBox,
-  ExportButton,
   FiltroButton,
   Modal,
   SearchInput,
@@ -19,6 +18,8 @@ import { IOcurrenceType } from "@/types/models/Ocurrences/IOcurrenceType";
 import ModalAddAndUpdate from "./components/modalAddAndUpdate";
 import { useDialog } from "@/hooks/use-dialog";
 import { ocurrenceTypeService } from "@/services/Ocurrences/ocurrenceTypeService";
+import { ExportButton } from "@/components/ui/exportButton";
+import dayjs from "dayjs";
 
 export function Tipo({
   isMobile,
@@ -36,6 +37,8 @@ export function Tipo({
     pageSize: 10,
     term: "",
   });
+  
+  const [exportTypes, setExportTypes] = useState<string[][]>([]);
 
   const [typeSelected, setTypeSelected] = useState<IOcurrenceType>(
     {} as IOcurrenceType
@@ -98,6 +101,30 @@ export function Tipo({
 
   const rows = types?.items ?? [];
 
+   const handleChangeExportTypes = () => {
+     const arrayTpes = types?.items?.filter((item) => {
+       return selected.includes(item.id);
+     });
+
+     const csvData = [
+       ["Tipo de ocorrência", "Descrição", "Data de registro"],
+       ...(arrayTpes?.map((type) => {
+         return [
+           type.typeName ?? "",
+           type.description ?? "",
+           dayjs(type.registerDate).format("DD/MM/YYYY") ?? "",
+         ];
+       }) ?? []),
+     ];
+
+     setExportTypes(csvData);
+   };
+
+   useEffect(() => {
+     handleChangeExportTypes();
+   }, [selected]);
+
+
   const { openDialog, confirmDialog } = useDialog();
 
   return (
@@ -125,7 +152,15 @@ export function Tipo({
             />
           </Stack>
         </Stack>
-        {!isMobile && <ExportButton onClick={() => {}} isMobile={isMobile} />}
+        {!isMobile && (
+          <ExportButton
+            disabled={selected.length < 1}
+            fileName="tipos.csv"
+            csvData={exportTypes}
+            onClick={() => {}}
+            hidden={isMobile}
+          />
+        )}
       </Stack>
       <div className="flex flex-col gap-4 w-full">
         <BaseTable
@@ -141,10 +176,8 @@ export function Tipo({
                   message: "Este item não poderá ser recuperado depois.",
                   onConfirm: async () => {
                     try {
-                      await ocurrenceTypeService.deleteType(
-                        data.id
-                      );
-                      refetch()
+                      await ocurrenceTypeService.deleteType(data.id);
+                      refetch();
                     } catch (e) {
                       confirmDialog({
                         title: "Houve um erro ao excluir a classificação",
@@ -189,7 +222,7 @@ export function Tipo({
           title={openModalAdd == true ? "Novo tipo" : "Editar tipo"}
         >
           <ModalAddAndUpdate
-          refetch={refetch}
+            refetch={refetch}
             handleClose={() => {
               setTypeSelected({} as IOcurrenceType);
               handleCloseModalAdd();

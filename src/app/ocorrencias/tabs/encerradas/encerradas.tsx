@@ -1,14 +1,8 @@
 "use client";
-import {
-  CheckBox,
-  ExportButton,
-  FiltroButton,
-  Modal,
-  SearchInput,
-} from "@/components";
+import { CheckBox, FiltroButton, Modal, SearchInput } from "@/components";
 import { BaseTable } from "@/components/table/BaseTable";
 import Pagination from "@/components/ui/pagination";
-import { generateService } from "@/services/Ocurrences";
+import { ocurrenceService } from "@/services/Ocurrences";
 import { basePagination } from "@/types";
 import { IFilterOcurrences } from "@/types/models/Ocurrences/IFilterOcurrences";
 import {
@@ -21,12 +15,13 @@ import { Assignment, Check } from "@mui/icons-material";
 import { Stack } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IOcurrenceClassification } from "@/types/models/Ocurrences/IOcurrenceClassification";
 import { IOcurrenceType } from "@/types/models/Ocurrences/IOcurrenceType";
 import { IOcurrenceCharacterization } from "@/types/models/Ocurrences/IOcurrenceCharacterization";
 import ModalFilter from "./components/modalFilter";
-import { recognitionService } from "@/services/Ocurrences/recognitionService";
+import { ExportButton } from "@/components/ui/exportButton";
+import { IOcurrenceRecognize } from "@/types/models/Ocurrences/IOcurrenceRecognize";
 
 export function Encerradas({
   isMobile,
@@ -44,18 +39,21 @@ export function Encerradas({
     {} as IFilterOcurrences
   );
   const [selected, setSelected] = useState<number[]>([]);
+
   const [filter, setFilter] = useState({
     page: 0,
     pageSize: 10,
     term: "",
   });
 
+  const [exportOcurrences, setExportOcurrences] = useState<string[][]>([]);
+
   const { isLoading, data: ocurrences } = useQuery<
-    basePagination<IOcurrence> | undefined
+    basePagination<IOcurrenceRecognize> | undefined
   >({
     queryKey: ["encerradas", { filterOcurrences, filter }],
     queryFn: () =>
-      recognitionService.listOcurrenceAsync(
+      ocurrenceService.listOcurrenceRecognitionAsync(
         filter.term,
         filter.page,
         filter.pageSize,
@@ -151,6 +149,41 @@ export function Encerradas({
 
   const rows = ocurrences?.items ?? [];
 
+  const handleChangeExportOcurrence = () => {
+    const arrayOcurrence = ocurrences?.items?.filter((item) => {
+      return selected.includes(item.id);
+    });
+
+    const csvData = [
+      [
+        "Data e Hora",
+        "Código OS",
+        "Profissional",
+        "Caracterização",
+        "Tipo",
+        "Origem",
+        "Status",
+      ],
+      ...(arrayOcurrence?.map((ocurrence) => {
+        return [
+          dayjs(ocurrence.registerDate).format("DD/MM/YYYY") ?? "",
+          ocurrence.occurrence?.registerNumber ?? "",
+          ocurrence.professional?.name ?? "",
+          ocurrence.characterization?.description ?? "",
+          ocurrence.occurrence?.occurrenceType?.typeName ?? "",
+          ocurrence.occurrence?.origin ?? "",
+          ocurrence.occurrence?.acknowledged ? "Concluído" : "Pendente",
+        ];
+      }) ?? []),
+    ];
+
+    setExportOcurrences(csvData);
+  };
+
+  useEffect(() => {
+    handleChangeExportOcurrence();
+  }, [selected]);
+
   return (
     <Stack>
       <Stack
@@ -182,7 +215,15 @@ export function Encerradas({
             />
           </Stack>
         </Stack>
-        {!isMobile && <ExportButton onClick={() => {}} isMobile={isMobile} />}
+        {!isMobile && (
+          <ExportButton
+            disabled={selected.length < 1}
+            fileName="ocorrencias-encerradas.csv"
+            csvData={exportOcurrences}
+            onClick={() => {}}
+            hidden={isMobile}
+          />
+        )}
       </Stack>
       <div className="flex flex-col gap-4 w-full">
         <BaseTable

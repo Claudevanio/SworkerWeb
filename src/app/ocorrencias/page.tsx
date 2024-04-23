@@ -12,6 +12,8 @@ import { ocurrrenceClassificationService } from "@/services/Ocurrences";
 import { ocurrenceTypeService } from "@/services/Ocurrences/ocurrenceTypeService";
 import { ocurrenceCharacterizationService } from "@/services/Ocurrences/ocurrenceCharacterizationsService";
 import { Encerradas } from "./tabs/encerradas/encerradas";
+import { ReceiptLongOutlined } from "@mui/icons-material";
+import { COLORS } from "@/utils";
 
 export default function Ocorrencias() {
   const isMobile = useMediaQuery("(max-width:768px)");
@@ -57,12 +59,15 @@ export default function Ocorrencias() {
   const tabs = [
     {
       label: "Geradas",
+      icon: <ReceiptLongOutlined sx={{ color: COLORS.primary["500"] }} />,
     },
     {
       label: "Encerradas",
+      icon: <ReceiptLongOutlined sx={{ color: COLORS.primary["500"] }} />,
     },
     {
       label: "Reconhecidas",
+      icon: <ReceiptLongOutlined sx={{ color: COLORS.primary["500"] }} />,
     },
   ];
 

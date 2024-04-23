@@ -1,11 +1,5 @@
 "use client";
-import {
-  CheckBox,
-  ExportButton,
-  FiltroButton,
-  Modal,
-  SearchInput,
-} from "@/components";
+import { CheckBox, FiltroButton, Modal, SearchInput } from "@/components";
 import { BaseTable } from "@/components/table/BaseTable";
 import Pagination from "@/components/ui/pagination";
 import { ocurrrenceClassificationService } from "@/services/Ocurrences";
@@ -17,7 +11,7 @@ import {
 import { DeleteOutline, EditOutlined } from "@mui/icons-material";
 import { Stack } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
-import { SetStateAction, useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import { IOcurrenceClassification } from "@/types/models/Ocurrences/IOcurrenceClassification";
 import { IOcurrenceType } from "@/types/models/Ocurrences/IOcurrenceType";
 import { IOcurrenceCharacterization } from "@/types/models/Ocurrences/IOcurrenceCharacterization";
@@ -25,6 +19,7 @@ import { IFilterClassification } from "@/types/models/Ocurrences/IFilterClassifi
 import ModalFilter from "./components/modalFilter";
 import ModalAddAndUpdate from "./components/modalAddAndUpdate";
 import { useDialog } from "@/hooks/use-dialog";
+import { ExportButton } from "@/components/ui/exportButton";
 
 export function Classificacao({
   isMobile,
@@ -50,12 +45,18 @@ export function Classificacao({
     term: "",
   });
 
+  const [exportClassifications, setExportClassifications] = useState<
+    string[][]
+  >([]);
+
   const [classificationSelected, setClassificationSelected] =
     useState<IOcurrenceClassification>({} as IOcurrenceClassification);
 
-  const { isLoading, data: classifications, refetch } = useQuery<
-    basePagination<IOcurrenceClassification> | undefined
-  >({
+  const {
+    isLoading,
+    data: classifications,
+    refetch,
+  } = useQuery<basePagination<IOcurrenceClassification> | undefined>({
     queryKey: ["conf-classificacao", { filterClassifications, filter }],
     queryFn: () =>
       ocurrrenceClassificationService.getClassificationsWithPagination(
@@ -121,6 +122,29 @@ export function Classificacao({
 
   const rows = classifications?.items ?? [];
 
+  const handleChangeExportClassifications = () => {
+    const arrayClassification = classifications?.items?.filter((item) => {
+      return selected.includes(item.id);
+    });
+
+    const csvData = [
+      ["Descrição", "Severidade", "Tipo de ocorrência"],
+      ...(arrayClassification?.map((classification) => {
+        return [
+          classification.description ?? "",
+          classification.severity.toString() ?? "",
+          classification.type?.typeName ?? "",
+        ];
+      }) ?? []),
+    ];
+
+    setExportClassifications(csvData);
+  };
+
+  useEffect(() => {
+    handleChangeExportClassifications();
+  }, [selected]);
+
   const { openDialog, confirmDialog } = useDialog();
 
   return (
@@ -157,7 +181,15 @@ export function Classificacao({
             />
           </Stack>
         </Stack>
-        {!isMobile && <ExportButton onClick={() => {}} isMobile={isMobile} />}
+        {!isMobile && (
+          <ExportButton
+            disabled={selected.length < 1}
+            fileName="classificações.csv"
+            csvData={exportClassifications}
+            onClick={() => {}}
+            hidden={isMobile}
+          />
+        )}
       </Stack>
       <div className="flex flex-col gap-4 w-full">
         <BaseTable
@@ -176,7 +208,7 @@ export function Classificacao({
                       await ocurrrenceClassificationService.deleteClassification(
                         data.id
                       );
-                      refetch()
+                      refetch();
                     } catch (e) {
                       confirmDialog({
                         title: "Houve um erro ao excluir a classificação",
@@ -238,9 +270,9 @@ export function Classificacao({
           title={openModalAdd ? "Nova classificação" : "Editar classificação"}
         >
           <ModalAddAndUpdate
-          refetch={refetch}
+            refetch={refetch}
             handleClose={() => {
-              setClassificationSelected({} as IOcurrenceClassification)
+              setClassificationSelected({} as IOcurrenceClassification);
               handleCloseModalAdd();
               setOpenModalUpdate(false);
             }}

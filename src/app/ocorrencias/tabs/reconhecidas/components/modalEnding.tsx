@@ -1,7 +1,7 @@
 "use client";
 import { Button, Dropdown, Form, Input } from "@/components";
 import { useDialog } from "@/hooks/use-dialog";
-import { recognitionService } from "@/services/Ocurrences/recognitionService";
+import { ocurrenceService } from "@/services/Ocurrences";
 import { IOcurrenceRecognize } from "@/types/models/Ocurrences/IOcurrenceRecognize";
 import { masks } from "@/utils";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -42,7 +42,7 @@ export default function ModalEnding({
       closed: checked,
     };
     try {
-      await recognitionService.closeOcurrenceAsync(newOcurrenceRecognize);
+      await ocurrenceService.closeOcurrenceAsync(newOcurrenceRecognize);
     } catch (e) {
       confirmDialog({
         title: "Houve um erro ao reconhecer a ocorrência",

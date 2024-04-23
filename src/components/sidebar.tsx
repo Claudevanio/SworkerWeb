@@ -76,6 +76,8 @@ const Sidebar: React.FC<{}> = () => {
 
   if(currentPage === '/login' || currentPage === "/esqueci-senha") return <></>
 
+  const nomePagina = currentPage.includes('ocorrencias') ? 'Ocorrências' : currentPage.includes('servicos-o') ? 'Serviços Operacionais' : 'Administração';
+
   return (
     <Box
       sx={{
@@ -103,88 +105,78 @@ const Sidebar: React.FC<{}> = () => {
       }
       </IconButton>
       {
-        isOpen ? 'Menu Principal' : 'Nome pagina'
+        isOpen ? 'Menu Principal' : nomePagina
       }
     </div>
       
       <Drawer
         variant={"persistent"}
         anchor="left"
-        open={
-          isMobile ? isOpen : true
-        }
-        onClose={toggleDrawer} 
+        open={isMobile ? isOpen : true}
+        onClose={toggleDrawer}
         sx={{
-          width: drawerWidth, 
-          height: '100vh',
+          width: drawerWidth,
+          height: "100vh",
           zIndex: 10,
-          position: 'relative',
-          '@media (max-width: 768px)': {
-            width: '100%',
-            height: isOpen ? '100vh' : '0',
-            visibility: isOpen ? 'visible' : 'hidden',
+          position: "relative",
+          "@media (max-width: 768px)": {
+            width: "100%",
+            height: isOpen ? "100vh" : "0",
+            visibility: isOpen ? "visible" : "hidden",
           },
-          '& .MuiDrawer-paper': {
-            backgroundColor: '#020617',
+          "& .MuiDrawer-paper": {
+            backgroundColor: "#020617",
             width: drawerWidth,
-            boxSizing: 'border-box',  
-            position: 'relative',
-            borderRight: 'none',
-            padding: '32px 24px 32px 24px',
-            transition: 'width 0.5s ease-in-out',
-            gap: '52px',
-            display: 'flex',
-            flexDirection: 'column', 
-            '@media (max-width: 768px)': {
-              width: '100%',
-            }
+            boxSizing: "border-box",
+            position: "relative",
+            borderRight: "none",
+            padding: "32px 24px 32px 24px",
+            transition: "width 0.5s ease-in-out",
+            gap: "52px",
+            display: "flex",
+            flexDirection: "column",
+            "@media (max-width: 768px)": {
+              width: "100%",
+            },
           },
         }}
       >
-        <div
-          className='flex flex-col gap-10 '
-        >
-          <div className='gap-2 flex pb-4 cursor-pointer items-center '
-          > 
-            <Avatar/>
+        <div className="flex flex-col gap-10 ">
+          <div className="gap-2 flex pb-4 cursor-pointer items-center ">
+            <Avatar />
             <div>
               <h2 className="text-primary-50 text-[20px] font-bold">
                 {user?.companyName}
               </h2>
               <p className="text-base-4 text-xs font-medium">{user?.name}</p>
             </div>
-
           </div>
-          <div className='flex flex-col gap-2'>
-            <h2
-              className='text-primary-50 text-xs font-bold'
-            >
-              MENU
-            </h2>
-            { <Link 
-                href={handleLinkPath('/')}
-              >
-                <MenuButton variant={
-                  currentPage === '/' ? 'primary' : 'secondary'
-                } className={`w-full gap-2 flex justify-start`}>
-                  <AdminPanelSettingsOutlined/>
+          <div className="flex flex-col gap-2">
+            <h2 className="text-primary-50 text-xs font-bold">MENU</h2>
+            {
+              <Link href={handleLinkPath("/")}>
+                <MenuButton
+                  variant={currentPage === "/" ? "primary" : "secondary"}
+                  className={`w-full gap-2 flex justify-start`}
+                >
+                  <AdminPanelSettingsOutlined />
                   Administração
                 </MenuButton>
               </Link>
             }
-            
+
             <Accordion
               expanded={accordionExpanded}
               onChange={() => setAccordionExpanded(!accordionExpanded)}
               sx={{
-                backgroundColor: 'transparent',
+                backgroundColor: "transparent",
                 padding: 0,
                 margin: 0,
               }}
             >
               <AccordionSummary
                 sx={{
-                  backgroundColor: 'transparent',
+                  backgroundColor: "transparent",
                   padding: 0,
                   margin: 0,
                   height: "40px",
@@ -223,7 +215,9 @@ const Sidebar: React.FC<{}> = () => {
                 <Link href={handleLinkPath("/servicos-operacionais")}>
                   <MenuButton
                     variant={
-                      currentPage === "/servicos-operacionais" ? "primary" : "secondary"
+                      currentPage === "/servicos-operacionais"
+                        ? "primary"
+                        : "secondary"
                     }
                     className={`w-full gap-2 px-8 flex justify-start`}
                   >
@@ -244,9 +238,9 @@ const Sidebar: React.FC<{}> = () => {
                     Ordens de serviço
                   </MenuButton>
                 </Link>
-                <Link href={handleLinkPath("/cadastro-usuario")} passHref>
+                <Link href={handleLinkPath("/servicos-operacionais/config")} passHref>
                   <MenuButton
-                    variant={getButtonVariant("cadastro-usuario")}
+                    variant={getButtonVariant("servicos-operacionais/config")}
                     className={`w-full gap-2 flex px-8 justify-start`}
                   >
                     <SettingsOutlined />
@@ -299,10 +293,10 @@ const Sidebar: React.FC<{}> = () => {
                   gap: "8px",
                 }}
               >
-                <Link href="">
+                <Link href={handleLinkPath("/ocorrencias-dashboard")}>
                   <MenuButton
                     variant={
-                      currentPage === "/dashboard-ocorrencias"
+                      currentPage === "/ocorrencias-dashboard"
                         ? "primary"
                         : "secondary"
                     }
@@ -326,7 +320,7 @@ const Sidebar: React.FC<{}> = () => {
                 <Link href={handleLinkPath("/ocorrencias-config")}>
                   <MenuButton
                     variant={
-                      currentPage === "/configuracoes-ocorrencias"
+                      currentPage === "/ocorrencias-config"
                         ? "primary"
                         : "secondary"
                     }
