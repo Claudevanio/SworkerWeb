@@ -10,39 +10,26 @@ import { BaseTable } from "@/components/table/BaseTable";
 import Pagination from "@/components/ui/pagination";
 import { ocurrrenceClassificationService } from "@/services/Ocurrences";
 import { basePagination } from "@/types";
-import {
-  IOcurrence,
-  ListOccurrenceTypeModel,
-} from "@/types/models/Ocurrences/IOcurrence";
 import { DeleteOutline, EditOutlined } from "@mui/icons-material";
 import { Stack } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
-import { SetStateAction, useState } from "react";
+import {  useEffect, useState } from "react";
 import { IOcurrenceClassification } from "@/types/models/Ocurrences/IOcurrenceClassification";
 import { IOcurrenceType } from "@/types/models/Ocurrences/IOcurrenceType";
-import { IOcurrenceCharacterization } from "@/types/models/Ocurrences/IOcurrenceCharacterization";
-import { IFilterClassification } from "@/types/models/Ocurrences/IFilterClassification";
-import ModalFilter from "./components/modalFilter";
 import ModalAddAndUpdate from "./components/modalAddAndUpdate";
 import { useDialog } from "@/hooks/use-dialog";
+import { ocurrenceTypeService } from "@/services/Ocurrences/ocurrenceTypeService";
 
-export function Classificacao({
+export function Tipo({
   isMobile,
-  characterizations,
-  types,
   openModalAdd,
   handleCloseModalAdd,
 }: {
   isMobile: boolean;
-  characterizations: IOcurrenceCharacterization[];
-  types: IOcurrenceType[];
   openModalAdd: boolean;
   handleCloseModalAdd: () => void;
 }) {
-  const [openModalFilter, setOpenModalFilter] = useState(false);
   const [openModalUpdate, setOpenModalUpdate] = useState(false);
-  const [filterClassifications, setFilterClassifications] =
-    useState<IFilterClassification>({} as IFilterClassification);
   const [selected, setSelected] = useState<number[]>([]);
   const [filter, setFilter] = useState({
     page: 0,
@@ -50,29 +37,30 @@ export function Classificacao({
     term: "",
   });
 
-  const [classificationSelected, setClassificationSelected] =
-    useState<IOcurrenceClassification>({} as IOcurrenceClassification);
+  const [typeSelected, setTypeSelected] = useState<IOcurrenceType>(
+    {} as IOcurrenceType
+  );
 
-  const { isLoading, data: classifications, refetch } = useQuery<
-    basePagination<IOcurrenceClassification> | undefined
+  const { isLoading, data: types, refetch } = useQuery<
+    basePagination<IOcurrenceType> | undefined
   >({
-    queryKey: ["conf-classificacao", { filterClassifications, filter }],
+    queryKey: ["conf-tipo", { filter }],
     queryFn: () =>
-      ocurrrenceClassificationService.getClassificationsWithPagination(
+      ocurrenceTypeService.getTypesWithPagination(
         filter.term,
         filter.page,
         filter.pageSize,
-        filterClassifications
       ) as any,
     refetchOnWindowFocus: false,
+    refetchOnMount: true
   });
 
   const columns = [
     {
-      label: "Descrição",
+      label: "Tipo de ocorrência",
       key: "description",
       mobileTitle: true,
-      rowFormatter: (classification: IOcurrenceClassification) => {
+      rowFormatter: (type: IOcurrenceType) => {
         return (
           <div
             className="flex items-center gap-2 group"
@@ -81,7 +69,7 @@ export function Classificacao({
             <div
               className="w-0 group-hover:!w-12 overflow-hidden transition-all items-center gap-1"
               style={
-                selected.includes(classification.id)
+                selected.includes(type.id)
                   ? {
                       width: "2rem",
                     }
@@ -90,36 +78,25 @@ export function Classificacao({
             >
               <CheckBox
                 variant="secondary"
-                value={selected.includes(classification.id)}
+                value={selected.includes(type.id)}
                 onChange={() => {
                   setSelected((prev) => {
-                    if (prev.includes(classification.id)) {
-                      return prev.filter((v) => v !== classification.id);
+                    if (prev.includes(type.id)) {
+                      return prev.filter((v) => v !== type.id);
                     }
-                    return [...prev, classification.id];
+                    return [...prev, type.id];
                   });
                 }}
               />
             </div>
-            <div>{classification.description}</div>
+            <div>{type.typeName}</div>
           </div>
         );
       },
     },
-    {
-      label: "Severidade",
-      key: "severity",
-    },
-    {
-      label: "Tipo de ocorrência",
-      key: "type",
-      Formatter: (type: ListOccurrenceTypeModel) => {
-        return <div>{type.typeName}</div>;
-      },
-    },
   ];
 
-  const rows = classifications?.items ?? [];
+  const rows = types?.items ?? [];
 
   const { openDialog, confirmDialog } = useDialog();
 
@@ -138,22 +115,13 @@ export function Classificacao({
         >
           <Stack width={isMobile ? "100%" : "80%"}>
             <SearchInput
-              value={filterClassifications.query}
+              value={filter.term}
               onChange={(e) => {
-                setFilterClassifications({
-                  ...filterClassifications,
-                  query: e,
+                setFilter({
+                  ...filter,
+                  term: e,
                 });
               }}
-            />
-          </Stack>
-          <Stack
-            width={isMobile ? "35%" : "18%"}
-            alignSelf={isMobile ? "end" : "auto"}
-          >
-            <FiltroButton
-              onClick={() => setOpenModalFilter(true)}
-              isMobile={isMobile}
             />
           </Stack>
         </Stack>
@@ -168,12 +136,12 @@ export function Classificacao({
               label: "Excluir",
               onClick: (data: IOcurrenceClassification) =>
                 openDialog({
-                  title: "Excluir classificação",
+                  title: "Excluir tipo",
                   subtitle: "Deseja mesmo excluir?",
                   message: "Este item não poderá ser recuperado depois.",
                   onConfirm: async () => {
                     try {
-                      await ocurrrenceClassificationService.deleteClassification(
+                      await ocurrenceTypeService.deleteType(
                         data.id
                       );
                       refetch()
@@ -190,8 +158,8 @@ export function Classificacao({
             },
             {
               label: "Editar",
-              onClick: (data: IOcurrenceClassification) => {
-                setClassificationSelected(data);
+              onClick: (data: IOcurrenceType) => {
+                setTypeSelected(data);
                 setOpenModalUpdate(true);
               },
               icon: <EditOutlined />,
@@ -201,7 +169,7 @@ export function Classificacao({
         />
         <Pagination
           currentPage={filter.page ?? 0}
-          totalPages={Math.ceil(classifications?.count / filter.pageSize)}
+          totalPages={Math.ceil(types?.count / filter.pageSize)}
           onChange={(page) =>
             setFilter((prev) => ({
               ...prev,
@@ -210,23 +178,6 @@ export function Classificacao({
           }
         />
       </div>
-      {openModalFilter && (
-        <Modal
-          width="60%"
-          isOpen={openModalFilter}
-          onClose={() => {
-            setOpenModalFilter(false);
-          }}
-          title="Filtrar por:"
-        >
-          <ModalFilter
-            filter={filterClassifications}
-            setFilter={setFilterClassifications}
-            handleClose={() => setOpenModalFilter(false)}
-            types={types}
-          />
-        </Modal>
-      )}
       {(openModalAdd || openModalUpdate) && (
         <Modal
           width="60%"
@@ -235,18 +186,17 @@ export function Classificacao({
             setOpenModalUpdate(false);
             handleCloseModalAdd();
           }}
-          title={openModalAdd ? "Nova classificação" : "Editar classificação"}
+          title={openModalAdd == true ? "Novo tipo" : "Editar tipo"}
         >
           <ModalAddAndUpdate
           refetch={refetch}
             handleClose={() => {
-              setClassificationSelected({} as IOcurrenceClassification)
+              setTypeSelected({} as IOcurrenceType);
               handleCloseModalAdd();
               setOpenModalUpdate(false);
             }}
-            types={types}
-            classificationSelected={classificationSelected}
             isAdd={openModalAdd}
+            typeSelected={typeSelected}
           />
         </Modal>
       )}

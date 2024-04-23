@@ -54,7 +54,7 @@ export const ServiceOrderProvider = ({ children }: { children: React.ReactNode }
   // #endregion 
 
   //#region serviceOrder
-    const [serviceOrderFilters, setServiceOrderFilters] = useState<basicSearchQuery>({ term: '', page: 1, pageSize: 999, start: dayjs().subtract(30, 'day').toDate().toISOString() });
+    const [serviceOrderFilters, setServiceOrderFilters] = useState<basicSearchQuery>({ term: '', page: 1, pageSize: 999, start: dayjs().subtract(30, 'day').toDate().toISOString(), end: dayjs().toDate().toISOString() });
 
     const { data: serviceOrders, isLoading: serviceOrdersLoading } = useQuery({
       queryKey: ['serviceOrders', serviceOrderFilters],
@@ -81,7 +81,11 @@ export const ServiceOrderProvider = ({ children }: { children: React.ReactNode }
       try{
         await serviceOrderService.updateServiceOrderStatus(id, statusId);
       } catch (error) {
-        console.log(error);
+        confirmDialog({
+          title: 'Erro ao alterar status',
+          message: error.message,
+          variant: 'error',
+        })
       }
     }
 

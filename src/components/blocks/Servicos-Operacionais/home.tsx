@@ -2,16 +2,18 @@ import { useState } from 'react';
 import { SimpleTab } from '../tabs/simple-tab';
 import { PageTitle } from '../title';
 import { ApartmentOutlined, FolderSharedOutlined, Moving, ViewKanban } from '@mui/icons-material'; 
-import { EmpresasTab } from './Tabs/EmpresaTab';
+import { EvolucaoTab } from './Tabs/EvolucaoTab';
 import { useModal } from '@/hooks';
 import { AdministratorProvider, useAdministrator } from '@/contexts/AdministrationProvider'; 
 import { Kanban } from './components/kanban';
 import { ServiceOrderProvider } from '@/contexts/serviceOrderProvider';
-import { ModalFiltroServicosDashboard } from './Overlay/ModalFiltroEquipament';
+import { ModalFiltroServicosDashboard } from './Overlay/ModalFiltroServicosDashboard';
 
 export function ServicosOperacionaisComponent(){
   const [activeTab, setActiveTab] = useState<number | undefined>(0)
   const [subTab, setSubTab] = useState<number | undefined>(0)
+
+  const [isFilterModalOpen, openFilterModal, closeFilterModal] = useModal()
 
   const tabs = [
     { label: 'Kanban',
@@ -24,22 +26,9 @@ export function ServicosOperacionaisComponent(){
       className='text-primary-500'/>, 
     },
   ] 
+ 
 
-  const handleLabel = (index: number) => {
-    if(activeTab === 0) return 'Adicionar Permissão'
-    if(!subTab){
-      return index===0 ? 'Adicionar Permissão' : 'Adicionar Empresa' 
-    } 
-    return (subTab === 0 ? 'Adicionar Empresa' :
-    subTab === 1 ? 'Adicionar Unidade' : 
-    subTab === 2 ? 'Adicionar Setor' :
-    subTab === 3 ? 'Adicionar Profissional' :
-    'Adicionar Equipamento' 
-    )
-  }
-
-
-
+ 
   return ( 
     <>
       <div
@@ -66,7 +55,9 @@ export function ServicosOperacionaisComponent(){
             activeTab !== undefined && activeTab === 0 ? {  } : {display: 'none'}
           }
         >
-          <Kanban/>
+          <Kanban
+            openFilterModal={openFilterModal}
+          />
         </div>
         <div
           className='flex flex-col gap-4'
@@ -74,20 +65,15 @@ export function ServicosOperacionaisComponent(){
             activeTab !== undefined && activeTab === 1 ? {  } : {display: 'none'}
           }
         >
-          <EmpresasTab
-            activeTab={
-              subTab
-            }
-            setActiveTab={
-              setSubTab
-            }
-          />
+          <EvolucaoTab>
+            alo
+          </EvolucaoTab>
         </div>
       </div> 
       <ModalFiltroServicosDashboard
-        isOpen={true}
-        onClose={() => {}}
-        />
+        isOpen={isFilterModalOpen}
+        onClose={closeFilterModal}
+      />
     </>
   )
 

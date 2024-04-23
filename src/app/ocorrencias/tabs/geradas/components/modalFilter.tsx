@@ -18,6 +18,10 @@ const schemaFilter = Yup.object({
   registerDateEnd: Yup.string(),
   availableDateStart: Yup.string(),
   availableDateEnd: Yup.string(),
+  occurrenceCaracterization: Yup.number(),
+  occurrenceType: Yup.number(),
+  origin: Yup.string(),
+  recognitionStatus: Yup.string(),
 });
 
 type FormFieldsFilter = Yup.InferType<typeof schemaFilter>;
@@ -27,26 +31,28 @@ export default function ModalFilter({
   setFilterOcurrences,
   handleClose,
   characterizations,
-  characterizationSelected,
-  setCharacterizationSelected,
   types,
-  typesSelected,
-  setTypesSelected,
 }: {
   filterOcurrences: IFilterOcurrences;
   setFilterOcurrences: Dispatch<SetStateAction<IFilterOcurrences>>;
   handleClose: () => void;
   characterizations: IOcurrenceCharacterization[];
-  characterizationSelected: IOcurrenceCharacterization;
-  setCharacterizationSelected: Dispatch<
-    SetStateAction<IOcurrenceCharacterization>
-  >;
   types: IOcurrenceType[];
-  typesSelected: IOcurrenceType;
-  setTypesSelected: Dispatch<SetStateAction<IOcurrenceType>>;
 }) {
   const methodsFilter = useForm<FormFieldsFilter>({
     resolver: yupResolver(schemaFilter),
+    defaultValues: {
+      occurrenceCaracterization: filterOcurrences.characterization,
+      origin: filterOcurrences.origin,
+      recognitionStatus: filterOcurrences.status,
+      occurrenceType: filterOcurrences.type,
+      professional: filterOcurrences.professional,
+      registerDateStart: filterOcurrences.registerDateStart,
+      registerDateEnd: filterOcurrences.registerDateEnd,
+      availableDateStart: filterOcurrences.availableDateStart,
+      availableDateEnd: filterOcurrences.availableDateEnd,
+      ocurrenceNumber: filterOcurrences.numberOcurrence 
+    },
   });
 
   const dateFormatter = (data: string) => {
@@ -60,8 +66,8 @@ export default function ModalFilter({
       ...filterOcurrences,
       numberOcurrence: data.ocurrenceNumber,
       professional: data.professional,
-      characterization: characterizationSelected.id,
-      type: typesSelected.id,
+      characterization: data.occurrenceCaracterization,
+      type: data.occurrenceType,
       registerDateStart: data.registerDateStart
         ? dayjs(dateFormatter(data.registerDateStart)).toISOString()
         : "",
@@ -101,15 +107,8 @@ export default function ModalFilter({
       </div>
       <div className="flex gap-4 md:gap-6 flex-col md:flex-row justify-between">
         <Dropdown
-          name="occurrence-caracterization"
+          name="occurrenceCaracterization"
           label="Caracterização"
-          defaultValueSelect={filterOcurrences.characterization}
-          onChangeSelect={(e) =>
-            setCharacterizationSelected({
-              ...characterizationSelected,
-              id: e.target.value,
-            })
-          }
           options={characterizations.map((item) => {
             return {
               label: item.description,
@@ -118,15 +117,8 @@ export default function ModalFilter({
           })}
         />
         <Dropdown
-          name="occurrence-type"
+          name="occurrenceType"
           label="Tipo de ocorrência"
-          defaultValueSelect={filterOcurrences.type}
-          onChangeSelect={(e) =>
-            setTypesSelected({
-              ...typesSelected,
-              id: e.target.value,
-            })
-          }
           options={types.map((item) => {
             return {
               label: item.description,
@@ -139,28 +131,14 @@ export default function ModalFilter({
         <Dropdown
           name="origin"
           label="Origem"
-          defaultValueSelect={filterOcurrences.origin}
-          onChangeSelect={(e) =>
-            setFilterOcurrences({
-              ...filterOcurrences,
-              origin: e.target.value,
-            })
-          }
           options={[
             { label: "1", value: 1 },
             { label: "2", value: 2 },
           ]}
         />
         <Dropdown
-          name="recognition-status"
+          name="recognitionStatus"
           label="Status de avaliação"
-          defaultValueSelect={filterOcurrences.status}
-          onChangeSelect={(e) =>
-            setFilterOcurrences({
-              ...filterOcurrences,
-              status: e.target.value,
-            })
-          }
           options={[
             { label: "Pendente", value: "false" },
             { label: "Concluido", value: "true" },

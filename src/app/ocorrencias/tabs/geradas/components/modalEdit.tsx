@@ -13,6 +13,9 @@ const schemaEdit = Yup.object({
   occurrenceDate: Yup.string(),
   locale: Yup.string(),
   description: Yup.string(),
+  occurrenceCategory: Yup.number(),
+  profissional: Yup.number(),
+  serviceOrder: Yup.string(),
 });
 
 type FormFieldsEdit = Yup.InferType<typeof schemaEdit>;
@@ -30,6 +33,14 @@ export default function ModalEdit({
 }) {
   const methodsEdit = useForm<FormFieldsEdit>({
     resolver: yupResolver(schemaEdit),
+    defaultValues: {
+      occurrenceCategory: currentOcurrence.characterization?.id,
+      profissional: currentOcurrence.professional?.id,
+      serviceOrder: currentOcurrence.serviceOrder?.code,
+      occurrenceDate: dayjs(currentOcurrence.registerDate).format("DD/MM/YYYY"),
+      locale: currentOcurrence.local,
+      description: currentOcurrence.description,
+    },
   });
 
   const { confirmDialog } = useDialog();
@@ -60,18 +71,16 @@ export default function ModalEdit({
     >
       <div className="flex gap-4 md:gap-6 flex-col md:flex-row justify-between">
         <Input
-          name="service-order"
+          name="serviceOrder"
           label="Ordem de serviço"
           required
-          defaultValue={currentOcurrence.serviceOrder?.code}
           disabled={true}
         />
         <Dropdown
-          name="occurrence-category"
+          name="occurrenceCategory"
           label="Categorização de ocorrência"
           required
           disabled={true}
-          defaultValueSelect={currentOcurrence.characterization?.id}
           options={[
             {
               label: currentOcurrence.characterization?.description,
@@ -87,7 +96,6 @@ export default function ModalEdit({
           label="Profissional"
           required
           disabled={true}
-          defaultValueSelect={currentOcurrence.professional?.id}
           options={[
             {
               label: currentOcurrence.professional?.name,
@@ -100,9 +108,6 @@ export default function ModalEdit({
           label="Data da ocorrência"
           required
           error={methodsEdit.formState.errors.occurrenceDate}
-          defaultValue={dayjs(currentOcurrence.registerDate).format(
-            "DD/MM/YYYY"
-          )}
           placeholder="DD/MM/AAAA"
           disabled={false}
           mask={masks.DATE}
@@ -114,7 +119,6 @@ export default function ModalEdit({
           label="Local"
           required
           placeholder="Local"
-          defaultValue={currentOcurrence.local}
           error={methodsEdit.formState.errors.locale}
           disabled={false}
         />
@@ -123,7 +127,6 @@ export default function ModalEdit({
         name="description"
         label="Descrição"
         required
-        defaultValue={currentOcurrence.description}
         placeholder="Texto descritivo"
         error={methodsEdit.formState.errors.description}
         disabled={false}

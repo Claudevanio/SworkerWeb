@@ -53,30 +53,37 @@ export const ocurrrenceClassificationService = {
   async insertClassification(
     classification: IOcurrenceClassification
   ): Promise<void> {
-    await api.post(
-      `/occurrence-classifications`,
-      {
-        type: classification.type.id,
+    try {
+      await api.post(`/occurrence-classifications`, {
+        occurrenceTypeId: classification.type.id,
         description: classification.description,
         severity: classification.severity,
-      }
-    );
+      });
+    } catch (e) {
+      throw e.response.data;
+    }
   },
 
   async updateClassification(
     classification: IOcurrenceClassification
   ): Promise<void> {
-    await api.put(`/occurrence-classifications/${classification.id}`, {
-      id: classification.id,
-      occurrenceTypeId: classification.type.id,
-      description: classification.description,
-      severity: classification.severity,
-    });
+    try {
+      await api.put(`/occurrence-classifications/${classification.id}`, {
+        id: classification.id,
+        occurrenceTypeId: classification.type.id,
+        description: classification.description,
+        severity: classification.severity,
+      });
+    } catch (e) {
+      throw e.response.data;
+    }
   },
 
-  async deleteClassification(
-    classificationId: number
-  ): Promise<void> {
-    await api.delete(`/occurrence-classifications/${classificationId}`);
+  async deleteClassification(classificationId: number): Promise<void> {
+    try {
+      await api.delete(`/occurrence-classifications/${classificationId}`);
+    } catch (e) {
+      throw e.response.data;
+    }
   },
 };

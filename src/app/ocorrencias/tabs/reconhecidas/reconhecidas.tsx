@@ -57,19 +57,11 @@ export function Reconhecidas({
     {} as IOcurrenceRecognize
   );
 
-  const [classificationSelected, setClassificationSelected] =
-    useState<IOcurrenceClassification>({} as IOcurrenceClassification);
-
-  const [typeSelect, setTypeSelect] = useState<IOcurrenceType>(
-    {} as IOcurrenceType
-  );
-
-  const [characterizationSelected, setCharacterizationSelected] =
-    useState<IOcurrenceCharacterization>({} as IOcurrenceCharacterization);
-
-  const { isLoading, data: ocurrences } = useQuery<
-    basePagination<IOcurrenceRecognize> | undefined
-  >({
+  const {
+    isLoading,
+    data: ocurrences,
+    refetch,
+  } = useQuery<basePagination<IOcurrenceRecognize> | undefined>({
     queryKey: ["reconhecidas", { filterOcurrences, filter }],
     queryFn: () =>
       recognitionService.listOcurrenceAsync(
@@ -209,6 +201,7 @@ export function Reconhecidas({
             {
               label: "Exportar",
               onClick: () => {},
+              hiddenDesktop: true,
               icon: <Check />,
             },
             {
@@ -224,7 +217,7 @@ export function Reconhecidas({
         />
         <Pagination
           currentPage={filter.page ?? 0}
-          totalPages={Math.floor(ocurrences?.count / filter.pageSize)}
+          totalPages={Math.ceil(ocurrences?.count / filter.pageSize)}
           onChange={(page) =>
             setFilter((prev) => ({
               ...prev,
@@ -248,14 +241,8 @@ export function Reconhecidas({
             setFilterOcurrences={setFilterOcurrences}
             handleClose={() => setOpenModalFilter(false)}
             characterizations={characterizations}
-            characterizationSelected={characterizationSelected}
-            setCharacterizationSelected={setCharacterizationSelected}
             types={types}
-            typesSelected={typeSelect}
-            setTypesSelected={setTypeSelect}
             classifications={classifications}
-            classificationSelected={classificationSelected}
-            setClassificationSelected={setClassificationSelected}
           />
         </Modal>
       )}
@@ -270,6 +257,7 @@ export function Reconhecidas({
           title="Filtrar por:"
         >
           <ModalEnding
+            refetch={refetch}
             currentOcurrence={currentOcurrence}
             handleClose={() => setOpenModalEnding(false)}
           />

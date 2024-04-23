@@ -18,31 +18,29 @@ import { DeleteOutline, EditOutlined } from "@mui/icons-material";
 import { Stack } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { SetStateAction, useState } from "react";
-import { IOcurrenceClassification } from "@/types/models/Ocurrences/IOcurrenceClassification";
 import { IOcurrenceType } from "@/types/models/Ocurrences/IOcurrenceType";
 import { IOcurrenceCharacterization } from "@/types/models/Ocurrences/IOcurrenceCharacterization";
-import { IFilterClassification } from "@/types/models/Ocurrences/IFilterClassification";
+import { IFilterCharacterization } from "@/types/models/Ocurrences/IFilterCharacterization";
 import ModalFilter from "./components/modalFilter";
 import ModalAddAndUpdate from "./components/modalAddAndUpdate";
 import { useDialog } from "@/hooks/use-dialog";
+import { ocurrenceCharacterizationService } from "@/services/Ocurrences/ocurrenceCharacterizationsService";
 
-export function Classificacao({
+export function Categorizacao({
   isMobile,
-  characterizations,
   types,
   openModalAdd,
   handleCloseModalAdd,
 }: {
   isMobile: boolean;
-  characterizations: IOcurrenceCharacterization[];
   types: IOcurrenceType[];
   openModalAdd: boolean;
   handleCloseModalAdd: () => void;
 }) {
   const [openModalFilter, setOpenModalFilter] = useState(false);
   const [openModalUpdate, setOpenModalUpdate] = useState(false);
-  const [filterClassifications, setFilterClassifications] =
-    useState<IFilterClassification>({} as IFilterClassification);
+  const [filterCharacterizations, setFilterClassifications] =
+    useState<IFilterCharacterization>({} as IFilterCharacterization);
   const [selected, setSelected] = useState<number[]>([]);
   const [filter, setFilter] = useState({
     page: 0,
@@ -50,29 +48,29 @@ export function Classificacao({
     term: "",
   });
 
-  const [classificationSelected, setClassificationSelected] =
-    useState<IOcurrenceClassification>({} as IOcurrenceClassification);
+  const [characterizationSelected, setCharacterizationSelected] =
+    useState<IOcurrenceCharacterization>({} as IOcurrenceCharacterization);
 
-  const { isLoading, data: classifications, refetch } = useQuery<
-    basePagination<IOcurrenceClassification> | undefined
+  const { isLoading, data: characterizations, refetch } = useQuery<
+    basePagination<IOcurrenceCharacterization> | undefined
   >({
-    queryKey: ["conf-classificacao", { filterClassifications, filter }],
+    queryKey: ["conf-caracterizacao", { filterCharacterizations, filter }],
     queryFn: () =>
-      ocurrrenceClassificationService.getClassificationsWithPagination(
+      ocurrenceCharacterizationService.getCharacterizationsWithPagination(
         filter.term,
         filter.page,
         filter.pageSize,
-        filterClassifications
+        filterCharacterizations
       ) as any,
     refetchOnWindowFocus: false,
   });
 
   const columns = [
     {
-      label: "Descrição",
+      label: "Categoria",
       key: "description",
       mobileTitle: true,
-      rowFormatter: (classification: IOcurrenceClassification) => {
+      rowFormatter: (characterization: IOcurrenceCharacterization) => {
         return (
           <div
             className="flex items-center gap-2 group"
@@ -81,7 +79,7 @@ export function Classificacao({
             <div
               className="w-0 group-hover:!w-12 overflow-hidden transition-all items-center gap-1"
               style={
-                selected.includes(classification.id)
+                selected.includes(characterization.id)
                   ? {
                       width: "2rem",
                     }
@@ -90,25 +88,21 @@ export function Classificacao({
             >
               <CheckBox
                 variant="secondary"
-                value={selected.includes(classification.id)}
+                value={selected.includes(characterization.id)}
                 onChange={() => {
                   setSelected((prev) => {
-                    if (prev.includes(classification.id)) {
-                      return prev.filter((v) => v !== classification.id);
+                    if (prev.includes(characterization.id)) {
+                      return prev.filter((v) => v !== characterization.id);
                     }
-                    return [...prev, classification.id];
+                    return [...prev, characterization.id];
                   });
                 }}
               />
             </div>
-            <div>{classification.description}</div>
+            <div>{characterization.description}</div>
           </div>
         );
       },
-    },
-    {
-      label: "Severidade",
-      key: "severity",
     },
     {
       label: "Tipo de ocorrência",
@@ -119,7 +113,7 @@ export function Classificacao({
     },
   ];
 
-  const rows = classifications?.items ?? [];
+  const rows = characterizations?.items ?? [];
 
   const { openDialog, confirmDialog } = useDialog();
 
@@ -138,10 +132,10 @@ export function Classificacao({
         >
           <Stack width={isMobile ? "100%" : "80%"}>
             <SearchInput
-              value={filterClassifications.query}
+              value={filterCharacterizations.query}
               onChange={(e) => {
                 setFilterClassifications({
-                  ...filterClassifications,
+                  ...filterCharacterizations,
                   query: e,
                 });
               }}
@@ -166,7 +160,7 @@ export function Classificacao({
           actions={[
             {
               label: "Excluir",
-              onClick: (data: IOcurrenceClassification) =>
+              onClick: (data: IOcurrenceCharacterization) =>
                 openDialog({
                   title: "Excluir classificação",
                   subtitle: "Deseja mesmo excluir?",
@@ -179,7 +173,7 @@ export function Classificacao({
                       refetch()
                     } catch (e) {
                       confirmDialog({
-                        title: "Houve um erro ao excluir a classificação",
+                        title: "Houve um erro ao excluir a categoria",
                         message: e.message,
                       });
                     }
@@ -190,8 +184,8 @@ export function Classificacao({
             },
             {
               label: "Editar",
-              onClick: (data: IOcurrenceClassification) => {
-                setClassificationSelected(data);
+              onClick: (data: IOcurrenceCharacterization) => {
+                setCharacterizationSelected(data);
                 setOpenModalUpdate(true);
               },
               icon: <EditOutlined />,
@@ -201,7 +195,7 @@ export function Classificacao({
         />
         <Pagination
           currentPage={filter.page ?? 0}
-          totalPages={Math.ceil(classifications?.count / filter.pageSize)}
+          totalPages={Math.ceil(characterizations?.count / filter.pageSize)}
           onChange={(page) =>
             setFilter((prev) => ({
               ...prev,
@@ -220,7 +214,7 @@ export function Classificacao({
           title="Filtrar por:"
         >
           <ModalFilter
-            filter={filterClassifications}
+            filter={filterCharacterizations}
             setFilter={setFilterClassifications}
             handleClose={() => setOpenModalFilter(false)}
             types={types}
@@ -235,17 +229,17 @@ export function Classificacao({
             setOpenModalUpdate(false);
             handleCloseModalAdd();
           }}
-          title={openModalAdd ? "Nova classificação" : "Editar classificação"}
+          title={openModalAdd ? "Nova categorização" : "Editar categorização"}
         >
           <ModalAddAndUpdate
           refetch={refetch}
             handleClose={() => {
-              setClassificationSelected({} as IOcurrenceClassification)
+              setCharacterizationSelected({} as IOcurrenceCharacterization)
               handleCloseModalAdd();
               setOpenModalUpdate(false);
             }}
             types={types}
-            classificationSelected={classificationSelected}
+            characterizationSelected={characterizationSelected}
             isAdd={openModalAdd}
           />
         </Modal>

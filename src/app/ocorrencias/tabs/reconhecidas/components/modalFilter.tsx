@@ -20,6 +20,10 @@ const schemaFilter = Yup.object({
   registerDateEnd: Yup.string(),
   recognitionDateStart: Yup.string(),
   recognitionDateEnd: Yup.string(),
+  occurrenceCharacterization: Yup.number(),
+  occurrenceType: Yup.number(),
+  classification: Yup.number(),
+  origin: Yup.string(),
 });
 
 type FormFieldsFilter = Yup.InferType<typeof schemaFilter>;
@@ -29,32 +33,31 @@ export default function ModalFilter({
   setFilterOcurrences,
   handleClose,
   characterizations,
-  characterizationSelected,
-  setCharacterizationSelected,
   types,
-  typesSelected,
-  setTypesSelected,
   classifications,
-  classificationSelected,
-  setClassificationSelected,
 }: {
   filterOcurrences: IFilterOcurrences;
   setFilterOcurrences: Dispatch<SetStateAction<IFilterOcurrences>>;
   handleClose: () => void;
   characterizations: IOcurrenceCharacterization[];
-  characterizationSelected: IOcurrenceCharacterization;
-  setCharacterizationSelected: Dispatch<
-    SetStateAction<IOcurrenceCharacterization>
-  >;
   types: IOcurrenceType[];
-  typesSelected: IOcurrenceType;
-  setTypesSelected: Dispatch<SetStateAction<IOcurrenceType>>;
   classifications: IOcurrenceClassification[];
-  classificationSelected: IOcurrenceClassification;
-  setClassificationSelected: Dispatch<SetStateAction<IOcurrenceClassification>>;
 }) {
   const methodsFilter = useForm<FormFieldsFilter>({
     resolver: yupResolver(schemaFilter),
+    defaultValues: {
+      occurrenceCharacterization: filterOcurrences.characterization,
+      occurrenceType: filterOcurrences.type,
+      classification: filterOcurrences.classification,
+      origin: filterOcurrences.origin,
+      ocurrenceNumber: filterOcurrences.numberOcurrence,
+      professional: filterOcurrences.professional,
+      supervisor: filterOcurrences.supervisor,
+      registerDateStart: filterOcurrences.registerDateStart,
+      registerDateEnd: filterOcurrences.registerDateEnd,
+      recognitionDateStart: filterOcurrences.recognitionDateStart,
+      recognitionDateEnd: filterOcurrences.recognitionDateEnd,
+    },
   });
 
   const dateFormatter = (data: string) => {
@@ -68,8 +71,9 @@ export default function ModalFilter({
       ...filterOcurrences,
       numberOcurrence: data.ocurrenceNumber,
       professional: data.professional,
-      characterization: characterizationSelected.id,
-      type: typesSelected.id,
+      characterization: data.occurrenceCharacterization,
+      type: data.occurrenceType,
+      origin: data.origin,
       registerDateStart: data.registerDateStart
         ? dayjs(dateFormatter(data.registerDateStart)).toISOString()
         : "",
@@ -115,15 +119,8 @@ export default function ModalFilter({
           disabled={false}
         />
         <Dropdown
-          name="occurrence-caracterization"
+          name="occurrenceCharacterization"
           label="Caracterização"
-          defaultValueSelect={filterOcurrences.characterization}
-          onChangeSelect={(e) =>
-            setCharacterizationSelected({
-              ...characterizationSelected,
-              id: e.target.value,
-            })
-          }
           options={characterizations.map((item) => {
             return {
               label: item.description,
@@ -134,15 +131,8 @@ export default function ModalFilter({
       </div>
       <div className="flex gap-4 md:gap-6 flex-col md:flex-row justify-between">
         <Dropdown
-          name="occurrence-type"
+          name="occurrenceType"
           label="Tipo de ocorrência"
-          defaultValueSelect={filterOcurrences.type}
-          onChangeSelect={(e) =>
-            setTypesSelected({
-              ...typesSelected,
-              id: e.target.value,
-            })
-          }
           options={types.map((item) => {
             return {
               label: item.description,
@@ -153,13 +143,6 @@ export default function ModalFilter({
         <Dropdown
           name="classification"
           label="Classificação"
-          defaultValueSelect={filterOcurrences.classification}
-          onChangeSelect={(e) =>
-            setClassificationSelected({
-              ...classificationSelected,
-              id: e.target.value,
-            })
-          }
           options={classifications.map((item) => {
             return {
               label: item.description,
@@ -172,16 +155,9 @@ export default function ModalFilter({
         <Dropdown
           name="origin"
           label="Origem"
-          defaultValueSelect={filterOcurrences.origin}
-          onChangeSelect={(e) =>
-            setFilterOcurrences({
-              ...filterOcurrences,
-              origin: e.target.value,
-            })
-          }
           options={[
-            { label: "1", value: 1 },
-            { label: "2", value: 2 },
+            { label: "1", value: "1" },
+            { label: "2", value: "2" },
           ]}
         />
       </Stack>

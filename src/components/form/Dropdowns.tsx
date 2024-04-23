@@ -2,9 +2,6 @@
 import { FormControl, MenuItem, Select, TextField, SelectChangeEvent } from "@mui/material";
 import { Field, FieldProps } from "./Fields";
 import Image from 'next/image';
-import { useQuery } from '@tanstack/react-query';
-import { IEquipmentType } from '@/types';
-import { equipmentTypeService } from '@/services/Administrator/equipmentService';
 import React from 'react';
 
 interface Option {
@@ -21,8 +18,6 @@ interface DropdownProps extends Omit<FieldProps, "render"> {
   required?: boolean;
   className?: string;
   disabled?: boolean;
-  onChangeSelect?: (e: SelectChangeEvent<any>) => void;
-  defaultValueSelect?: string | number
 }
 
 export const Dropdown: React.FC<DropdownProps> = ({
@@ -31,11 +26,9 @@ export const Dropdown: React.FC<DropdownProps> = ({
   options,
   required,
   className = "rounded-lg h-10 mt-2",
-  disabled,
-  onChangeSelect = () => {},
-  defaultValueSelect,
+  disabled, 
 }) => {
-  return (
+  return ( 
     <Field
       name={name}
       label={label}
@@ -46,11 +39,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
             <Select
               {...field}
               displayEmpty
-              disabled={disabled}
-              onChange={(e) => {
-                onChangeSelect(e);
-              }}
-              defaultValue={defaultValueSelect}
+              disabled={disabled}  
               inputProps={{
                 id: "dropdown-select",
                 variant: "standard",

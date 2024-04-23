@@ -50,16 +50,6 @@ export function Encerradas({
     term: "",
   });
 
-  const [classificationSelected, setClassificationSelected] =
-    useState<IOcurrenceClassification>({} as IOcurrenceClassification);
-
-  const [typeSelect, setTypeSelect] = useState<IOcurrenceType>(
-    {} as IOcurrenceType
-  );
-
-  const [characterizationSelected, setCharacterizationSelected] =
-    useState<IOcurrenceCharacterization>({} as IOcurrenceCharacterization);
-
   const { isLoading, data: ocurrences } = useQuery<
     basePagination<IOcurrence> | undefined
   >({
@@ -202,6 +192,7 @@ export function Encerradas({
           actions={[
             {
               label: "Exportar",
+              hiddenDesktop: true,
               onClick: () => {},
               icon: <Check />,
             },
@@ -209,7 +200,7 @@ export function Encerradas({
         />
         <Pagination
           currentPage={filter.page ?? 0}
-          totalPages={Math.floor(ocurrences?.count / filter.pageSize)}
+          totalPages={Math.ceil(ocurrences?.count / filter.pageSize)}
           onChange={(page) =>
             setFilter((prev) => ({
               ...prev,
@@ -232,14 +223,8 @@ export function Encerradas({
             setFilterOcurrences={setFilterOcurrences}
             handleClose={() => setOpenModalFilter(false)}
             characterizations={characterizations}
-            characterizationSelected={characterizationSelected}
-            setCharacterizationSelected={setCharacterizationSelected}
-            types={types}
-            typesSelected={typeSelect}
-            setTypesSelected={setTypeSelect}
             classifications={classifications}
-            classificationSelected={classificationSelected}
-            setClassificationSelected={setClassificationSelected}
+            types={types}
           />
         </Modal>
       )}

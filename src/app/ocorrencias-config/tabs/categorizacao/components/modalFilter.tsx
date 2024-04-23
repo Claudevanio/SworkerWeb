@@ -1,8 +1,6 @@
 "use client";
 import { Button, Dropdown, Form, Input } from "@/components";
-import { IFilterClassification } from "@/types/models/Ocurrences/IFilterClassification";
-import { IOcurrenceCharacterization } from "@/types/models/Ocurrences/IOcurrenceCharacterization";
-import { IOcurrenceClassification } from "@/types/models/Ocurrences/IOcurrenceClassification";
+import { IFilterCharacterization } from "@/types/models/Ocurrences/IFilterCharacterization";
 import { IOcurrenceType } from "@/types/models/Ocurrences/IOcurrenceType";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Stack, Button as ButtonMUI } from "@mui/material";
@@ -11,9 +9,8 @@ import { useForm } from "react-hook-form";
 import * as Yup from "yup";
 
 const schemaFilter = Yup.object({
-  description: Yup.string(),
+  category: Yup.string(),
   occurrenceType: Yup.number(),
-  severity: Yup.number(),
 });
 
 type FormFieldsFilter = Yup.InferType<typeof schemaFilter>;
@@ -24,26 +21,24 @@ export default function ModalFilter({
   handleClose,
   types,
 }: {
-  filter: IFilterClassification;
-  setFilter: Dispatch<SetStateAction<IFilterClassification>>;
+  filter: IFilterCharacterization;
+  setFilter: Dispatch<SetStateAction<IFilterCharacterization>>;
   handleClose: () => void;
   types: IOcurrenceType[];
 }) {
   const methodsFilter = useForm<FormFieldsFilter>({
     resolver: yupResolver(schemaFilter),
     defaultValues: {
-      occurrenceType: filter.typeId,
-      description: filter.description,
-      severity: filter.severityId
-    },
+      category: filter.category,
+      occurrenceType: filter.typeId
+    }
   });
 
   async function onSubmitFilter(data: FormFieldsFilter) {
     setFilter({
       ...filter,
-      description: data.description,
+      category: data.category,
       typeId: data.occurrenceType,
-      severityId: data.severity,
     });
 
     handleClose();
@@ -65,25 +60,12 @@ export default function ModalFilter({
           };
         })}
       />
-      <div className="flex gap-4 md:gap-6 flex-col md:flex-row justify-between">
-        <Input
-          name="description"
-          label="Descrição"
-          placeholder="Descrição"
-          disabled={false}
-        />
-        <Dropdown
-          name="severity"
-          label="Severidade"
-          options={[
-            { label: "Informativo", value: 1 },
-            { label: "Mobilização", value: 2 },
-            { label: "Atenção", value: 3 },
-            { label: "Alerta", value: 4 },
-            { label: "Crítico", value: 5 },
-          ]}
-        />
-      </div>
+      <Input
+        name="category"
+        label="Categoria"
+        placeholder="Categoria"
+        disabled={false}
+      />
       <Stack flexDirection="row" justifyContent="space-between">
         <ButtonMUI
           onClick={() => handleClose()}

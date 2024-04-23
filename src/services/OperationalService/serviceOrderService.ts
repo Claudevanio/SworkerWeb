@@ -28,11 +28,15 @@ export const serviceOrderService = {
   },
 
   async updateServiceOrderStatus (id: string, statusId: number): Promise<void> {
-    const data = {
-      orderServiceId: id,
-      statusId,
+    try {
+      const data = {
+        orderServiceId: id,
+        statusId,
+      }
+      await api.put<void>(`/service-orders/${id}/status`, data);
+    } catch (e) {
+      throw e.response.data;
     }
-    await api.put<void>(`/service-orders/${id}/status`, data);
   },
 
   async getServiceOrderById (id: string): Promise<ServiceOrder> {
@@ -51,6 +55,7 @@ export const serviceOrderService = {
   },
 
   async listServiceOrderAsync (filters: any): Promise<any[]> {
+    console.log(filters)
     const response = await api.get<any[]>('/service-orders', { params: filters });
     return response.data;
   },

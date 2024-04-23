@@ -1,5 +1,5 @@
 'use client';
-import { Box, Typography } from '@mui/material';
+import { Box, Skeleton, Typography } from '@mui/material';
 import { useEffect, useMemo, useState } from 'react';
 import { DragDropContext, Draggable, Droppable, DroppableProps } from 'react-beautiful-dnd';
 import { StrictModeDroppable } from './StrictDroppable';
@@ -7,8 +7,15 @@ import Image from 'next/image';
 import { COLORS } from '@/utils';
 import { useServiceOrder } from '@/contexts';
 import { ServiceOrder } from '@/types/models/ServiceOrder/serviceOrder';
+import { FiltroButton } from '@/components/ui';
 
-export const Kanban = () => { 
+export const Kanban = (
+  {
+    openFilterModal,
+  }: {
+    openFilterModal: () => void;
+  }
+) => { 
 
   const {
     serviceOrders
@@ -206,7 +213,7 @@ export const Kanban = () => {
           }
       }, [serviceOrders]);
 
-      const onDragEnd = (result: any) => {
+      const onDragEnd = async (result: any) => {
           const { source, destination } = result;
           if (!destination) return;
           const sourceStage = stages[source.droppableId as never] as any;
@@ -266,6 +273,13 @@ export const Kanban = () => {
  
       return (
           <DragDropContext onDragEnd={onDragEnd}> 
+          <div
+            className='w-full justify-end flex  md:mt-[-12px]'
+          >
+            <FiltroButton
+              onClick={openFilterModal}
+            /> 
+          </div>
               <Box sx={{
                   display: "flex",
                   gap: "2rem",
@@ -333,8 +347,8 @@ export const Kanban = () => {
                                         }
                                       }
                                   > 
-                                  {stage.items.map((serviceOrder: ServiceOrder, index: number) => (
-                                      <Draggable key={serviceOrder.id} draggableId={serviceOrder?.id?.toString()} index={index}
+                                  {stage.items.map((serviceOrder: ServiceOrder, index: number) => ( 
+                                     <Draggable key={serviceOrder.id} draggableId={serviceOrder?.id?.toString()} index={index}
                                       >
                                           {(provided: any) => (
                                               <Box
@@ -352,7 +366,7 @@ export const Kanban = () => {
                                                   >
                                                     {serviceOrder.code}
                                                   </h4>
-                                                  <p
+                                                  { !serviceOrders.isLoading && <p
                                                     className='text-base-1 font-bold p-2 rounded-md uppercase min-w-[50%]'
                                                     style={
                                                       serviceOrder.tagId === 0 ? {backgroundColor: COLORS['warning']['2'], border: `1px solid ${COLORS['warning']['3']}`} :
@@ -362,10 +376,10 @@ export const Kanban = () => {
                                                       {backgroundColor: COLORS['erro']['2'], border: `1px solid ${COLORS['erro']['3']}`} 
                                                     }
                                                   >
-                                                    {
+                                                    { 
                                                       serviceOrder?.supervisor?.name ? 'Associada' : 'Não Associada'
                                                     }
-                                                  </p>
+                                                  </p>}
                                                 </div>
                                                   <div
                                                     className='flex flex-col gap-4'
@@ -373,7 +387,8 @@ export const Kanban = () => {
                                                     <p
                                                       className='text-base-7 font-normal text-base'
                                                     >
-                                                      {serviceOrder.description}
+                                                      {
+                                                      serviceOrders.isLoading ? <Skeleton width={100} height={20} /> : serviceOrder.description}
                                                     </p>
                                                     <div 
                                                       className='flex flex-col gap-2'>
@@ -381,7 +396,8 @@ export const Kanban = () => {
                                                         >
                                                           <strong>
                                                             Origem:
-                                                          </strong> { ' ' 
+                                                          </strong> {
+                                                      serviceOrders.isLoading ? <Skeleton width={100} height={20} /> :  ' ' 
                                                             + (serviceOrder?.customer?.name ?? 'Indefinido')
                                                           }
                                                         </span>
@@ -389,6 +405,7 @@ export const Kanban = () => {
                                                           <strong>
                                                           Responsavel: 
                                                           </strong>{ 
+                                                      serviceOrders.isLoading ? <Skeleton width={100} height={20} /> :
                                                             ' ' + (serviceOrder?.serviceOrderProfessionals?.find((prof) => prof?.isResponsible)?.professionalName ?? serviceOrder?.serviceOrderProfessionals?.length > 0 ? serviceOrder?.serviceOrderProfessionals[0]?.professionalName : 'Indefinido')
                                                           }
                                                         </span>
@@ -396,6 +413,7 @@ export const Kanban = () => {
                                                           <strong>
                                                           Supervisor: 
                                                           </strong>{ 
+                                                      serviceOrders.isLoading ? <Skeleton width={100} height={20} /> :
                                                             ' ' + (serviceOrder?.supervisor?.name ?? 'Indefinido')
                                                           }
 

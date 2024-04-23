@@ -8,48 +8,54 @@ import { masks } from "@/utils";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Button as ButtonMUI, Stack, Switch, Typography } from "@mui/material";
 import dayjs from "dayjs";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { useForm } from "react-hook-form";
 import * as Yup from "yup";
 
 const schemaRecognize = Yup.object({
   classification: Yup.number(),
   observation: Yup.string(),
+  occurrenceType: Yup.number(),
+  occurrenceCategorization: Yup.number(),
+  occurrenceDate: Yup.string(),
+  locale: Yup.string(),
+  description: Yup.string(),
 });
 
 export default function ModalRecognize({
   currentOcurrence,
   setCurrentOcurrence,
-  classificationSelected,
   classifications,
   handleClose,
-  setClassificationSelected,
+  refetch
 }: {
   currentOcurrence: IOcurrence;
   setCurrentOcurrence: Dispatch<SetStateAction<IOcurrence>>;
-  classificationSelected: IOcurrenceClassification;
   classifications: IOcurrenceClassification[];
   handleClose: () => void;
-  setClassificationSelected: Dispatch<SetStateAction<IOcurrenceClassification>>;
+  refetch: () => void;
 }) {
   type FormFields = Yup.InferType<typeof schemaRecognize>;
 
   const methodsRecognize = useForm<FormFields>({
     resolver: yupResolver(schemaRecognize),
+    defaultValues: {
+      occurrenceType: currentOcurrence.occurrenceTypeId,
+      occurrenceCategorization: currentOcurrence.characterization?.id,
+      observation: currentOcurrence.observation,
+      occurrenceDate: dayjs(currentOcurrence.registerDate).format("DD/MM/YYYY"),
+      locale: currentOcurrence.local,
+      description: currentOcurrence.description,
+    },
   });
 
   const { confirmDialog } = useDialog();
 
   async function onSubmit(data: FormFields) {
-    setCurrentOcurrence({
-      ...currentOcurrence,
-      observation: data.observation,
-    });
-
     const newOcurrenceRecognize = {
       absenceDays: 0,
-      characterizationId: currentOcurrence.characterization.id,
-      classificationId: classificationSelected.id,
+      characterizationId: data.occurrenceCategorization,
+      classificationId: data.classification,
       closed: false,
       daysWorkedAfterDayOff: 0,
       description: currentOcurrence.description,
@@ -70,6 +76,7 @@ export default function ModalRecognize({
       });
     }
 
+    refetch();
     handleClose();
   }
 
@@ -98,12 +105,6 @@ export default function ModalRecognize({
           required
           error={methodsRecognize.formState.errors.classification}
           disabled={false}
-          onChangeSelect={(e) =>
-            setClassificationSelected({
-              ...classificationSelected,
-              id: e.target.value,
-            })
-          }
           options={classifications.map((item) => {
             return {
               label: item?.description,
@@ -112,10 +113,9 @@ export default function ModalRecognize({
           })}
         />
         <Dropdown
-          name="occurrence-type"
+          name="occurrenceType"
           label="Tipo de ocorrência"
           required
-          defaultValueSelect={currentOcurrence.occurrenceTypeId}
           disabled={true}
           options={[
             {
@@ -130,7 +130,6 @@ export default function ModalRecognize({
         name="observation"
         label="Observação"
         required
-        defaultValue={currentOcurrence.observation}
         placeholder="Texto descritivo"
         disabled={false}
         minRows={5}
@@ -138,10 +137,9 @@ export default function ModalRecognize({
       />
       <div className="flex gap-4 md:gap-6 flex-col md:flex-row justify-between">
         <Dropdown
-          name="occurrence-categorization"
+          name="occurrenceCategorization"
           label="Categorização da ocorrência"
           required
-          defaultValueSelect={currentOcurrence.characterization?.id}
           disabled={true}
           options={[
             {
@@ -151,13 +149,10 @@ export default function ModalRecognize({
           ]}
         />
         <Input
-          name="occurrence-date"
+          name="occurrenceDate"
           label="Data da ocorrência"
           required
           placeholder="DD/MM/AAAA"
-          defaultValue={dayjs(currentOcurrence.registerDate).format(
-            "DD/MM/YYYY"
-          )}
           disabled={true}
           mask={masks.DATE}
         />
@@ -167,7 +162,6 @@ export default function ModalRecognize({
           name="locale"
           label="Local"
           required
-          defaultValue={currentOcurrence.local}
           placeholder="Local"
           disabled={true}
         />
@@ -176,7 +170,6 @@ export default function ModalRecognize({
         name="description"
         label="Descrição"
         required
-        defaultValue={currentOcurrence.description}
         placeholder="Texto descritivo"
         disabled={true}
         minRows={5}

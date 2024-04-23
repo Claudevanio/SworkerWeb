@@ -10,13 +10,20 @@ import { ocurrrenceClassificationService } from "@/services/Ocurrences";
 import { ocurrenceTypeService } from "@/services/Ocurrences/ocurrenceTypeService";
 import { ocurrenceCharacterizationService } from "@/services/Ocurrences/ocurrenceCharacterizationsService";
 import { Classificacao } from "./tabs/classificacao/classificacao";
+import { Categorizacao } from "./tabs/categorizacao/categorizacao";
+import { Tipo } from "./tabs/tipo/tipo";
 
 export default function OcorrenciasConfig() {
   const isMobile = useMediaQuery("(max-width:768px)");
 
   const [activeTab, setActiveTab] = useState<number | undefined>();
 
+  const [openModalAddType, setOpenModalAddType] = useState(false);
+
   const [openModalAddClassification, setOpenModalAddClassification] =
+    useState(false);
+
+  const [openModalAddCharacterization, setOpenModalAddCharacterization] =
     useState(false);
 
   const [classifications, setClassifications] = useState<
@@ -80,8 +87,14 @@ export default function OcorrenciasConfig() {
               ? "Adicionar categoria"
               : "Adicionar classificação",
           onClick: () => {
-            if(activeTab == 2){
-              setOpenModalAddClassification(true)
+            if (activeTab == 0) {
+              setOpenModalAddType(true);
+            }
+            if (activeTab == 1) {
+              setOpenModalAddCharacterization(true);
+            }
+            if (activeTab == 2) {
+              setOpenModalAddClassification(true);
             }
           },
           isAdd: true,
@@ -94,8 +107,21 @@ export default function OcorrenciasConfig() {
         setActiveTab={setActiveTab}
         mobileView
       />
-      {activeTab == 0 && <></>}
-      {activeTab == 1 && <></>}
+      {activeTab == 0 && (
+        <Tipo
+          isMobile={isMobile}
+          openModalAdd={openModalAddType}
+          handleCloseModalAdd={() => setOpenModalAddType(false)}
+        />
+      )}
+      {activeTab == 1 && (
+        <Categorizacao
+          isMobile={isMobile}
+          types={types}
+          openModalAdd={openModalAddCharacterization}
+          handleCloseModalAdd={() => setOpenModalAddCharacterization(false)}
+        />
+      )}
       {activeTab == 2 && (
         <Classificacao
           isMobile={isMobile}

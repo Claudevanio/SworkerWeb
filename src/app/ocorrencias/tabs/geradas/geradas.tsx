@@ -52,16 +52,6 @@ export function Geradas({
     {} as IOcurrence
   );
 
-  const [classificationSelected, setClassificationSelected] =
-    useState<IOcurrenceClassification>({} as IOcurrenceClassification);
-
-  const [typeSelect, setTypeSelect] = useState<IOcurrenceType>(
-    {} as IOcurrenceType
-  );
-
-  const [characterizationSelected, setCharacterizationSelected] =
-    useState<IOcurrenceCharacterization>({} as IOcurrenceCharacterization);
-
   const [selected, setSelected] = useState<number[]>([]);
   const [filterOcurrences, setFilterOcurrences] = useState<IFilterOcurrences>(
     {} as IFilterOcurrences
@@ -76,7 +66,7 @@ export function Geradas({
   const {
     isLoading,
     data: ocurrences,
-    refetch
+    refetch,
   } = useQuery<basePagination<IOcurrence> | undefined>({
     queryKey: ["geradas", { filterOcurrences, filter }],
     queryFn: () =>
@@ -87,7 +77,7 @@ export function Geradas({
         filterOcurrences
       ) as any,
     refetchOnWindowFocus: false,
-    refetchOnMount: true
+    refetchOnMount: true,
   });
 
   const columns = [
@@ -239,7 +229,7 @@ export function Geradas({
         />
         <Pagination
           currentPage={filter.page ?? 0}
-          totalPages={Math.floor(ocurrences?.count / filter.pageSize)}
+          totalPages={Math.ceil(ocurrences?.count / filter.pageSize)}
           onChange={(page) =>
             setFilter((prev) => ({
               ...prev,
@@ -258,12 +248,11 @@ export function Geradas({
         title="Reconhecimento de ocorrência"
       >
         <ModalRecognize
+          refetch={refetch}
           currentOcurrence={currentOcurrence}
           setCurrentOcurrence={setCurrentOcurrence}
-          classificationSelected={classificationSelected}
           classifications={classifications}
           handleClose={() => setOpenModalRecognition(false)}
-          setClassificationSelected={setClassificationSelected}
         />
       </Modal>
 
@@ -299,10 +288,6 @@ export function Geradas({
           handleClose={() => setOpenModalFilter(false)}
           characterizations={characterizations}
           types={types}
-          setCharacterizationSelected={setCharacterizationSelected}
-          setTypesSelected={setTypeSelect}
-          characterizationSelected={characterizationSelected}
-          typesSelected={typeSelect}
         />
       </Modal>
     </Stack>

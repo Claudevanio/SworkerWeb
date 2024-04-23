@@ -1,30 +1,36 @@
 "use client";
 import { Button, Dropdown, Form, Input } from "@/components";
 import { useDialog } from "@/hooks/use-dialog";
-import { generateService } from "@/services/Ocurrences";
 import { recognitionService } from "@/services/Ocurrences/recognitionService";
-import { IOcurrence } from "@/types/models/Ocurrences/IOcurrence";
-import { IOcurrenceClassification } from "@/types/models/Ocurrences/IOcurrenceClassification";
 import { IOcurrenceRecognize } from "@/types/models/Ocurrences/IOcurrenceRecognize";
 import { masks } from "@/utils";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Button as ButtonMUI, Stack, Switch, Typography } from "@mui/material";
 import dayjs from "dayjs";
-import { Dispatch, SetStateAction, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as Yup from "yup";
 
 const schemaRecognize = Yup.object({
-  classification: Yup.number(),
-  observation: Yup.string(),
+  occurrenceCategorization: Yup.number(),
+  codeOs: Yup.string(),
+  dateAndTime: Yup.string(),
+  professional: Yup.string(),
+  characterization: Yup.string(),
+  type: Yup.string(),
+  occurrenceDate: Yup.string(),
+  origin: Yup.string(),
+  status: Yup.string(),
 });
 
 export default function ModalEnding({
   currentOcurrence,
   handleClose,
+  refetch,
 }: {
   currentOcurrence: IOcurrenceRecognize;
   handleClose: () => void;
+  refetch: () => void;
 }) {
   const [checked, setChecked] = useState(false);
 
@@ -44,12 +50,26 @@ export default function ModalEnding({
       });
     }
 
+    refetch();
     handleClose();
   }
   type FormFields = Yup.InferType<typeof schemaRecognize>;
 
   const methodsRecognize = useForm<FormFields>({
     resolver: yupResolver(schemaRecognize),
+    defaultValues: {
+      occurrenceCategorization: currentOcurrence.characterizationId,
+      codeOs: currentOcurrence.occurrence?.registerNumber,
+      dateAndTime: dayjs(currentOcurrence.registerDate).format("DD/MM/YYYY"),
+      professional: currentOcurrence.professional?.name,
+      characterization: currentOcurrence.characterization?.description,
+      type: currentOcurrence.occurrence?.occurrenceType?.typeName,
+      occurrenceDate: dayjs(currentOcurrence.registerDate).format("DD/MM/YYYY"),
+      origin: currentOcurrence.occurrence?.origin,
+      status: currentOcurrence.occurrence?.auditStatus
+        ? "Concluido"
+        : "Pendente",
+    },
   });
 
   return (
@@ -66,27 +86,17 @@ export default function ModalEnding({
         <Typography>Encerrar ocorrência</Typography>
       </Stack>
       <div className="flex gap-4 md:gap-6 flex-col md:flex-row justify-between">
-        <Input
-          name="codeOs"
-          label="Código OS"
-          required
-          defaultValue={currentOcurrence.occurrence?.registerNumber}
-          disabled={true}
-        />
+        <Input name="codeOs" label="Código OS" required disabled={true} />
         <Input
           name="dateAndTime"
           label="Data e Hora"
           required
-          defaultValue={dayjs(currentOcurrence.registerDate).format(
-            "DD/MM/YYYY"
-          )}
           disabled={true}
         />
         <Input
           name="professional"
           label="Profissional"
           required
-          defaultValue={currentOcurrence.professional?.name}
           disabled={true}
         />
       </div>
@@ -96,23 +106,15 @@ export default function ModalEnding({
           name="characterization"
           label="Caracterização"
           required
-          defaultValue={currentOcurrence.characterization?.description}
           disabled={true}
         />
-        <Input
-          name="type"
-          label="Tipo"
-          required
-          defaultValue={currentOcurrence.occurrence?.occurrenceType?.typeName}
-          disabled={true}
-        />
+        <Input name="type" label="Tipo" required disabled={true} />
       </div>
       <div className="flex gap-4 md:gap-6 flex-col md:flex-row justify-between">
         <Dropdown
-          name="occurrence-categorization"
+          name="occurrenceCategorization"
           label="Categorização da ocorrência"
           required
-          defaultValueSelect={currentOcurrence.characterization?.id}
           disabled={true}
           options={[
             {
@@ -122,34 +124,17 @@ export default function ModalEnding({
           ]}
         />
         <Input
-          name="occurrence-date"
+          name="occurrenceDate"
           label="Data da ocorrência"
           required
           placeholder="DD/MM/AAAA"
-          defaultValue={dayjs(currentOcurrence.registerDate).format(
-            "DD/MM/YYYY"
-          )}
           disabled={true}
           mask={masks.DATE}
         />
       </div>
       <div className="flex gap-4 md:gap-6 flex-col md:flex-row justify-between">
-        <Input
-          name="origin"
-          label="Origem"
-          required
-          defaultValue={currentOcurrence.occurrence?.origin}
-          disabled={true}
-        />
-        <Input
-          name="status"
-          label="Status"
-          required
-          defaultValue={
-            currentOcurrence.occurrence?.auditStatus ? "Concluido" : "Pendente"
-          }
-          disabled={true}
-        />
+        <Input name="origin" label="Origem" required disabled={true} />
+        <Input name="status" label="Status" required disabled={true} />
       </div>
       <Stack
         flexDirection="row"

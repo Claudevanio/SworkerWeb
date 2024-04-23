@@ -1,8 +1,8 @@
 "use client";
 import { Button, Dropdown, Form, Input } from "@/components";
 import { useDialog } from "@/hooks/use-dialog";
-import { ocurrrenceClassificationService } from "@/services/Ocurrences";
-import { IOcurrenceClassification } from "@/types/models/Ocurrences/IOcurrenceClassification";
+import { ocurrenceCharacterizationService } from "@/services/Ocurrences/ocurrenceCharacterizationsService";
+import { IOcurrenceCharacterization } from "@/types/models/Ocurrences/IOcurrenceCharacterization";
 import { IOcurrenceType } from "@/types/models/Ocurrences/IOcurrenceType";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Stack, Button as ButtonMUI } from "@mui/material";
@@ -10,9 +10,8 @@ import { useForm } from "react-hook-form";
 import * as Yup from "yup";
 
 const schema = Yup.object({
-  description: Yup.string(),
+  category: Yup.string(),
   occurrenceType: Yup.number(),
-  severity: Yup.number(),
 });
 
 type FormFields = Yup.InferType<typeof schema>;
@@ -20,63 +19,61 @@ type FormFields = Yup.InferType<typeof schema>;
 export default function ModalAddAndUpdate({
   handleClose,
   types,
-  classificationSelected,
+  characterizationSelected,
   isAdd,
-  refetch
+  refetch,
 }: {
   handleClose: () => void;
   types: IOcurrenceType[];
-  classificationSelected: IOcurrenceClassification;
+  characterizationSelected: IOcurrenceCharacterization;
   isAdd: boolean;
   refetch: () => void;
 }) {
   const methods = useForm<FormFields>({
     resolver: yupResolver(schema),
     defaultValues: {
-      occurrenceType: classificationSelected.type?.id,
-      description: classificationSelected.description,
-      severity: classificationSelected.severity,
+      occurrenceType: characterizationSelected.type?.id,
+      category: characterizationSelected.description,
     },
   });
 
   const { confirmDialog } = useDialog();
 
   async function onSubmit(data: FormFields) {
-    classificationSelected.type.id = data.occurrenceType;
-    classificationSelected.severity = data.severity;
-    classificationSelected.description = data.description;
+    characterizationSelected.type.id = data.occurrenceType;
+    characterizationSelected.description = data.category;
 
     if (isAdd) {
       try {
-        await ocurrrenceClassificationService.insertClassification(
-          classificationSelected
+        await ocurrenceCharacterizationService.insertCharacterization(
+          characterizationSelected
         );
       } catch (e) {
         confirmDialog({
-          title: "Houve um erro ao adicionar uma classificação",
+          title: "Houve um erro ao adicionar uma categoria",
           message: e.message,
         });
       }
     } else {
       try {
-        await ocurrrenceClassificationService.updateClassification(
-          classificationSelected
+        await ocurrenceCharacterizationService.updateCharacterization(
+          characterizationSelected
         );
       } catch (e) {
         confirmDialog({
-          title: "Houve um erro ao editar a classificação",
+          title: "Houve um erro ao editar a categoria",
           message: e.message,
         });
       }
     }
 
-    refetch()
+    refetch();
     handleClose();
   }
 
   return (
     <Form
-      onSubmit={(data: FormFields) => onSubmit(data)}
+      onSubmit={(data) => onSubmit(data)}
       className="flex flex-col gap-4 pb-4"
       {...methods}
     >
@@ -90,25 +87,12 @@ export default function ModalAddAndUpdate({
           };
         })}
       />
-      <div className="flex gap-4 md:gap-6 flex-col md:flex-row justify-between">
-        <Input
-          name="description"
-          label="Descrição"
-          placeholder="Descrição"
-          disabled={false}
-        />
-        <Dropdown
-          name="severity"
-          label="Severidade"
-          options={[
-            { label: "Informativo", value: 1 },
-            { label: "Mobilização", value: 2 },
-            { label: "Atenção", value: 3 },
-            { label: "Alerta", value: 4 },
-            { label: "Crítico", value: 5 },
-          ]}
-        />
-      </div>
+      <Input
+        name="category"
+        label="Categoria"
+        placeholder="Categoria"
+        disabled={false}
+      />
       <Stack flexDirection="row" justifyContent="space-between">
         <ButtonMUI
           onClick={() => handleClose()}

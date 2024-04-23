@@ -9,54 +9,37 @@ import { DeleteOutline, EditOutlined } from '@mui/icons-material';
 import { useState } from 'react';
 import { RoundedTab } from '../../tabs'; 
 
-export function EmpresasTab({
-  activeTab,
-  setActiveTab
-} : {
-  activeTab: number,
-  setActiveTab: (value: number) => void
+export function EvolucaoTab({
+  children 
+} : { 
+  children: React.ReactNode
 }) {  
+  const [activeTab, setActiveTab] = useState<number | undefined>(0)
   const tabs = [{
-    label: 'Empresas',
+    label: 'Procedimentos',
     tabIndex: 0,
   },
   {
-    label: 'Unidades',
+    label: 'Tarefas',
     tabIndex: 1,
   },
   {
-    label: 'Setores',
+    label: 'Equipes',
     tabIndex: 2,
-  },
-  {
-    label: 'Profissionais',
-    tabIndex: 3,
-  },
-  {
-    label: 'Equipamentos',
-    tabIndex: 4,
-  }] 
-
-  const currentTab = () => {
-    switch (activeTab) {
-      case 0:
-        return <p>aloo</p>
-      default:
-        return <p>alo2</p>
-    }
-  }
-
+  },  
+]
+ 
   return (
     <div
       className='flex flex-col gap-4 w-full'
     > 
     <RoundedTab
-      tabs={tabs}
+      tabs={tabs} 
       activeTab={activeTab}
-      setActiveTab={setActiveTab}
+      setActiveTab={setActiveTab} 
     />
     {
-      currentTab()
+      children
     }
     </div>
   );
