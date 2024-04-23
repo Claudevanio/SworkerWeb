@@ -60,7 +60,7 @@ export default function Login(){
         password: data.password,
       }) as LoginDataResponse;
       if(typeof response.data === 'string'){  
-        Cookies.set('token', response.data, { expires: 1 });
+        Cookies.set('token', response.data);
         router.push('/');
         return;
       }

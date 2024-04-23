@@ -18,12 +18,17 @@ const Pagination: React.FC<PaginationProps> = ({
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     onChange(value - 1);
   };
- 
+  
+  
+  if( !totalPages)
+    return <></>
+  
 
   return (
     <div
       className="flex justify-between w-full items-center gap-2"
-    > <span
+    >  
+    <span
         className="text-sm flex items-center gap-2 cursor-pointer min-w-[90px] justify-start"
         
           onClick={() => currentPage > 0 ? onChange(currentPage - 1) : {}}

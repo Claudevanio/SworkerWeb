@@ -42,8 +42,8 @@ const Sidebar: React.FC<{}> = () => {
 
   const handleLinkPath = (path: string) => {
     if (!currentPage) return "";
-    const currentPath = currentPage.split("/").slice(0, -1).join("/");
-    return (currentPath + path) as string;
+    // const currentPath = currentPage.split("/").slice(0, -1).join("/");
+    return (path) as string;
   };
 
   const { setUser, user } = useUser();
@@ -231,10 +231,10 @@ const Sidebar: React.FC<{}> = () => {
                     Dashboard
                   </MenuButton>
                 </Link>
-                <Link href={handleLinkPath("/ordens-servico")}>
+                <Link href={handleLinkPath("/servicos-operacionais/ordens-servico")}>
                   <MenuButton
                     variant={
-                      currentPage === "/ordens-servico"
+                      currentPage === "/servicos-operacionais/ordens-servico"
                         ? "primary"
                         : "secondary"
                     }

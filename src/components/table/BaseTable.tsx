@@ -159,8 +159,17 @@ export function BaseTable({
                 </StyledTableRow>
               ))}
 
-            {!isLoading &&
-              rows.map((row) => (
+            {
+              !isLoading && rows && rows.length === 0 && (
+                <StyledTableRow>
+                  <StyledTableCell colSpan={columns.length + 1} align="center">
+                    Nenhum registro encontrado
+                  </StyledTableCell>
+                </StyledTableRow>
+              )
+            }
+
+            {!isLoading && rows && rows.map((row) => (
                 <StyledTableRow
                   key={row.name}
                   style={

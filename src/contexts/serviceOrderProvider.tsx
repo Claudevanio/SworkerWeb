@@ -2,6 +2,7 @@
 import { useModal } from '@/hooks'; 
 import { useDialog } from '@/hooks/use-dialog';
 import { serviceOrderService } from '@/services/OperationalService/serviceOrderService'; 
+import { ServiceOrder } from '@/types/models/ServiceOrder/serviceOrder';
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import React, { createContext, useEffect, useState } from 'react'; 
@@ -16,9 +17,10 @@ interface ServiceOrderContextType {
     close: () => void;
   }
   serviceOrders: {
-    data: any;
+    data: ServiceOrder[];
     isLoading: boolean;
     setFilter: React.Dispatch<React.SetStateAction<basicSearchQuery>>;
+    filter: basicSearchQuery;
     changeStatus: (id: string, statusId: number, sourceId?:number) => void;
   }
 }
@@ -37,6 +39,7 @@ export const ServiceOrderContext = createContext<ServiceOrderContextType>({
   serviceOrders: {
     data: undefined,
     isLoading: false,
+    filter: {} as basicSearchQuery,
     setFilter: () => {},
     changeStatus: () => {},
   }
@@ -54,11 +57,14 @@ export const ServiceOrderProvider = ({ children }: { children: React.ReactNode }
   // #endregion 
 
   //#region serviceOrder
-    const [serviceOrderFilters, setServiceOrderFilters] = useState<basicSearchQuery>({ term: '', page: 1, pageSize: 999, start: dayjs().subtract(30, 'day').toDate().toISOString(), end: dayjs().toDate().toISOString() });
+    const [serviceOrderFilters, setServiceOrderFilters] = useState<basicSearchQuery>({ term: '', page: 0, pageSize: 999, start: dayjs().subtract(30, 'day').toDate().toISOString(), end: dayjs().toDate().toISOString() });
 
     const { data: serviceOrders, isLoading: serviceOrdersLoading } = useQuery({
-      queryKey: ['serviceOrders', serviceOrderFilters],
-      queryFn: () => serviceOrderService.listServiceOrderAsync(serviceOrderFilters), 
+      queryKey: ['serviceOrdersData', serviceOrderFilters],
+      queryFn: () => serviceOrderService.listServiceOrderAsync({
+        ...serviceOrderFilters,
+        currentPage: serviceOrderFilters?.page ?? 0,
+      }), 
       refetchOnWindowFocus: false,
     });
 
@@ -108,6 +114,7 @@ export const ServiceOrderProvider = ({ children }: { children: React.ReactNode }
         data: serviceOrders,
         isLoading: serviceOrdersLoading,
         setFilter: setServiceOrderFilters,
+        filter: serviceOrderFilters,
         changeStatus
       }
     }}>

@@ -1,40 +1,45 @@
 'use client'
-import { LineConfig, Line } from '@ant-design/charts';
+import { COLORS } from '@/utils';
+import { BarConfig, Bar } from '@ant-design/charts';
 
-export const LineChart = ({
+export const BarChart = ({
   data,
   xField,
   yField,
   height = 400,
   color = '#00B5B8',
-  field
+  typeOrder 
 } :{
   data: any[];
   xField: string;
   yField: string;
   height?: number;
   color?: string | string[];
-  field?: string;
+  typeOrder?: string[];
 }) => {
 
-  const chartConfig : LineConfig = {
+  const chartConfig : BarConfig = {
     data,
+    seriesField: 'type',
+    isStack: true,
     xField,
     yField,
-    seriesField: field,
-    isStack: !!field,
-    height, 
+    height,   
     autoFit: true,
     color,
     tooltip: {
       showCrosshairs: true,
       shared: true,
+    },  
+    columnBackground: COLORS['base']['1'] as any,
+    barStyle: {
+      radius: [20, 20, 0, 0], 
     },
   };
   // return <div></div>
 
   return (
-    <Line 
+    <Bar 
       {...chartConfig}
     />
   );

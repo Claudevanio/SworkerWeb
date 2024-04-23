@@ -61,3 +61,37 @@ export interface ServiceOrder {
   version: number;
   equipments?: IEquipment[]; // You can define the structure for this if available
 }
+
+
+export interface singleTask {
+  id: number;
+  code: string;
+  description: string;
+  serviceOrderStatusId: number;
+  requestDate: string;
+  executionDate: string;
+  checkInDate: string;
+  checkOutDate: string;
+  taskCheckInDate: string;
+  taskCheckOutDate: string;
+  taskExecutionTime: number;
+  professionalId: number;
+  professionalName: string;
+}
+
+export interface ServiceOrderTask {
+  id: number;
+  code: string;
+  name: string;
+  programmed: number;
+  onDemand: number;
+  estimatedTime: number;
+  serviceOrdersProgrammed: singleTask[];
+  serviceOrdersOnDemand: singleTask[];
+}
+
+export interface ApiResponse {
+  success: boolean;
+  message: string;
+  data: ServiceOrderTask[];
+}

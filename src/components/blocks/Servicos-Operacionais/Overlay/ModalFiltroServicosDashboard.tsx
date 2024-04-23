@@ -73,7 +73,7 @@ export function ModalFiltroServicosDashboard({
       isOpen={isOpen}
       onClose={onClose}
       title={
-        'Filtrar Equipamentos'
+        'Filtrar por:'
       }
       width='550px'
       onSubmit={

@@ -185,7 +185,7 @@ export function ModalProfessional({
               required 
               options={
                 options.map(option => ({
-                  label: option.label + 'aaaa',
+                  label: option.label,
                   value: option.value
                 }))
               } 

@@ -1,28 +1,30 @@
 import { useState } from 'react';
 import { SimpleTab } from '../tabs/simple-tab';
 import { PageTitle } from '../title';
-import { ApartmentOutlined, FolderSharedOutlined, Moving, ViewKanban } from '@mui/icons-material'; 
+import { ApartmentOutlined, FolderSharedOutlined, History, JoinInnerOutlined, Moving, ViewKanban } from '@mui/icons-material'; 
 import { EvolucaoTab } from './Tabs/EvolucaoTab';
 import { useModal } from '@/hooks';
 import { AdministratorProvider, useAdministrator } from '@/contexts/AdministrationProvider'; 
-import { Kanban } from './components/kanban';
+
 import { ServiceOrderProvider } from '@/contexts/serviceOrderProvider';
 import { ModalFiltroServicosDashboard } from './Overlay/ModalFiltroServicosDashboard';
 import { ProcedimentoTab } from './Tabs/ProcedimentoTab';
+import { HistoricoTab } from './components/historicoTab';
 
-export function ServicosOperacionaisComponent(){
-  const [activeTab, setActiveTab] = useState<number | undefined>(0) 
+export function OrdensSevicoComponent(){
+  const [activeTab, setActiveTab] = useState<number | undefined>(0)
+  const [subTab, setSubTab] = useState<number | undefined>(0)
 
   const [isFilterModalOpen, openFilterModal, closeFilterModal] = useModal()
 
   const tabs = [
-    { label: 'Kanban',
-      icon: <ViewKanban
+    { label: 'Histórico',
+      icon: <History
         className='text-primary-500'
       />, 
      },
-    { label: 'Evolução',
-      icon: <Moving
+    { label: 'Agrupamentos',
+      icon: <JoinInnerOutlined
       className='text-primary-500'/>, 
     },
   ] 
@@ -35,7 +37,7 @@ export function ServicosOperacionaisComponent(){
         className='w-full p-4 lg:p-8'
       >
         <PageTitle
-          title='Dashboard'
+          title='Ordens de serviço'
           subtitle='Veja aqui o status de todas as tarefas'
           // button={{
           //   label: handleLabel(activeTab || 0),
@@ -55,7 +57,7 @@ export function ServicosOperacionaisComponent(){
             activeTab !== undefined && activeTab === 0 ? {  } : {display: 'none'}
           }
         >
-          <Kanban
+          <HistoricoTab
             openFilterModal={openFilterModal}
           />
         </div>
@@ -65,9 +67,7 @@ export function ServicosOperacionaisComponent(){
             activeTab !== undefined && activeTab === 1 ? {  } : {display: 'none'}
           }
         >
-          <EvolucaoTab
-            openFilterModal={openFilterModal}
-          />
+          <EvolucaoTab/>
         </div>
       </div> 
       <ModalFiltroServicosDashboard
@@ -79,10 +79,10 @@ export function ServicosOperacionaisComponent(){
 
 }
 
-export function OperacionaisComponentWrapper(){
+export function OrdensSevicoWrapper(){
   return (
     <ServiceOrderProvider>
-      <ServicosOperacionaisComponent/>
+      <OrdensSevicoComponent/>
     </ServiceOrderProvider>
   )
 }

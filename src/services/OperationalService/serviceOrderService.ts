@@ -1,5 +1,6 @@
 import { ServiceOrder } from '@/types/models/ServiceOrder/serviceOrder';
 import { api } from '../api';
+import dayjs from 'dayjs';
 
 export const serviceOrderService = {
   async getServiceOrderStatusesAsync (): Promise<any[]> {
@@ -50,8 +51,9 @@ export const serviceOrderService = {
   },
 
   async countServiceOrderAsync (filters: any): Promise<number> {
-    const response = await api.get<number>('/service-orders/count', { params: filters });
-    return response.data;
+    const { page, pageSize, ...rest } = filters;
+    const response = await api.get<{ count: number }>('/service-orders/count', { params: { ...rest } });
+    return response.data?.count ?? 0;
   },
 
   async listServiceOrderAsync (filters: any): Promise<any[]> {
@@ -64,6 +66,81 @@ export const serviceOrderService = {
     const response = await api.get<any[]>(`/professionals/${professionalId}/service-orders`);
     return response.data;
   },
+
+  dashboardData: {
+    ocurrenceData: async (filters: { start: string; end: string }): Promise<any> => {
+
+      const dateDiff = dayjs(filters.end).diff(dayjs(filters.start), 'day');
+
+      const UnfilteredParams = {
+        start: dayjs(filters.start).subtract(dateDiff, 'day').format('YYYY-MM-DD'),
+        end: filters.start,
+      }
+
+      const [
+        geradas,
+        reconhecidas,
+        geradasFiltered,
+        reconhecidasFiltered,
+      ] = await Promise.all([
+        api.get<any>('/occurrences/count', { params: UnfilteredParams }),
+        api.get<any>('/recognized-occurrences/count', { params: UnfilteredParams }),
+        api.get<any>('/occurrences/count', { params: filters }),
+        api.get<any>('/recognized-occurrences/count', { params: filters }),
+      ]);
+
+      const unfilteredGeradasCount = geradas.data.count;
+      const unfilteredReconhecidasCount = reconhecidas.data.count;
+      const unfilteredClosedCount = unfilteredGeradasCount - unfilteredReconhecidasCount;
+
+      const filteredGeradasCount = geradasFiltered.data.count;
+      const filteredReconhecidasCount = reconhecidasFiltered.data.count;
+      const filteredClosedCount = filteredGeradasCount - filteredReconhecidasCount;
+
+      let geradasChangePercent;
+      if (unfilteredGeradasCount !== 0) {
+        geradasChangePercent = ((filteredGeradasCount - unfilteredGeradasCount) / unfilteredGeradasCount) * 100;
+      } else {
+        geradasChangePercent = 100;
+      }
+
+      let reconhecidasChangePercent;
+      if (unfilteredReconhecidasCount !== 0) {
+        reconhecidasChangePercent = ((filteredReconhecidasCount - unfilteredReconhecidasCount) / unfilteredReconhecidasCount) * 100;
+      } else {
+        reconhecidasChangePercent = 100;
+      }
+
+      let closedChangePercent;
+      if (unfilteredClosedCount !== 0) {
+        closedChangePercent = ((filteredClosedCount - unfilteredClosedCount) / unfilteredClosedCount) * 100;
+      } else {
+        closedChangePercent = 100;
+      }
+      return {
+        geradas: {
+          count: filteredGeradasCount,
+          change: geradasChangePercent,
+          unfilteredCount: unfilteredGeradasCount,
+        },
+        reconhecidas: {
+          count: filteredReconhecidasCount,
+          change: reconhecidasChangePercent,
+          unfilteredCount: unfilteredReconhecidasCount,
+        },
+        closed: {
+          count: filteredClosedCount,
+          change: closedChangePercent,
+          unfilteredCount: unfilteredClosedCount,
+        },
+      }
+
+    },
+    listTaskSpentTime: async (filters: { start: string; end: string }): Promise<any> => {
+      const response = await api.get<any>('/tasks/spent', { params: filters });
+      return response.data;
+    }
+  }
 
   // Implemente os demais métodos seguindo o mesmo padrão
   // ...
