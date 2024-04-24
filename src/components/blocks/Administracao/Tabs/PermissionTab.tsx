@@ -19,7 +19,7 @@ export function PermissionsTab() {
       key: 'name',
     },
     {
-      label: 'Permissões',
+      label: 'Permisões',
       key: 'permissions',
       Formatter: (permissionsArr: IPermissions[]) => {
         return (

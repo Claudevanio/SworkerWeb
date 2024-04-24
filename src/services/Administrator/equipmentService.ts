@@ -1,4 +1,3 @@
-'use client'
 import { basePagination } from './../../types/basePagination';
 import { IEquipment, IEquipmentClassification, IEquipmentType } from '@/types';
 import { api } from '../api';
@@ -11,7 +10,7 @@ export const equipmentTypeService = {
     return response.data;
   },
 
-  async listEquipmentTypeAsync (term?: string, currentPage = 0, pageSize = 99): Promise<IEquipmentType[]> {
+  async listEquipmentTypeAsync (term?: string, currentPage = 0, pageSize = 10): Promise<IEquipmentType[]> {
     const response = await api.get<IEquipmentType[]>('/equipment-types', {
       params: { term, currentPage, pageSize },
     });
@@ -45,9 +44,9 @@ export const equipmentClassificationService = {
     return response.data;
   },
 
-  async listEquipmentClassificationAsync (term?: string, currentPage = 0, pageSize = 99): Promise<IEquipmentClassification[]> {
+  async listEquipmentClassificationAsync (code: string, description: string, typeId: string, term: string, currentPage: number, pageSize: number): Promise<IEquipmentClassification[]> {
     const response = await api.get<IEquipmentClassification[]>('/equipment-classifications', {
-      params: { term, currentPage, pageSize },
+      params: { code, description, typeId, term, currentPage, pageSize },
     });
     return response.data;
   },
@@ -241,31 +240,13 @@ export const equipmentService = {
     return response.data;
   },
 
-  async getQrcodes (qrCodeList: string[]): Promise<void> {
-    if (!qrCodeList || !qrCodeList.length) return;
-    const data = {}
-    debugger
-    const response = await api.get<any>('/equipaments/qrcode', {
-      params: {
-        uis: qrCodeList.join('&'),
-      },
+  async getQrcodes (qrCodeList: string[]): Promise<any> {
+    const query = qrCodeList.map(qrCode => `uis=${qrCode}`).join('&');
+    const response = await api.get<any>('/equipaments/qrcode?' + query, {
       headers: {
         Accept: '*/*',
-        "Content-Type": "application/json-patch+json",
-      },
-      data,
-      responseType: 'arraybuffer',
+      }
     });
-
-    if (response.data) {
-      const newBlob = new Blob([response.data], { type: "arraybuffer" });
-      const link = document.createElement('a');
-      link.href = window.URL.createObjectURL(newBlob);
-      link.setAttribute('download', 'EquipamentsCode.zip');
-      document.body.appendChild(link);
-      link.click();
-      link.parentNode?.removeChild(link);
-    }
 
     return response.data;
   },

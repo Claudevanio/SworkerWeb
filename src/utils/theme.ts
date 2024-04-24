@@ -30,14 +30,12 @@ export const COLORS = {
   sidebarHighlight: '#3B82F633',
   danger: '#EB5757',
   erro: {
-    '0': '#FFDADB',
     '1': '#F0C0C2',
     '2': '#FF6C6C',
     '3': '#FF0000',
     '4': '#990000',
   },
   sucesso: {
-    '0': '#EAFFDA',
     '1': '#B8F7AE',
     '2': '#5CE271',
     '3': '#009918',

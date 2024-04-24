@@ -7,7 +7,6 @@ import {
   Step,
   StepLabel,
   StepIconProps,
-  useMediaQuery,
 } from "@mui/material";
 
 export type StepperProps = {
@@ -19,11 +18,12 @@ export type StepperProps = {
 };
 
 export const Stepper = ({ steps, currentStep }: StepperProps) => {
-
-  const isMobile = useMediaQuery('(max-width:768px)');
-
   const QontoConnector = styled(StepConnector)(({ theme }) => ({
-    '@media (min-width: 768px)': {
+    [`&.${stepConnectorClasses.alternativeLabel}`]: {
+      top: 10,
+      left: "calc(-50% + 16px)",
+      right: "calc(50% + 16px)",
+    },
     [`&.${stepConnectorClasses.active}`]: {
       [`& .${stepConnectorClasses.line}`]: {
         borderColor: "#94A3B8",
@@ -40,25 +40,6 @@ export const Stepper = ({ steps, currentStep }: StepperProps) => {
       borderTopWidth: 3,
       borderRadius: 1,
     },
-  },
-  '@media (max-width: 768px)': {
-    [`&.${stepConnectorClasses.active}`]: {
-      [`& .${stepConnectorClasses.line}`]: {
-        borderColor: "#94A3B8",
-      },
-    },
-    [`&.${stepConnectorClasses.completed}`]: {
-      [`& .${stepConnectorClasses.line}`]: {
-        borderColor: "#94A3B8",
-      },
-    },
-    [`& .${stepConnectorClasses.line}`]: {
-      borderColor:
-        theme.palette.mode === "dark" ? theme.palette.grey[800] : "#eaeaf0",
-      borderLeftWidth: 2,
-      borderRadius: 1,
-    },
-  }
   }));
 
   const QontoStepIconRoot = styled("div")<{ ownerState: { active?: boolean } }>(
@@ -68,8 +49,6 @@ export const Stepper = ({ steps, currentStep }: StepperProps) => {
       display: "flex",
       height: 24,
       alignItems: "center",
-      width: 24,
-      justifyContent: 'flex-start',
       ...(ownerState.active && {
         color: "#DBEAFE",
         '& .QontoStepIcon-circle': {
@@ -86,7 +65,7 @@ export const Stepper = ({ steps, currentStep }: StepperProps) => {
         width: 24,
         height: 24,
         borderRadius: "50%",
-        backgroundColor: "#F1F5F9",
+        backgroundColor: "#fff",
         color: "#020617",
         textAlign: "center",
         fontSize: 12,
@@ -123,34 +102,11 @@ export const Stepper = ({ steps, currentStep }: StepperProps) => {
   };
 
   return (
-    <BaseStepper activeStep={currentStep - 1}
-    orientation={
-      isMobile ? 'vertical' : 'horizontal'
-    }
-    connector={<QontoConnector />}  
-    sx={{
-      justifyContent: 'space-between',
-      pb:0,
-      mb: 4,
-      mt: 2
-
-    }}
+    <BaseStepper alternativeLabel activeStep={currentStep - 1} connector={<QontoConnector />}
+      className='w-full' 
     >
       {steps.map((value, index) => (
-        <Step key={index}
-          sx={{  
-            '@media (min-width: 768px)': {
-              '.MuiStepLabel-root':{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-                fontSize: '14px',
-              }
-            }
-          }}
-        >
+        <Step key={index}>
           <StepLabel StepIconComponent={QontoStepIcon}
             StepIconProps={{
               step: value.value as any,

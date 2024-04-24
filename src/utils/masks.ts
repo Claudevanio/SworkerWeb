@@ -31,7 +31,7 @@ export const TelefoneMaskWithoutDDD = (v: string) => {
   return isValue.substring(0, 10);
 };
 
-export const DATE = (v: string) => {
+export const DATEMaskStart = (v: string) => {
   let isValue = v;
   isValue = isValue.replace(/\D/g, "");
   isValue = isValue.replace(/^(\d{2})(\d)/g, "$1/$2");
@@ -55,7 +55,7 @@ export const CNPJMask = (v: string | number) => {
   return isValue.substring(0, 18);
 };
 
-export const DATEInternational = (v: string) => {
+export const DATEMaskStartInternational = (v: string) => {
   let isValue = v;
   isValue = isValue.replace(/\D/g, "");
   isValue = isValue.replace(/^(\d{4})(\d)/g, "$1/$2");

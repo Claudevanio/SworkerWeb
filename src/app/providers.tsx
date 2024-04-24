@@ -10,16 +10,16 @@ export const Providers : React.FC<{children: React.ReactNode}> = ({children}) =>
       <QueryClientProvider 
         client={queryClient}
       >
-        <DialogProvider>
-          <UserProvider>
-              <ThemeProvider
-                theme={theme}>
-                  {
-                    children
-                  }
-              </ThemeProvider>
-          </UserProvider>
-        </DialogProvider>
+        <UserProvider>
+          <DialogProvider>
+            <ThemeProvider
+              theme={theme}>
+                {
+                  children
+                }
+            </ThemeProvider>
+          </DialogProvider>
+        </UserProvider>
       </QueryClientProvider> 
   );
 }

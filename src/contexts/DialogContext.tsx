@@ -29,14 +29,12 @@ type DialogContextType = {
       onCloseText,
       message,
       subtitle,
-      variant,
-      hideCloseButton
+      variant
     } : {
       title: string,
       onConfirm?: () => void,
       onConfirmText?: string,
-      onCloseText?: string,
-      hideCloseButton?: boolean
+      onCloseText?: string
       message?: string
       subtitle?: string
       variant?: 'error' | 'success'

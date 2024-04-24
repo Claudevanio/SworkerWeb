@@ -103,7 +103,7 @@ export function ModalProfessional({
 
   const sectorsIds = methods.watch('sectorsIds');
 
-  const options = permissions.data?.items?.map((role: IRole) => ({label: role.name, value: role.roleId})) ?? []
+
   return (
     <Modal
       isOpen={isOpen}
@@ -177,18 +177,15 @@ export function ModalProfessional({
             className='flex gap-4 md:gap-6 flex-col md:flex-row items-start md:items-end w-full'>
           <div
               className='w-full md:w-1/3'
-          > 
-             
+          >
             <Dropdown
               name='roleId'
               label='Cargo'
               required 
               options={
-                options.map(option => ({
-                  label: option.label,
-                  value: option.value
-                }))
-              } 
+                permissions.data?.items?.map((role: IRole) => ({label: role.name, value: role.id})) ?? []
+              }
+              error={methods.formState.errors.roleId}
               disabled={readonly}
             />
           </div>

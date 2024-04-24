@@ -6,7 +6,6 @@ export type ModalProps = {
   title?: string;
   isOpen: boolean;
   onClose: () => void;
-  onCancel?: () => void;
   children: React.ReactNode;
   width?: string;  
   fullMobile?: boolean;
@@ -24,7 +23,7 @@ export const Modal = ({
   fullMobile = false,
   onSubmit,
   SubmitText,
-  methods,
+  methods
 }: ModalProps) => {
   const style = {
     position: "absolute",

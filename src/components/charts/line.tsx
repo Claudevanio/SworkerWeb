@@ -6,30 +6,27 @@ export const LineChart = ({
   xField,
   yField,
   height = 400,
-  color = '#00B5B8',
-  field
+  color = '#00B5B8'
 } :{
   data: any[];
   xField: string;
   yField: string;
   height?: number;
-  color?: string | string[];
-  field?: string;
+  color?: string;
 }) => {
 
-  const chartConfig : LineConfig = {
+  const chartConfig = {
     data,
     xField,
     yField,
-    seriesField: field,
-    isStack: !!field,
     height, 
     autoFit: true,
-    color,
-    tooltip: {
-      showCrosshairs: true,
-      shared: true,
+    label: {
+      style: {
+        fill: '#aaa',
+      },
     },
+    color
   };
   // return <div></div>
 

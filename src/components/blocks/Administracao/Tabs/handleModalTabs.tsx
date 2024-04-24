@@ -61,8 +61,8 @@ export function ModalTabs({
       return <AdministrationModals.ModalEquipments
         isOpen={modal.isOpen}
         onClose={modal.close}
-        current={equipments.current}
-        readonly={equipments.readonly}
+        current={companyUnities.current}
+        readonly={companyUnities.readonly}
       />
   } 
   
