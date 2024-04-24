@@ -8,6 +8,7 @@ import { COLORS } from '@/utils';
 import { useServiceOrder } from '@/contexts';
 import { ServiceOrder } from '@/types/models/ServiceOrder/serviceOrder';
 import { FiltroButton } from '@/components/ui';
+import { useRouter } from 'next/navigation';
 
 export const Kanban = (
   {
@@ -19,9 +20,7 @@ export const Kanban = (
 
   const {
     serviceOrders
-  } = useServiceOrder();
-  
-  const [allFilterData, setAllFilterData] = useState<any>({})
+  } = useServiceOrder(); 
   
   const [crmPainelData, setCrmPainelData] = useState<any>([{}])
   
@@ -69,25 +68,7 @@ export const Kanban = (
    
   useEffect(() => {
       fetchPainelData()
-  }, []); 
-
-  function getTitleFromSection(section: number) {
-      switch (section) {
-          case 1:
-              return "Primeiro Contato";
-          case 2:
-              return "Consulta/Procedimento agendado";
-          case 3:
-              return "Orçamento";
-          case 4:
-              return "Compra Realizada";
-          case 5:
-              return "Tratamento abandonado";
-          default:
-              return "Primeiro Contato";
-      }
-  }
-
+  }, []);   
   
   const initialStages = useMemo(() => {
           return {
@@ -269,6 +250,8 @@ export const Kanban = (
               }
           }
       };
+
+      const router = useRouter();
       
  
       return (
@@ -357,6 +340,9 @@ export const Kanban = (
                                                   {...provided.dragHandleProps}
                                                   sx={{ cursor: 'grab', width: '100%' }} 
                                                   className='w-full bg-primary-100 border-primary-300 border-2 rounded-lg px-6 py-[22px] flex flex-col gap-4'
+                                                  onClick={() => {
+                                                    router.push(`/servicos-operacionais/${serviceOrder.id}`)
+                                                  }}
                                               >
                                                 <div
                                                   className='flex items-center justify-between'

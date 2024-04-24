@@ -145,7 +145,7 @@ export function TarefasTab(
               Linha do tempo
             </h2> 
             <LineChart
-              data={dataArray}
+              data={dataArray ?? []}
               xField='date'
               yField='value'
               height={300}
@@ -164,10 +164,10 @@ export function TarefasTab(
             <div
               className='w-full overflow-scroll'>
                 <div
-                  className='min-w-[1500px] w-full mr-4'
+                  className='min-w-[1200px] w-full mr-4'
                 >
                   <BarChart
-                    data={dataForBarChart}
+                    data={dataForBarChart ?? []}
                     yField='label'
                     xField='value'
                     typeOrder={['Sob Demanda', 'Executado']}

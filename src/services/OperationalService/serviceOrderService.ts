@@ -19,7 +19,7 @@ export const serviceOrderService = {
   },
 
   async getServiceOrderProfessionalFilesAsync (osId: string, professionalId: string): Promise<any> {
-    const response = await api.get<any>(`/service-orders/${osId}/${professionalId}/files`);
+    const response = await api.get<any>(`/${osId}/${professionalId}/files`);
     return response.data;
   },
 
@@ -42,6 +42,16 @@ export const serviceOrderService = {
 
   async getServiceOrderById (id: string): Promise<ServiceOrder> {
     const response = await api.get<ServiceOrder>(`/service-orders/${id}`);
+    return response.data;
+  },
+
+  async getServiceOrderDetailById (id: string): Promise<any> {
+    const response = await api.get<ServiceOrder>(`/${id}/detail`);
+    return response.data;
+  },
+
+  async getOcurrencesByServiceOrderId (id: string): Promise<any[]> {
+    const response = await api.get<any[]>(`/service-orders/${id}/occurrences?id=${id}`);
     return response.data;
   },
 

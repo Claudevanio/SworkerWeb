@@ -10,6 +10,7 @@ interface ExportButtonProps {
   hidden?: boolean;
   fileName?: string;
   disabled?: boolean;
+  className?: string;
 }
 
 export const ExportButton: React.FC<ExportButtonProps> = ({
@@ -18,12 +19,14 @@ export const ExportButton: React.FC<ExportButtonProps> = ({
   hidden,
   fileName,
   disabled,
+  className
 }) => {
   return disabled ? (
     <Button
       variant="primary"
       onClick={onClick}
       disabled={disabled}
+      className={className}
       sx={{
         gap: 2,
         borderRadius: "8px",

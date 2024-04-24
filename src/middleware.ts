@@ -28,6 +28,7 @@ const allowedUrls = [
   '/login',
   '/cadastro',
   '/esqueci-senha',
+  '/servicos-operacionais',
 ];
 
 

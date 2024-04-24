@@ -319,7 +319,7 @@ export const AdministratorProvider = ({ children }: { children: React.ReactNode 
 
     const [equipmentQueryObject, setEquipmentQueryObject] = useTriggerEffect<SearchEquipment>({
       page: 0,
-      pageSize: 3,
+      pageSize: 5,
       term: undefined,
     });
 
@@ -328,7 +328,8 @@ export const AdministratorProvider = ({ children }: { children: React.ReactNode 
      } = useQuery<basePagination<IEquipment> | undefined>({
       queryKey: ['searchEquipments', equipmentQueryObject],
       queryFn: () => equipmentService.getEquipmentsAsync({
-        ...equipmentQueryObject
+        ...equipmentQueryObject,
+        currentPage: equipmentQueryObject.page,
       }) as any,
       refetchOnWindowFocus: false,
     });
@@ -352,7 +353,8 @@ export const AdministratorProvider = ({ children }: { children: React.ReactNode 
       refetchEquipments();
     }
 
-    const removeEquipment = async (equipment: IEquipment) => {
+    const removeEquipment = async (equipment: IEquipment) => { 
+      console.log(equipment)
       await equipmentService.removeEquipmentAsync(equipment.id!);
       setEquipmentQueryObject({ ...equipmentQueryObject, page: 0 });
       refetchEquipments();
@@ -372,6 +374,8 @@ export const AdministratorProvider = ({ children }: { children: React.ReactNode 
     setSectorReadOnly(false);
     setCurrentProfessional(undefined);
     setProfessionalReadOnly(false);
+    setCurrentEquipment(undefined);
+    setEquipmentReadOnly(false);
     closeModal();    
   }
   

@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react';
-import { Drawer, List, ListItem, ListItemIcon, ListItemText, IconButton, Avatar, Accordion, AccordionSummary, AccordionDetails, AccordionActions, Box } from '@mui/material';
+import { Drawer, List, ListItem, ListItemIcon, ListItemText, IconButton, Avatar, Accordion, AccordionSummary, AccordionDetails, AccordionActions, Box, Skeleton } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -11,13 +11,12 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { set } from 'react-hook-form';
 import { usePathname, useRouter } from 'next/navigation';
-import { AccountCircleOutlined, AdminPanelSettingsOutlined, ArticleOutlined, Close, Feedback, Handshake, HomeOutlined, KeyboardArrowDown, LegendToggle, ListAltOutlined, LogoutOutlined, MenuOutlined, PendingActions, PersonAddAlt1, SettingsOutlined, ViewKanbanOutlined } from '@mui/icons-material';
+import { AccountCircleOutlined, AdminPanelSettingsOutlined, ArticleOutlined, Close, Feedback, Handshake, HomeOutlined, KeyboardArrowDown, LegendToggle, ListAltOutlined, LogoutOutlined, MenuOutlined, PendingActions, PersonAddAlt1, ReportGmailerrorredOutlined, SettingsOutlined, ViewKanbanOutlined } from '@mui/icons-material';
 import { useUser } from '@/hooks/useUser'; 
 import Cookies from 'js-cookie';
 import { Authservice } from '@/services';
 
-const Sidebar: React.FC<{ 
-}> = () => {
+const Sidebar: React.FC<{}> = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -27,27 +26,27 @@ const Sidebar: React.FC<{
   };
 
   useEffect(() => {
-    if(window.innerWidth < 768) { 
+    if (window.innerWidth < 768) {
       setIsMobile(true);
-    } else { 
+    } else {
       setIsMobile(false);
     }
   }, []);
- 
 
-  const drawerWidth =  '280px';
+  const drawerWidth = "280px";
 
   const currentPage = usePathname();
 
-  const getButtonVariant = (path: string) => currentPage.includes(path) ? 'primary' : 'secondary';
+  const getButtonVariant = (path: string) =>
+    currentPage.includes(path) ? "primary" : "secondary";
 
   const handleLinkPath = (path: string) => {
-    if(!currentPage) return '' 
-    const currentPath = currentPage.split('/').slice(0, -1).join('/'); 
-    return currentPath + path as string;
-  }
+    if (!currentPage) return "";
+    // const currentPath = currentPage.split("/").slice(0, -1).join("/");
+    return (path) as string;
+  };
 
-  const {setUser, user} = useUser();
+  const { setUser, user } = useUser();
 
   const router = useRouter();
 
@@ -58,27 +57,38 @@ const Sidebar: React.FC<{
     router.replace('/login');
   }
 
-  const isLoginPage = currentPage === '/login' || currentPage === "/esqueci-senha"
+  // const isLoginPage = currentPage === '/login' || currentPage === "/esqueci-senha"
 
-  const [accordionExpanded, setAccordionExpanded] = useState(currentPage === '/ordens-servico' || currentPage === '/cadastro-usuario' || currentPage === '/dashboard');
+  const [accordionExpanded, setAccordionExpanded] = useState(
+    currentPage === "/servicos-operacionais" ||
+      currentPage === "/cadastro-usuario" ||
+      currentPage === "/dashboard"
+  );
+
+    const [accordionOcurrencesExpanded, setAccordionOcurrencesExpanded] =
+      useState(
+        currentPage === "/ocorrencias"
+      );
 
   useEffect(() => {
     setIsCollapsed(true);
   }, [currentPage]);
 
-  if(!user || isLoginPage) return <></>
+  if(currentPage === '/login' || currentPage === "/esqueci-senha") return <></>
+
+  const nomePagina = currentPage.includes('ocorrencias') ? 'Ocorrências' : currentPage.includes('servicos-o') ? 'Serviços Operacionais' : 'Administração';
 
   return (
     <Box
       sx={{
-        position: 'relative',
+        position: "relative",
         width: drawerWidth,
         minWidth: drawerWidth,
-        '@media (max-width: 768px)': {
-          width: '100%',
-          position: isOpen ? 'fixed' : 'relative',
-          height: '120px',
-          backgroundColor: '#FCFEFF',
+        "@media (max-width: 768px)": {
+          width: "100%",
+          position: isOpen ? "fixed" : "relative",
+          height: "120px",
+          backgroundColor: "#FCFEFF",
           zIndex: 5,
         },
       }}
@@ -95,194 +105,258 @@ const Sidebar: React.FC<{
       }
       </IconButton>
       {
-        isOpen ? 'Menu Principal' : 'Nome pagina'
+        isOpen ? 'Menu Principal' : nomePagina
       }
     </div>
       
       <Drawer
         variant={"persistent"}
         anchor="left"
-        open={
-          isMobile ? isOpen : true
-        }
-        onClose={toggleDrawer} 
+        open={isMobile ? isOpen : true}
+        onClose={toggleDrawer}
         sx={{
-          width: drawerWidth, 
-          height: '100vh',
+          width: drawerWidth,
+          height: "100vh",
           zIndex: 10,
-          position: 'relative',
-          '@media (max-width: 768px)': {
-            width: '100%',
-            height: isOpen ? '100vh' : '0',
-            visibility: isOpen ? 'visible' : 'hidden',
+          position: "relative",
+          "@media (max-width: 768px)": {
+            width: "100%",
+            height: isOpen ? "100vh" : "0",
+            visibility: isOpen ? "visible" : "hidden",
           },
-          '& .MuiDrawer-paper': {
-            backgroundColor: '#020617',
+          "& .MuiDrawer-paper": {
+            backgroundColor: "#020617",
             width: drawerWidth,
-            boxSizing: 'border-box',  
-            position: 'relative',
-            borderRight: 'none',
-            padding: '32px 24px 32px 24px',
-            transition: 'width 0.5s ease-in-out',
-            gap: '52px',
-            display: 'flex',
-            flexDirection: 'column', 
-            '@media (max-width: 768px)': {
-              width: '100%',
-            }
+            boxSizing: "border-box",
+            position: "relative",
+            borderRight: "none",
+            padding: "32px 24px 32px 24px",
+            transition: "width 0.5s ease-in-out",
+            gap: "52px",
+            display: "flex",
+            flexDirection: "column",
+            "@media (max-width: 768px)": {
+              width: "100%",
+            },
           },
         }}
       >
-        <div
-          className='flex flex-col gap-10 '
-        >
-          <div className='gap-2 flex pb-4 cursor-pointer items-center '
-          > 
-            <Avatar/>
+        <div className="flex flex-col gap-10 ">
+          <div className="gap-2 flex pb-4 cursor-pointer items-center ">
+            <Avatar />
             <div>
-              <h2
-                className='text-primary-50 text-[20px] font-bold'
-              >
-                {user.companyName}
+              <h2 className="text-primary-50 text-[20px] font-bold">
+                {user?.companyName}
               </h2>
-              <p
-                className='text-base-4 text-xs font-medium'
-              >
-                {user.name}
-              </p>
+              <p className="text-base-4 text-xs font-medium">{user?.name}</p>
             </div>
-
           </div>
-          <div className='flex flex-col gap-2'>
-            <h2
-              className='text-primary-50 text-xs font-bold'
-            >
-              MENU
-            </h2>
-            { <Link 
-                href={handleLinkPath('/')}
-              >
-                <MenuButton variant={
-                  currentPage === '/' ? 'primary' : 'secondary'
-                } className={`w-full gap-2 flex justify-start`}>
-                  <AdminPanelSettingsOutlined/>
+          <div className="flex flex-col gap-2">
+            <h2 className="text-primary-50 text-xs font-bold">MENU</h2>
+            {
+              <Link href={handleLinkPath("/")}>
+                <MenuButton
+                  variant={currentPage === "/" ? "primary" : "secondary"}
+                  className={`w-full gap-2 flex justify-start`}
+                >
+                  <AdminPanelSettingsOutlined />
                   Administração
                 </MenuButton>
               </Link>
             }
-            
+
             <Accordion
               expanded={accordionExpanded}
               onChange={() => setAccordionExpanded(!accordionExpanded)}
               sx={{
-                backgroundColor: 'transparent',
+                backgroundColor: "transparent",
                 padding: 0,
                 margin: 0,
               }}
             >
               <AccordionSummary
                 sx={{
-                  backgroundColor: 'transparent',
+                  backgroundColor: "transparent",
                   padding: 0,
                   margin: 0,
-                  height: '40px',
-                }} 
-              > 
-              <MenuButton 
-                variant={ 'secondary'} className={`w-full gap-2 flex justify-start`}> 
-                    <Image
-                        src="/linked_services.svg"
-                        alt="Imagem"
-                        objectFit="contain"
-                        width={23}
-                        height={23}
-                        />
-                      Serviços Operacionais   
-                      
-                      <KeyboardArrowDown
-                        className='text-primary-400'
-                        sx={{
-                          rotate: accordionExpanded ? '180deg' : '0deg',
-                          transition: 'all 0.3s ease-in-out',
-                        }}
-                      />
-            </MenuButton> 
+                  height: "40px",
+                }}
+              >
+                <MenuButton
+                  variant={"secondary"}
+                  className={`w-full gap-2 flex justify-start`}
+                >
+                  <Image
+                    src="/linked_services.svg"
+                    alt="Imagem"
+                    objectFit="contain"
+                    width={23}
+                    height={23}
+                  />
+                  Serviços Operacionais
+                  <KeyboardArrowDown
+                    className="text-primary-400"
+                    sx={{
+                      rotate: accordionExpanded ? "180deg" : "0deg",
+                      transition: "all 0.3s ease-in-out",
+                    }}
+                  />
+                </MenuButton>
               </AccordionSummary>
-            <AccordionDetails
+              <AccordionDetails
+                sx={{
+                  padding: 0,
+                  margin: 0,
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "8px",
+                }}
+              >
+                <Link href={handleLinkPath("/servicos-operacionais")}>
+                  <MenuButton
+                    variant={
+                      currentPage === "/servicos-operacionais"
+                        ? "primary"
+                        : "secondary"
+                    }
+                    className={`w-full gap-2 px-8 flex justify-start`}
+                  >
+                    <ViewKanbanOutlined />
+                    Dashboard
+                  </MenuButton>
+                </Link>
+                <Link href={handleLinkPath("/servicos-operacionais/ordens-servico")}>
+                  <MenuButton
+                    variant={
+                      currentPage === "/servicos-operacionais/ordens-servico"
+                        ? "primary"
+                        : "secondary"
+                    }
+                    className={`w-full gap-2 px-8  flex justify-start`}
+                  >
+                    <ListAltOutlined />
+                    Ordens de serviço
+                  </MenuButton>
+                </Link>
+                <Link href={handleLinkPath("/servicos-operacionais/config")} passHref>
+                  <MenuButton
+                    variant={getButtonVariant("servicos-operacionais/config")}
+                    className={`w-full gap-2 flex px-8 justify-start`}
+                  >
+                    <SettingsOutlined />
+                    Configurações
+                  </MenuButton>
+                </Link>
+              </AccordionDetails>
+            </Accordion>
+
+            <Accordion
+              expanded={accordionOcurrencesExpanded}
+              onChange={() =>
+                setAccordionOcurrencesExpanded(!accordionOcurrencesExpanded)
+              }
               sx={{
+                backgroundColor: "transparent",
                 padding: 0,
                 margin: 0,
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '8px',
               }}
-            > 
-            <Link 
-                href={handleLinkPath('/')}
+            >
+              <AccordionSummary
+                sx={{
+                  backgroundColor: "transparent",
+                  padding: 0,
+                  margin: 0,
+                  height: "40px",
+                }}
               >
-                <MenuButton variant={
-                  currentPage === '/dashboard' ? 'primary' : 'secondary'
-                } className={`w-full gap-2 px-8 flex justify-start`}>
-                  <ViewKanbanOutlined/>
-                  Dashboard
+                <MenuButton
+                  variant={getButtonVariant("cadastro-usuario")}
+                  className={`w-full gap-2 flex justify-start`}
+                >
+                  <Feedback />
+                  Ocorrências
+                  <KeyboardArrowDown
+                    className="text-primary-400"
+                    sx={{
+                      rotate: accordionOcurrencesExpanded ? "180deg" : "0deg",
+                      transition: "all 0.3s ease-in-out",
+                    }}
+                  />
                 </MenuButton>
-              </Link> 
-              <Link 
-                href={handleLinkPath('/ordens-servico')}
+              </AccordionSummary>
+              <AccordionDetails
+                sx={{
+                  padding: 0,
+                  margin: 0,
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "8px",
+                }}
               >
-                <MenuButton variant={
-                  currentPage === '/ordens-servico' ? 'primary' : 'secondary'
-                } className={`w-full gap-2 px-8  flex justify-start`}>
-                  <ListAltOutlined/>
-                  Ordens de serviço
-                </MenuButton>
-              </Link> 
-            <Link
-              href={handleLinkPath('/cadastro-usuario')}
-            passHref>
-              <MenuButton variant={getButtonVariant("cadastro-usuario")} className={`w-full gap-2 flex px-8 justify-start`}>
-                <SettingsOutlined/>
-                Configurações
-              </MenuButton>
-            </Link> 
-            </AccordionDetails>
-
+                <Link href={handleLinkPath("/ocorrencias-dashboard")}>
+                  <MenuButton
+                    variant={
+                      currentPage === "/ocorrencias-dashboard"
+                        ? "primary"
+                        : "secondary"
+                    }
+                    className={`w-full gap-2 px-8 flex justify-start`}
+                  >
+                    <ViewKanbanOutlined />
+                    Dashboard
+                  </MenuButton>
+                </Link>
+                <Link href={handleLinkPath("/ocorrencias")}>
+                  <MenuButton
+                    variant={
+                      currentPage === "/ocorrencias" ? "primary" : "secondary"
+                    }
+                    className={`w-full gap-2 px-8 flex justify-start`}
+                  >
+                    <ReportGmailerrorredOutlined />
+                    Ocorrências
+                  </MenuButton>
+                </Link>
+                <Link href={handleLinkPath("/ocorrencias-config")}>
+                  <MenuButton
+                    variant={
+                      currentPage === "/ocorrencias-config"
+                        ? "primary"
+                        : "secondary"
+                    }
+                    className={`w-full gap-2 px-8 flex justify-start`}
+                  >
+                    <SettingsOutlined />
+                    Configurações
+                  </MenuButton>
+                </Link>
+              </AccordionDetails>
             </Accordion>
-            <Link
-              href={handleLinkPath('/cadastro-usuario')}
-            passHref>
-              <MenuButton variant={getButtonVariant("cadastro-usuario")} className={`w-full gap-2 flex justify-start`}>
-                <Feedback/>
-                Ocorrências
-              </MenuButton>
-            </Link> 
-          </div> 
+          </div>
         </div>
 
-        <div className='flex flex-col gap-2 pb-24 md:pb-0'>
-            <h2
-              className='text-primary-50 text-xs font-bold'
-            >
-              PERFIL
-            </h2>
-            { <Link 
-                href={handleLinkPath('/')}
+        <div className="flex flex-col gap-2 pb-24 md:pb-0">
+          <h2 className="text-primary-50 text-xs font-bold">PERFIL</h2>
+          {
+            <Link href={handleLinkPath("/")}>
+              <MenuButton
+                variant={currentPage === "/perfil" ? "primary" : "secondary"}
+                className={`w-full gap-2 flex justify-start`}
               >
-                <MenuButton variant={
-                  currentPage === '/perfil' ? 'primary' : 'secondary'
-                } className={`w-full gap-2 flex justify-start`}>
-                  <AccountCircleOutlined/>
-                  Meu Perfil
-                </MenuButton>
-              </Link>
-            }   
-              <MenuButton variant={getButtonVariant("cadastro-usuario")} className={`w-full gap-2 flex justify-start text-erro-2`}
-                onClick={logout}
-              >
-                <LogoutOutlined/>
-                Sair  
-              </MenuButton> 
-          </div> 
+                <AccountCircleOutlined />
+                Meu Perfil
+              </MenuButton>
+            </Link>
+          }
+          <MenuButton
+            variant={getButtonVariant("cadastro-usuario")}
+            className={`w-full gap-2 flex justify-start text-erro-2`}
+            onClick={logout}
+          >
+            <LogoutOutlined />
+            Sair
+          </MenuButton>
+        </div>
       </Drawer>
     </Box>
   );

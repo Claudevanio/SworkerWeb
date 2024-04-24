@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from "yup";
 import { Form } from '@/components/form/Form';
-import { IconButton, MenuItem, Select } from '@mui/material';
+import { CircularProgress, IconButton, MenuItem, Select } from '@mui/material';
 import { Field } from '@/components/form/Fields';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -60,7 +60,7 @@ export default function Login(){
         password: data.password,
       }) as LoginDataResponse;
       if(typeof response.data === 'string'){  
-        Cookies.set('token', response.data, { expires: 1 });
+        Cookies.set('token', response.data);
         router.push('/');
         return;
       }
@@ -128,13 +128,26 @@ export default function Login(){
             </div>
 
                 <Button 
-                    type='submit'
-                    className=''
+                  isLoading={methods.formState.isSubmitting}
+                  type='submit'
+                  className=''
                 >
                   Entrar
                 </Button>
           </Form>  
         </div> 
+        {
+          methods.formState.isSubmitting && (
+            <div
+              className='fixed top-0 left-0 w-full h-full bg-primary-50 bg-opacity-50 flex items-center justify-center z-[1000]'
+            >
+              <CircularProgress
+                size={50}
+                color='primary'
+              />
+            </div>
+          )
+        }
         <ModalContaBloqueada
             isOpen={isModalOpen}
             onClose={closeModal}

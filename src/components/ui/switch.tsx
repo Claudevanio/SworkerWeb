@@ -61,7 +61,7 @@ export function CustomSwitch({ label, ...props }: CheckboxProps & { label: strin
       >{label}</label>
       <Controller
         name={props.name}
-        control={props.control}
+        control={props?.control}
         render={({ field }) => (
           <IOSSwitch
             {...field}

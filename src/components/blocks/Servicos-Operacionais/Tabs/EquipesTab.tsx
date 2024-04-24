@@ -263,7 +263,7 @@ export function EquipesTab(
                   className='min-w-[1500px] w-full mr-4'
                 >
                   <BarChart
-                    data={dataForBarChart}
+                    data={dataForBarChart ?? []}
                     yField='label'
                     xField='value'
                     typeOrder={['Sob Demanda', 'Executado']}

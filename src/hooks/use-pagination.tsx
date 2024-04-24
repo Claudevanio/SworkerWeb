@@ -4,6 +4,7 @@ interface PaginationResult<T> {
   currentPage: number;
   setCurrentPage: (page: number) => void;
   currentTableData: T[];
+  totalPage: number;
 }
 
 function usePagination<T>(data: T[], itemsPerPage: number): PaginationResult<T> {
@@ -20,12 +21,15 @@ function usePagination<T>(data: T[], itemsPerPage: number): PaginationResult<T> 
   }, [data, currentPage, itemsPerPage]);
 
   const currentTableData = attTableData();
+
+  const totalPage = Math.ceil(data.length / itemsPerPage);
   
 
   return {
     currentPage,
     setCurrentPage,
     currentTableData,
+    totalPage
   };
 }
 
