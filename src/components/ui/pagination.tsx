@@ -74,10 +74,10 @@ const Pagination: React.FC<PaginationProps> = ({
       <span
         className="text-sm flex items-center gap-2 cursor-pointer min-w-[90px] justify-end"
         onClick={() =>
-          currentPage < totalPages ? onChange(currentPage + 1) : {}
+          currentPage + 1 < totalPages ? onChange(currentPage + 1) : {}
         }
         style={
-          currentPage < totalPages
+          currentPage + 1 < totalPages
             ? {
                 color: COLORS["primary"]["600"],
                 display: isMobile ? "none" : "inline",

@@ -22,11 +22,10 @@ export const PieChart = ({ data }: PropsPie) => {
     legend: {
       color: {
         title: false,
-        position: "right",
+        position: "bottom-left",
         rowPadding: 5,
-        
       },
     },
   };
-  return <Pie {...config} width={100} height={200} appendPadding={4}  />;
+  return <Pie {...config}  />;
 };

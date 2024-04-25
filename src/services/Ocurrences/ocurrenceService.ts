@@ -98,7 +98,7 @@ export const ocurrenceService = {
     currentPage: number,
     pageSize: number,
     filter: IFilterOcurrences,
-    closed: boolean
+    closed?: boolean
   ): Promise<basePagination<IOcurrenceRecognize>> {
     const response = await api.get<IOcurrenceRecognize[]>(
       `/recognized-occurrences`,

@@ -83,7 +83,7 @@ export const CardsGrid = ({
               ))}
             </div>
             <div className="flex justify-between gap-4 w-full items-center">
-              {actions?.some((action) => action.label === "Reconhecer") ? (
+              {actions?.some((action) => action.label === "Reconhecer") && (
                 <p
                   className="text-secondary text-sm cursor-pointer w-fit"
                   onClick={(e) => {
@@ -95,8 +95,9 @@ export const CardsGrid = ({
                 >
                   Reconhecer
                 </p>
-              ) : <></>}
-              {actions?.some((action) => action.label === "Exportar") ? (
+              )}
+
+              {actions?.some((action) => action.label === "Exportar") && (
                 <>
                   <p
                     className="text-primary-700 text-sm cursor-pointer w-fit"
@@ -111,7 +112,9 @@ export const CardsGrid = ({
                     Exportar
                   </p>
                 </>
-              ) : (
+              )}
+
+              {actions?.some((action) => action.label === "Excluir") && (
                 <p
                   className="text-erro-2 text-sm cursor-pointer w-fit"
                   onClick={(e) => {
@@ -122,6 +125,20 @@ export const CardsGrid = ({
                   }}
                 >
                   Excluir
+                </p>
+              )}
+
+              {actions?.some((action) => action.label === "Detalhes") && (
+                <p
+                  className="text-primary-700 text-sm cursor-pointer w-fit"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    actions
+                      .find((action) => action.label === "Detalhes")
+                      ?.onClick(row);
+                  }}
+                >
+                  Detalhes
                 </p>
               )}
 

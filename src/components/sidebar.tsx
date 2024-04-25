@@ -92,23 +92,14 @@ const Sidebar: React.FC<{}> = () => {
           zIndex: 5,
         },
       }}
-    > 
-    <div
-      className='flex items-center gap-4 px-4 py-6 text-primary-700 font-bold border-b-[.5px] border-[#E3E3E3] md:hidden'
     >
-      <IconButton
-        onClick={toggleDrawer}
-        className='text-primary-700'
-      >
-      {
-        isOpen ? <Close /> : <MenuOutlined />
-      }
-      </IconButton>
-      {
-        isOpen ? 'Menu Principal' : nomePagina
-      }
-    </div>
-      
+      <div className="flex items-center gap-4 px-4 py-6 text-primary-700 font-bold border-b-[.5px] border-[#E3E3E3] md:hidden">
+        <IconButton onClick={toggleDrawer} className="text-primary-700">
+          {isOpen ? <Close /> : <MenuOutlined />}
+        </IconButton>
+        {isOpen ? "Menu Principal" : nomePagina}
+      </div>
+
       <Drawer
         variant={"persistent"}
         anchor="left"
@@ -225,7 +216,9 @@ const Sidebar: React.FC<{}> = () => {
                     Dashboard
                   </MenuButton>
                 </Link>
-                <Link href={handleLinkPath("/servicos-operacionais/ordens-servico")}>
+                <Link
+                  href={handleLinkPath("/servicos-operacionais/ordens-servico")}
+                >
                   <MenuButton
                     variant={
                       currentPage === "/servicos-operacionais/ordens-servico"
@@ -238,7 +231,10 @@ const Sidebar: React.FC<{}> = () => {
                     Ordens de serviço
                   </MenuButton>
                 </Link>
-                <Link href={handleLinkPath("/servicos-operacionais/config")} passHref>
+                <Link
+                  href={handleLinkPath("/servicos-operacionais/config")}
+                  passHref
+                >
                   <MenuButton
                     variant={getButtonVariant("servicos-operacionais/config")}
                     className={`w-full gap-2 flex px-8 justify-start`}
@@ -293,10 +289,10 @@ const Sidebar: React.FC<{}> = () => {
                   gap: "8px",
                 }}
               >
-                <Link href={handleLinkPath("/ocorrencias-dashboard")}>
+                <Link href={handleLinkPath("/ocorrencias/dashboard")}>
                   <MenuButton
                     variant={
-                      currentPage === "/ocorrencias-dashboard"
+                      currentPage === "/ocorrencias/dashboard"
                         ? "primary"
                         : "secondary"
                     }
@@ -317,10 +313,10 @@ const Sidebar: React.FC<{}> = () => {
                     Ocorrências
                   </MenuButton>
                 </Link>
-                <Link href={handleLinkPath("/ocorrencias-config")}>
+                <Link href={handleLinkPath("/ocorrencias/config")}>
                   <MenuButton
                     variant={
-                      currentPage === "/ocorrencias-config"
+                      currentPage === "/ocorrencias/config"
                         ? "primary"
                         : "secondary"
                     }
