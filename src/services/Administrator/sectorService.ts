@@ -135,6 +135,11 @@ export const SectorService = {
     return data as basePagination<ISector>;
   },
 
+  async getAll (): Promise<ISector[]> {
+    const response = await api.get<ISector[]>('/sector-equip/sector-list');
+    return response.data;
+  },
+
   async updateSectorAsync (item: ISector): Promise<void> {
     await api.put<void>(`/sectors/${item.id}`, item);
   },

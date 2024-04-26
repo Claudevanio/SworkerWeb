@@ -43,6 +43,11 @@ export const companyService = {
     return data as basePagination<ICompany>;
   },
 
+  async getAll (): Promise<ICompany[]> {
+    const response = await api.get<ICompany[]>('/companies');
+    return response.data;
+  },
+
   async countCompanyAccessLogsAsync (params: IAccessLogsParams): Promise<number> {
     const response = await api.get<number>('/companies/:companyId/access-logs/count', {
       params

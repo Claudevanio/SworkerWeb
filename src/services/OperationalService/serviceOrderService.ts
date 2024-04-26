@@ -3,9 +3,27 @@ import { api } from '../api';
 import dayjs from 'dayjs';
 
 export const serviceOrderService = {
-  async getServiceOrderStatusesAsync (): Promise<any[]> {
+  async getServiceOrderStatusesAsync (filters?: any): Promise<any[]> {
+    const { page, pageSize, ...rest } = filters;
     const response = await api.get<any[]>('/service-orders/status');
-    return response.data;
+
+    const { data } = response;
+
+    if (!filters) return data;
+
+    const countObj = await Promise.all(data.map(async (status: any) => {
+      const details = await api.get<{ count: number }>(`/service-orders/count?status=${status.id}`, {
+        params: rest
+      });
+      const obj = {
+        ...status,
+        count: details.data.count,
+      }
+      return obj;
+    }))
+
+
+    return countObj;
   },
 
   async getServiceOrderCodeAsync (): Promise<any> {
@@ -20,6 +38,12 @@ export const serviceOrderService = {
 
   async getServiceOrderProfessionalFilesAsync (osId: string, professionalId: string): Promise<any> {
     const response = await api.get<any>(`/${osId}/${professionalId}/files`);
+    return response.data;
+  },
+
+  async getServiceOrderByProfessionalIdAsync (professionalId: string): Promise<ServiceOrder[]> {
+    if (!professionalId || professionalId === '') return [];
+    const response = await api.get<ServiceOrder[]>(`/professionals/${professionalId}/service-orders`);
     return response.data;
   },
 

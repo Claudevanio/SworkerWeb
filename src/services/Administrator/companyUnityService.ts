@@ -24,6 +24,12 @@ export const companyUnityService = {
 
     return data as basePagination<ICompanyUnity>;
   },
+
+  async getAll (): Promise<ICompanyUnity[]> {
+    const response = await api.get<ICompanyUnity[]>('/company-unities');
+    return response.data;
+  },
+
   async updateCompanyUnityAsync (item: ICompanyUnity): Promise<void> {
     await api.put<void>(`/company-unities/`, item);
   },

@@ -12,6 +12,8 @@ import { ocurrenceCharacterizationService } from "@/services/Ocurrences/ocurrenc
 import { Classificacao } from "./tabs/classificacao/classificacao";
 import { Categorizacao } from "./tabs/categorizacao/categorizacao";
 import { Tipo } from "./tabs/tipo/tipo";
+import { ReceiptLongOutlined } from "@mui/icons-material";
+import { COLORS } from "@/utils";
 
 export default function OcorrenciasConfig() {
   const isMobile = useMediaQuery("(max-width:768px)");
@@ -65,12 +67,15 @@ export default function OcorrenciasConfig() {
   const tabs = [
     {
       label: "Tipo",
+      icon: <ReceiptLongOutlined sx={{ color: COLORS.primary["500"] }} />,
     },
     {
       label: "Categorização",
+      icon: <ReceiptLongOutlined sx={{ color: COLORS.primary["500"] }} />,
     },
     {
       label: "Classificação",
+      icon: <ReceiptLongOutlined sx={{ color: COLORS.primary["500"] }} />,
     },
   ];
 

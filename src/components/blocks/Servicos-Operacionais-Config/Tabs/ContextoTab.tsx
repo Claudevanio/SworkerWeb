@@ -5,7 +5,7 @@ import { IContext } from "@/types/models/ServiceOrder/IContext";
 import { EditOutlined } from "@mui/icons-material";
 
 export default function ContextoTab() {
-  const { contexts, modal } = useServiceOperations();
+  const { contexts, modal, equipmentTypes } = useServiceOperations();
 
   const rows = contexts.data?.items ?? [];
 
@@ -22,6 +22,13 @@ export default function ContextoTab() {
     {
       label: "Tipo",
       key: "type",
+      Formatter: (typeId: any) => {
+        const filteredType = equipmentTypes.data.find(
+          (type) => type.id === typeId
+        );
+
+        return <div>{filteredType?.description}</div>;
+      },
     },
     {
       label: "Caracterização",

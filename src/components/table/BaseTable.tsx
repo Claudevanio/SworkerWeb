@@ -33,7 +33,13 @@ interface CustomizedTableProps {
     label: string;
     onClick: (data?: any) => void;
     hiddenDesktop?: boolean;
+    csv?:{
+      fileName: string;
+      data: (row) => string[][];
+    }
   }>;
+  showAllActions?: boolean;
+  warning?: (row: { [key: string]: any }) => React.ReactNode;
   onExpand?: (row: { [key: string]: number | string }) => void;
   hideMobileView?: boolean;
   isRecognize?: boolean;
@@ -88,7 +94,10 @@ export function BaseTable({
   onClickRow,
   isLoading,
   isRecognize,
-  hideMobileView
+  hideMobileView,
+  showAllActions = false,
+  warning,
+
 }: CustomizedTableProps) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
@@ -97,7 +106,7 @@ export function BaseTable({
   const desktopColumns = columns.filter((column) => !column.hideOnDesktop);
 
   return (
-    <>
+    <> 
     {
       !hideMobileView && (
         <CardsGrid
@@ -190,7 +199,7 @@ export function BaseTable({
                       key={column.key}
                       component="td"
                       style={column.style}
-                    >
+                    > 
                       {column.rowFormatter
                         ? column.rowFormatter(row)
                         : column.Formatter
@@ -207,7 +216,7 @@ export function BaseTable({
                         maxWidth: "100px",
                       }}
                     >
-                      <div className="flex justify-end items-center w-full h-full">
+                      <div className="flex justify-end items-center w-full h-full gap-1">
                         {onExpand && (
                           <IconButton
                             sx={{
@@ -227,15 +236,40 @@ export function BaseTable({
                             />
                           </IconButton>
                         )}
-                        <IconButton
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedRow(row);
-                            setAnchorEl(e.currentTarget);
-                          }}
-                        >
-                          <MoreVert className="text-base-7" />
-                        </IconButton>
+
+                        {
+                          warning && warning(row)
+                        }
+                        {
+                          showAllActions && (
+                            actions.map((action, index) => (
+                              <IconButton
+                                key={index}
+                                onClick={() => action.onClick(row)}
+                                sx={{
+                                  width: "32px",
+                                  height: "32px",
+                                  display: action.hiddenDesktop ? "none" : "flex",
+                                }}
+                              >
+                                {action.icon}
+                              </IconButton>
+                            ))
+                          )
+                        }
+                        {
+                          !showAllActions && (
+                            <IconButton
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedRow(row);
+                                setAnchorEl(e.currentTarget);
+                              }}
+                            >
+                              <MoreVert className="text-base-7" />
+                            </IconButton>
+                          )
+                        }
                       </div>
                     </StyledTableCell>
                   )}

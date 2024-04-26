@@ -48,7 +48,7 @@ export function ModalContext({
     },
   });
 
-  const { contexts, characterizations } = useServiceOperations();
+  const { contexts, characterizations, equipmentTypes } = useServiceOperations();
 
   async function onSubmit(data: FormFields) {
     const newData: IContext = {
@@ -121,12 +121,12 @@ export function ModalContext({
             label="Tipo"
             required
             disabled={readonly}
-            options={[
-              {
-                label: "1",
-                value: 1,
-              },
-            ]}
+            options={equipmentTypes.data?.map(type => {
+              return {
+                label: type.description,
+                value: type.id
+              }
+            }) ?? []}
           />
         </div>
         <div className="flex gap-4 md:gap-6 flex-col md:flex-row justify-between">

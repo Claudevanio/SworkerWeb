@@ -1,3 +1,4 @@
+'use client';
 import { useState } from 'react';
 import { SimpleTab } from '../tabs/simple-tab';
 import { PageTitle } from '../title';

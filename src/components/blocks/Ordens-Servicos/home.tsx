@@ -1,14 +1,14 @@
+'use client';
 import { useState } from 'react';
 import { SimpleTab } from '../tabs/simple-tab';
 import { PageTitle } from '../title';
 import { ApartmentOutlined, FolderSharedOutlined, History, JoinInnerOutlined, Moving, ViewKanban } from '@mui/icons-material'; 
-import { EvolucaoTab } from './Tabs/EvolucaoTab';
+import { AgrupamentoTab } from './Tabs/AgrupamentoTab';
 import { useModal } from '@/hooks';
 import { AdministratorProvider, useAdministrator } from '@/contexts/AdministrationProvider'; 
 
 import { ServiceOrderProvider } from '@/contexts/serviceOrderProvider';
-import { ModalFiltroServicosDashboard } from './Overlay/ModalFiltroServicosDashboard';
-import { ProcedimentoTab } from './Tabs/ProcedimentoTab';
+import { ModalFiltroServicosDashboard } from './Overlay/ModalFiltroServicosDashboard'; 
 import { HistoricoTab } from './components/historicoTab';
 
 export function OrdensSevicoComponent(){
@@ -66,8 +66,10 @@ export function OrdensSevicoComponent(){
           style={
             activeTab !== undefined && activeTab === 1 ? {  } : {display: 'none'}
           }
-        >
-          <EvolucaoTab/>
+        > 
+            <AgrupamentoTab
+              openFilterModal={openFilterModal}
+            /> 
         </div>
       </div> 
       <ModalFiltroServicosDashboard

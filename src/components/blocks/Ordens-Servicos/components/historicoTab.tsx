@@ -8,6 +8,10 @@ import { serviceOrderService } from '@/services/OperationalService/serviceOrderS
 import { ServiceOrder } from '@/types/models/ServiceOrder/serviceOrder';
 import { CheckBox, ExportButton, FiltroButton } from '@/components/ui';
 import dayjs from 'dayjs';
+import { TrendingUp } from '@mui/icons-material';
+import { useRouter } from 'next/navigation';
+import { Tooltip } from '@mui/material';
+import Image from 'next/image'; 
 
 export const HistoricoTab = (
   {
@@ -16,6 +20,8 @@ export const HistoricoTab = (
     openFilterModal: () => void;
   }
 ) => { 
+
+  const router = useRouter();
 
   const {
     serviceOrders
@@ -38,6 +44,35 @@ export const HistoricoTab = (
   })
 
   const [selected, setSelected] = useState<ServiceOrder[]>([]);
+
+  function mapCSVData(data: ServiceOrder[] | ServiceOrder) : string[][] {
+    const obj = Array.isArray(data) ? data.map((item) => ({
+      Código: item.code,
+      Procedimento: item.description,
+      'Data de Solicitação':  dayjs(item.requestDate).format('DD/MM/YYYY : HH:mm'),
+      Responsável: item.supervisor.name,
+      Status: item.status.description,
+      'Data de execução': dayjs(item.executionDate).format('DD/MM/YYYY : HH:mm'),
+    })) : [{
+      Código: data.code,
+      Procedimento: data.description,
+      'Data de Solicitação':  dayjs(data.requestDate).format('DD/MM/YYYY : HH:mm'),
+      Responsável: data.supervisor.name,
+      Status: data.status.description,
+      'Data de execução': dayjs(data.executionDate).format('DD/MM/YYYY : HH:mm'),
+    }]
+
+    if (obj.length === 0) {
+      return [];
+    }
+
+    const firstArray = Object.keys(obj[0]);
+
+    const csvData = obj.map((item) => firstArray.map((key) => item[key]));
+
+    return [firstArray, ...csvData];
+
+  }
  
       return (
         <div>  
@@ -47,51 +82,106 @@ export const HistoricoTab = (
             <FiltroButton onClick={openFilterModal}
               className=' !h-12'
             />
-            <ExportButton onClick={
-              () => {
-                console.log(selected)
-              }
-            }
-              className=' !h-12 hidden md:flex'
-              disabled={selected.length === 0}
+            <ExportButton 
+                csvData={
+                  selected.length > 0
+                    ? mapCSVData(selected)
+                    : mapCSVData(serviceOrders.data ?? [])
+                }
+                className=' !h-12 hidden md:flex'
+                disabled={selected.length === 0}
+                fileName='historico_ordens_servico.csv'
               /> 
-          </div> 
+          </div>  
           <BaseTable
             rows={serviceOrders.data ?? []}
             isLoading={serviceOrders.isLoading}
+            actions={[{
+              label: 'Evolucao',
+              icon: <TrendingUp
+                className='text-primary-700'
+              />,
+              onClick: (data: ServiceOrder) => {
+                router.replace(`/servicos-operacionais/${data.id}`)
+              }
+            },
+            {
+              label: 'Exportar',
+              onClick: ()=>{},
+              csv: {
+                data: (row) => mapCSVData(row ?? []),
+                fileName: 'historico_ordens_servico.csv'
+              },
+              hiddenDesktop: true
+            }
+          ]}
+            warning={
+              (row: ServiceOrder) => !!row.isActive && <Tooltip
+                title='Ordem de serviço com Ocorrencia'
+                placement='top'
+              >
+                <Image
+                  src='/Warning.svg' 
+                  width={40}
+                  height={40}
+                  alt='warning'
+                />
+              </Tooltip>
+            }
+            showAllActions
             columns={[{
               label: 'Código',
               key: 'code',
               rowFormatter: (row) => { 
-                return <div
-                className="flex items-center gap-1 group"
-                style={{ height: "70px" }}
-              >
-                <div
-                  className="w-0 group-hover:!w-12 overflow-hidden transition-all items-center gap-1"
-                  style={
-                    selected.find((v) => v.id === row.id)
-                      ? {
-                          width: "2rem",
-                        }
-                      : {}
-                  }
+                return (<>
+                  <div
+                  className=" hidden md:flex items-center gap-1 group"
+                  style={{ height: "70px" }}
                 >
-                  <CheckBox
-                    variant="secondary"
-                    value={!!selected.find((v) => v.id === row.id)}
-                    onChange={() => {
-                      setSelected((prev) => {
-                        if (!!selected.find((v) => v.id === row.id)) {
-                          return prev.filter((v) => v.id !== row.id);
-                        }
-                        return [...prev, row];
-                      });
-                    }}
-                  />
+                  <div
+                    className="w-0 group-hover:!w-12 overflow-hidden transition-all items-center gap-1"
+                    style={
+                      selected.find((v) => v.id === row.id)
+                        ? {
+                            width: "2rem",
+                          }
+                        : {}
+                    }
+                  >
+                    <CheckBox
+                      variant="secondary"
+                      value={!!selected.find((v) => v.id === row.id)}
+                      onChange={() => {
+                        setSelected((prev) => {
+                          if (!!selected.find((v) => v.id === row.id)) {
+                            return prev.filter((v) => v.id !== row.id);
+                          }
+                          return [...prev, row];
+                        });
+                      }}
+                    />
+                  </div>
+                  <div>{row.code}</div>
                 </div>
-                <div>{row.code}</div>
-              </div>
+                <div
+                  className="md:hidden"
+                >
+                  <div
+                    className='flex items-center gap-3'
+                  >
+                    {
+                      row.id && <Image
+                        className='md:hidden'
+                        src='/Warning.svg'
+                        width={20}
+                        height={20}
+                        alt='warning'
+                      />
+                    }
+                    {row.code}</div>
+                </div>
+                </>
+              )
               },
               mobileTitle: true
             },

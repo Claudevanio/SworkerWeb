@@ -21,7 +21,7 @@ export const ExportButton: React.FC<ExportButtonProps> = ({
   disabled,
   className
 }) => {
-  return disabled ? (
+  return disabled || onClick ? (
     <Button
       variant="primary"
       onClick={onClick}

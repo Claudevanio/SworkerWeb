@@ -36,17 +36,18 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
             onConfirmText: "Fazer login",
             onCloseText: " ",
             onConfirm: () => {
+              process.env.NODE_ENV === "development" ?
+              Authservice.login({
+                userName: "ivoxps@gmail.com",
+                password: "#3dP3R@5wk0R",
+              }).then((response) => {
+                if (typeof response.data === "string") {
+                  Cookies.set("token", response.data);
+                  router.refresh();
+                  return;
+                }
+              }) :
               router.push('/login');
-              // Authservice.login({
-              //   userName: "ivoxps@gmail.com",
-              //   password: "#3dP3R@5wk0R",
-              // }).then((response) => {
-              //   if (typeof response.data === "string") {
-              //     Cookies.set("token", response.data);
-              //     router.refresh();
-              //     return;
-              //   }
-              // });
             },
           });
         }
@@ -55,8 +56,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     );
   }, []);
 
-  const token = Cookies.get("token");
-  const pathName = usePathname();
+  const token = Cookies.get("token"); 
 
   React.useEffect(() => {
     if (!!user) return;
@@ -66,7 +66,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       const user = jwtDecode(token) as IUser;
       setUser(user);
     }
-  }, [user, token, pathName]);
+  }, [user, token]);
 
   return (
     <UserContext.Provider value={{ user, setUser }}>
@@ -74,3 +74,4 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     </UserContext.Provider>
   );
 };
+

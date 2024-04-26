@@ -1,10 +1,11 @@
 import { useModal } from "@/hooks";
 import useTriggerEffect from "@/hooks/triggeredUseState";
 import { useDialog } from '@/hooks/use-dialog';
+import { equipmentTypeService } from "@/services/Administrator/equipmentService";
 import { ocurrenceCharacterizationService } from "@/services/Ocurrences";
 import { configContextService } from "@/services/OperationalService/configContextService";
 import { configTaskGroupService } from '@/services/OperationalService/configTaskGroupService';
-import { basePagination } from "@/types";
+import { IEquipmentType, basePagination } from "@/types";
 import { IOcurrenceCharacterization } from "@/types/models/Ocurrences/IOcurrenceCharacterization";
 import { IContext } from "@/types/models/ServiceOrder/IContext";
 import { ITaskGroup } from '@/types/models/ServiceOrder/ITaskGroup';
@@ -28,6 +29,10 @@ interface Characterization {
   data: IOcurrenceCharacterization[];
 }
 
+interface EquipmentTypes {
+  data: IEquipmentType[];
+}
+
 interface ServiceOperationConfigType {
   modal: {
     isOpen: boolean;
@@ -37,6 +42,7 @@ interface ServiceOperationConfigType {
   contexts: baseCRUD<IContext>;
   characterizations: Characterization
   taskGroups: baseCRUD<ITaskGroup>;
+  equipmentTypes: EquipmentTypes
 }
 
 const crudInitialState = {
@@ -56,7 +62,8 @@ export const ServiceOperationConfigContext =
     contexts: crudInitialState,
     modal: {} as any,
     characterizations: crudInitialState,
-    taskGroups: crudInitialState
+    taskGroups: crudInitialState,
+    equipmentTypes: crudInitialState
   });
 
 export const ServiceOperationsConfigProvider = ({
@@ -185,12 +192,25 @@ const removeTaskGroup = async (taskGroup: ITaskGroup) => {
 
   // #region Characterizations
 
-  const {
-    data: characterizations,
-  } = useQuery<IOcurrenceCharacterization[] | undefined>({
+  const { data: characterizations } = useQuery<
+    IOcurrenceCharacterization[] | undefined
+  >({
     queryKey: ["searchCharacterization"],
     queryFn: () =>
       ocurrenceCharacterizationService.getCharacterizations() as any,
+    refetchOnWindowFocus: false,
+    refetchOnMount: true,
+  });
+
+  // #endregion
+
+  // #region EquipmentsTypes
+
+  const { data: equipmentTypes } = useQuery<
+    IEquipmentType[] | undefined
+  >({
+    queryKey: ["searchEquipmentsTypes"],
+    queryFn: () => equipmentTypeService.listEquipmentTypeAsync() as any,
     refetchOnWindowFocus: false,
     refetchOnMount: true,
   });
@@ -229,6 +249,9 @@ const removeTaskGroup = async (taskGroup: ITaskGroup) => {
           readonly: readonly,
           create: createTaskGroup,
           remove: removeTaskGroup
+        },
+        equipmentTypes: {
+          data: equipmentTypes
         }
       }}
     >

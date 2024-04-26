@@ -13,6 +13,7 @@ interface IProfessionalParams {
   term?: string;
   currentPage?: number;
   pageSize?: number;
+  standardSupervisor?: boolean;
 }
 
 export const professionalService = {
