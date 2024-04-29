@@ -36,10 +36,11 @@ export function CheckBoxRadio({ label,
   )
 }
 
-export function CheckBox({ label, variant = 'primary', ...props }: CheckBoxProps) {
+export function CheckBox({ label, variant = 'primary', ...props }: any) {
   return (
     <div className="flex gap-2 items-center">
       <Checkbox
+        {...props}
         checked={props.value}
         onClick={props.onChange}
         sx={{

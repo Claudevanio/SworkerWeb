@@ -118,78 +118,42 @@ export const equipmentService = {
     pageSize?: number;
   }): Promise<basePagination<IEquipment>> {
 
-    // const mockData: basePagination<IEquipment> = {
-    //   items: [
-    //     {
-    //       id: '1',
-    //       uid: '1',
-    //       hwid: '1',
-    //       classificationId: '1',
-    //       manufacturer: '1',
-    //       model: '1',
-    //       brand: '1',
-    //       release: '1',
-    //       context: '1',
-    //       manualFile: '1',
-    //       manufactureDate: '1',
-    //       status: true,
-    //       equipmentClassification: {
-    //         id: '1',
-    //         typeId: '1',
-    //         name: '1',
-    //         code: '1',
-    //         description: '1',
-    //       },
-    //     },
-    //     {
-    //       id: '2',
-    //       uid: '2',
-    //       hwid: '2',
-    //       classificationId: '2',
-    //       manufacturer: '2',
-    //       model: '2',
-    //       brand: '2',
-    //       release: '2',
-    //       context: '2',
-    //       manualFile: '2',
-    //       manufactureDate: '2',
-    //       status: true,
-    //       equipmentClassification: {
-    //         id: '2',
-    //         typeId: '2',
-    //         name: '2',
-    //         code: '2',
-    //         description: '2',
-    //       },
-    //     }
-    //   ],
-    //   count: 2,
-    // };
-
-    // const filteredData = mockData.items.filter(
-    //   equipment => {
-    //     if (term) {
-    //       return Object.values(equipment).some(value => String(value).toLowerCase().includes(term.toLowerCase()));
-    //     }
-    //     return true;
-    //   }
-    // );
-
-    // // Paginate
-    // const startIndex = (currentPage - 1) * pageSize;
-    // const endIndex = startIndex + pageSize;
-    // const paginatedData = filteredData.slice(startIndex, endIndex);
-
-    // return Promise.resolve(
-    //   { items: paginatedData, count: paginatedData.length }
-    // );
-
     const response = await api.get<IEquipment[]>('/equipaments', {
       params: { uid, hwid, brand, manufacturer, classification, active, inspectionExpired, term, currentPage, pageSize },
     });
     const count = await this.countAsync({ uid, hwid, brand, manufacturer, classification, active, inspectionExpired, term });
 
     return { items: response.data, count };
+
+  },
+
+  async getEquipments ({
+    uid,
+    hwid,
+    brand,
+    manufacturer,
+    classification,
+    active,
+    inspectionExpired,
+    term,
+    currentPage,
+    pageSize,
+  }: {
+    uid?: string;
+    hwid?: string;
+    brand?: string;
+    manufacturer?: string;
+    classification?: string;
+    active?: boolean;
+    inspectionExpired?: boolean;
+    term?: string;
+    currentPage?: number;
+    pageSize?: number;
+  }): Promise<IEquipment[]> {
+    const response = await api.get<IEquipment[]>('/equipaments', {
+      params: { uid, hwid, brand, manufacturer, classification, active, inspectionExpired, term, currentPage, pageSize },
+    });
+    return response.data;
 
   },
 

@@ -3,13 +3,13 @@ import { api } from "../api";
 import { IOcurrenceType } from "@/types/models/Ocurrences/IOcurrenceType";
 
 export const ocurrenceTypeService = {
-  async getTypes(): Promise<any> {
+  async getTypes (): Promise<any> {
     const response = await api.get<any>(`/occurrence-type?pageSize=100`);
 
     return response.data;
   },
 
-  async getTypesWithPagination(
+  async getTypesWithPagination (
     term: string,
     currentPage: number,
     pageSize: number
@@ -37,7 +37,7 @@ export const ocurrenceTypeService = {
     return Promise.resolve({ items: data, count: count });
   },
 
-  async insertType(type: IOcurrenceType): Promise<void> {
+  async insertType (type: IOcurrenceType): Promise<void> {
     try {
       await api.post(`/occurrence-type/add`, {
         typeName: type.typeName,
@@ -49,7 +49,7 @@ export const ocurrenceTypeService = {
     }
   },
 
-  async updateType(
+  async updateType (
     type: IOcurrenceType
   ): Promise<void> {
     try {
@@ -64,7 +64,7 @@ export const ocurrenceTypeService = {
     }
   },
 
-  async deleteType(typeId: number): Promise<void> {
+  async deleteType (typeId: number): Promise<void> {
     try {
       await api.delete(`/occurrence-type/delete?id=${typeId}`);
     } catch (e) {

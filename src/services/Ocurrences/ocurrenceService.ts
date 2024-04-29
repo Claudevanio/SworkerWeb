@@ -5,7 +5,7 @@ import { IOcurrenceRecognize } from "@/types/models/Ocurrences/IOcurrenceRecogni
 import { IFilterOcurrences } from "@/types/models/Ocurrences/IFilterOcurrences";
 
 export const ocurrenceService = {
-  async getCountOcurrence(dateStart: string, dateEnd: string) {
+  async getCountOcurrence (dateStart: string, dateEnd: string) {
     const responseCount = await api.get("/occurrences/count", {
       params: {
         start: dateStart,
@@ -18,7 +18,7 @@ export const ocurrenceService = {
     return count;
   },
 
-  async getCountOcurrenceRecognize(dateStart: string, dateEnd: string) {
+  async getCountOcurrenceRecognize (dateStart: string, dateEnd: string) {
     const responseCount = await api.get("/recognized-occurrences/count", {
       params: {
         acknowledgedStart: dateStart,
@@ -32,7 +32,7 @@ export const ocurrenceService = {
     return count;
   },
 
-  async getCountOcurrenceClose(dateStart: string, dateEnd: string) {
+  async getCountOcurrenceClose (dateStart: string, dateEnd: string) {
     const responseCount = await api.get("/recognized-occurrences/count", {
       params: {
         closedStart: dateStart,
@@ -46,7 +46,7 @@ export const ocurrenceService = {
     return count;
   },
 
-  async listOcurrenceAsync(
+  async listOcurrenceAsync (
     term: string | null,
     currentPage: number | null,
     pageSize: number | null,
@@ -93,7 +93,16 @@ export const ocurrenceService = {
     return Promise.resolve({ items: data, count: count });
   },
 
-  async listOcurrenceRecognitionAsync(
+  async getOcurrenceByCategoryAsync (categoryId: string): Promise<IOcurrence[]> {
+    const response = await api.get<IOcurrence[]>(`/occurrences`, {
+      params: {
+        cdescription: categoryId,
+      },
+    });
+    return response.data;
+  },
+
+  async listOcurrenceRecognitionAsync (
     term: string,
     currentPage: number,
     pageSize: number,
@@ -152,7 +161,7 @@ export const ocurrenceService = {
     return Promise.resolve({ items: data, count: count });
   },
 
-  async closeOcurrenceAsync(item: IOcurrenceRecognize): Promise<void> {
+  async closeOcurrenceAsync (item: IOcurrenceRecognize): Promise<void> {
     await api.post<void>(`/occurrences/${item.occurrenceId}/recognize`, item, {
       headers: {
         Accept: "*/*",
@@ -161,7 +170,7 @@ export const ocurrenceService = {
     });
   },
 
-  async updateOcurrenceAsync(item: IOcurrence): Promise<void> {
+  async updateOcurrenceAsync (item: IOcurrence): Promise<void> {
     try {
       await api.put<void>(
         `/occurrences/${item.id}`,
@@ -183,7 +192,12 @@ export const ocurrenceService = {
     }
   },
 
-  async recognizeOcurrenceAsync(item: IOcurrenceRecognize): Promise<void> {
+  getById: async (id: string): Promise<IOcurrence> => {
+    const response = await api.get<IOcurrence>(`/occurrences?id=${id}`);
+    return response.data;
+  },
+
+  async recognizeOcurrenceAsync (item: IOcurrenceRecognize): Promise<void> {
     try {
       await api.post<void>(
         `/occurrences/${item.occurrenceId}/recognize`,

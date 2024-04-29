@@ -40,7 +40,8 @@ export default function CustomizedGroupAccordion(
     summary,
     expanded,
     onChange, 
-    defaultExpanded=true
+    defaultExpanded=true,
+    filledSummary,
   }: {
     children: React.ReactNode,
     summary: string,
@@ -48,6 +49,7 @@ export default function CustomizedGroupAccordion(
     onChange?: (value: string | number ) => void
     special?: 'first' | 'last'
     defaultExpanded?: boolean  
+    filledSummary?: boolean
   }
 ) {
   const handleChange = (panel: string | number) => () => {
@@ -77,6 +79,11 @@ export default function CustomizedGroupAccordion(
             <KeyboardArrowDown
               className="text-base-7"
             />
+          }
+          sx={
+            filledSummary ? {
+              backgroundColor: COLORS['primary']['50'],
+            } : {}
           }
         >
             <p

@@ -113,6 +113,12 @@ export const YearMask = (v: string) => {
   return isValue;
 }
 
+export const NUMBER = (v: string) => {
+  let isValue = v;
+  isValue = isValue.replace(/\D/g, "");
+  return isValue;
+}
+
 export const CARDMask = (v: string) => {
   let isValue = v;
   isValue = isValue.replace(/\D/g, '');

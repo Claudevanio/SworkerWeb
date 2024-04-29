@@ -12,6 +12,7 @@ import { ServiceOperationsConfigProvider, useServiceOperations } from "@/context
 import ContextoTab from "./Tabs/ContextoTab";
 import { ModalTabs } from "./Tabs/handleModalTabs";
 import { TaskGroupTab } from './Tabs/TaskGroupTab';
+import { TaskTab } from './Tabs/TaskTab';
 
 export function ServicoOperacionalConfigComponent() {
   const [activeTab, setActiveTab] = useState<number | undefined>(0);
@@ -90,6 +91,16 @@ export function ServicoOperacionalConfigComponent() {
           }
         >
           <TaskGroupTab />
+        </div>
+        <div
+          className="flex flex-col gap-4"
+          style={
+            activeTab !== undefined && activeTab === 2
+              ? {}
+              : { display: "none" }
+          }
+        >
+          <TaskTab />
         </div>
       </div>
       <ModalTabs tab={activeTab} />

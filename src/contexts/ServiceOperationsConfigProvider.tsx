@@ -5,9 +5,11 @@ import { equipmentTypeService } from "@/services/Administrator/equipmentService"
 import { ocurrenceCharacterizationService } from "@/services/Ocurrences";
 import { configContextService } from "@/services/OperationalService/configContextService";
 import { configTaskGroupService } from '@/services/OperationalService/configTaskGroupService';
+import { configTaskService } from '@/services/OperationalService/configTasks';
 import { IEquipmentType, basePagination } from "@/types";
 import { IOcurrenceCharacterization } from "@/types/models/Ocurrences/IOcurrenceCharacterization";
 import { IContext } from "@/types/models/ServiceOrder/IContext";
+import { ITask } from '@/types/models/ServiceOrder/ITask';
 import { ITaskGroup } from '@/types/models/ServiceOrder/ITaskGroup';
 import { useQuery } from "@tanstack/react-query";
 import { createContext, useContext, useState } from "react";
@@ -42,7 +44,8 @@ interface ServiceOperationConfigType {
   contexts: baseCRUD<IContext>;
   characterizations: Characterization
   taskGroups: baseCRUD<ITaskGroup>;
-  equipmentTypes: EquipmentTypes
+  equipmentTypes: EquipmentTypes;
+  tasks: baseCRUD<ITask>
 }
 
 const crudInitialState = {
@@ -63,7 +66,8 @@ export const ServiceOperationConfigContext =
     modal: {} as any,
     characterizations: crudInitialState,
     taskGroups: crudInitialState,
-    equipmentTypes: crudInitialState
+    equipmentTypes: crudInitialState,
+    tasks: crudInitialState
   });
 
 export const ServiceOperationsConfigProvider = ({
@@ -184,6 +188,7 @@ const removeTaskGroup = async (taskGroup: ITaskGroup) => {
  function handleCloseModal() {
   setCurrentContext(undefined);
   setCurrentTaskGroup(undefined);
+  setCurrentTask(undefined);
   setReadOnly(false)
   closeModal();
 }
@@ -216,6 +221,63 @@ const removeTaskGroup = async (taskGroup: ITaskGroup) => {
   });
 
   // #endregion
+
+  // #region Tasks
+  const [taskQueryObject, setTaskQueryObject] =
+    useTriggerEffect<basicSearchQuery>({
+      page: 0,
+      pageSize: 6,
+      term: undefined,
+    });
+
+  const [currentTask, setCurrentTask] = useState<ITask | undefined>(
+    undefined
+  );
+
+  const selectTask = (task: ITask, readonly: boolean) => {
+    setCurrentTask(task);
+    setReadOnly(readonly);
+  };
+
+  const removeTask = async (task: ITask) => {
+    if (!task) return;
+    try {
+      await configTaskService.removeTask(task);
+      setTaskQueryObject({ ...taskQueryObject, page: 0 });
+      refetchTasks();
+    } catch (e) {
+      confirmDialog({
+        title: "Erro ao excluir",
+        subtitle: "Não foi possível excluir a tarefa",
+        message: e.message,
+      });
+    }
+  }
+
+  const updateTask = async (task: ITask) => {
+    await configTaskService.updateTask(task);
+    setTaskQueryObject({ ...taskQueryObject, page: 0 });
+    refetchTasks();
+  };
+
+  const {
+    isLoading: isLoadingTasks,
+    data: tasks,
+    refetch: refetchTasks,
+  } = useQuery<basePagination<ITask> | undefined>({
+    queryKey: ["searchTasks", taskQueryObject],
+    queryFn: () =>
+      configTaskService.listTaskAsync({
+        currentPage: taskQueryObject.page,
+        pageSize: taskQueryObject.pageSize,
+        term: taskQueryObject.term,
+      } ) as any,
+    refetchOnWindowFocus: false,
+  });
+
+  // #endregion
+
+
 
   return (
     <ServiceOperationConfigContext.Provider
@@ -252,6 +314,17 @@ const removeTaskGroup = async (taskGroup: ITaskGroup) => {
         },
         equipmentTypes: {
           data: equipmentTypes
+        },
+        tasks: {
+          data: tasks,
+          isLoading: isLoadingTasks,
+          update: updateTask,
+          remove: removeTask,
+          current: currentTask,
+          selectCurrent: selectTask,
+          setFilter: setTaskQueryObject,
+          filters: taskQueryObject,
+          readonly: readonly
         }
       }}
     >

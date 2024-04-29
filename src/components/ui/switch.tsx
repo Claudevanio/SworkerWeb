@@ -53,9 +53,15 @@ const IOSSwitch = styled((props: SwitchProps) => (
   },
 }));
 
-export function CustomSwitch({ label, ...props }: CheckboxProps & { label: string, control?: any }) {
+export function CustomSwitch({ label, ...props }: CheckboxProps & { label: string, control?: any, row?: boolean}) {
   return (
-    <div className="flex flex-col gap-2 items-start">
+    <div className="flex flex-col gap-2 items-start"
+      style={
+        props.row
+          ? { flexDirection: 'row-reverse', alignItems: 'center', width: 'fit-content' }
+          : { }
+      }
+    >
       <label
         className={props.className + ' text-primary font-semibold'}
       >{label}</label>

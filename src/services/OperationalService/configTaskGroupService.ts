@@ -25,6 +25,13 @@ export const configTaskGroupService = {
     return Promise.resolve({ items: data, count: count });
   },
 
+  async getAllTaskGroups (): Promise<ITaskGroup[]> {
+    const response = await api.get<ITaskGroup[]>('/task-groups', {
+      data: {}
+    });
+    return response.data;
+  },
+
   async updateTaskGroup (
     TaskGroup: ITaskGroup
   ): Promise<void> {

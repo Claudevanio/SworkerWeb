@@ -3,60 +3,104 @@ import { Autocomplete as MuiAutoComplete, TextField } from '@mui/material';
 import { Input } from './input';
 import { ControllerRenderProps } from 'react-hook-form';
 import { KeyboardArrowDown } from '@mui/icons-material';
+import { COLORS } from '@/utils';
 
 export function AutoComplete(
   {
-    optionLabel = 'title',
+    optionLabel = 'name',
     options,
-    field
+    inputValue,
+    inputOnChange,
+    onSelect,
+    label
   } : {
     options: any[], 
-    style: any,
-    field: Omit<ControllerRenderProps, "ref">;
+    style?: any, 
     optionLabel?: string;
+    inputValue?: string;
+    label?: string;
+    onSelect: (value: any) => void;
+    inputOnChange?: (value: string) => void;
   }
 ) {
-  return (
-    <MuiAutoComplete
-    {...field}
-    clearIcon={null}
-    noOptionsText={
-      'Sem opções'
-    } 
-    popupIcon={<KeyboardArrowDown
+  return ( <div
+    className='flex flex-col gap-2 w-full'
+  >
+      {label && <label 
+          className='text-primary font-semibold'
+      >
+          {label} 
+      </label>}
+      <MuiAutoComplete 
+      clearIcon={null}
+      noOptionsText={
+        'Sem opções'
+      } 
+      clearOnEscape={false}
+      clearOnBlur={false}
+      popupIcon={<KeyboardArrowDown
+        sx={{
+          color: '#BDBDBD'
+        }}
+      />}
+      options={options}
+      getOptionLabel={(option : any) => option[optionLabel] || option.name}
       sx={{
-        color: '#BDBDBD'
-      }}
-    />}
-    options={options}
-    getOptionLabel={(option : any) => option[optionLabel] || option.title}
-    sx={{
-      '& .MuiAutocomplete-inputRoot': {
-        '& .MuiAutocomplete-input': {
-          padding: '1rem',
-          fontWeight: 300,
-          color: '#00B5B8'
-        },
-      },  
-    }}
-    onChange={(_, value) => {
-      field.onChange(value)
-    }}
-    renderInput={(params) => <TextField {...params} 
-    variant="standard"
-    sx={{
-      '& .MuiOutlinedInput-root': {
-          '& fieldset': {
-              borderColor: '#BDBDBD',
-              borderRadius: '.5rem', 
-          }, 
-          'input': { 
-              fontWeight: 300,
-              color: '#00B5B8'
+        '& .MuiAutocomplete-inputRoot': {
+          '& .MuiAutocomplete-input': { 
+            fontWeight: 300,
+            maxHeight: '.55rem',
+            color:  COLORS['base']['7']
           },
-          p:0
-      },
-  }} />}
-    />
+        },  
+        width: '100%',
+      }}
+      inputValue={inputValue}
+      onInputChange={(_, value) => {
+        if (inputOnChange) {
+          inputOnChange(value);
+        }
+      }}
+      onChange={(_, value) => {
+        onSelect(value);
+      }}
+      renderInput={(params) => <TextField {...params} 
+      variant="outlined"
+      sx={{
+        '& .MuiOutlinedInput-root': {
+            '& fieldset': {
+              borderColor: "#00000070",
+              borderRadius: ".5rem", 
+            }, 
+            'input': { 
+                fontWeight: 300,
+            },
+            p:0
+        },
+        input: {
+          height: '2.5rem',
+          fontWeight: 300,
+          color: "#404E67",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          "&:disabled": {
+            color: "#020617 !important",
+            "-webkit-text-fill-color": "#020617 !important",
+          },
+        },
+        "*:focus": {
+          backgroundColor: "transparent !important",
+        },
+        "&:focus": {
+          backgroundColor: "transparent !important",
+        },
+        "*": {
+          borderRadius: ".5rem",
+          color: "#020617 !important",
+          "-webkit-text-fill-color": "#020617 !important",
+        },
+    }} />}
+      />
+  </div>
   );
 }

@@ -77,7 +77,11 @@ export const Modal = ({
               />
             </IconButton>
           </div>
-          {children}
+          <div
+            className='w-full relative'
+          >
+            {children}
+          </div>
           {
             onSubmit && (
               <div className="flex flex-col-reverse gap-2 w-full md:flex-row justify-between items-center mt-4">

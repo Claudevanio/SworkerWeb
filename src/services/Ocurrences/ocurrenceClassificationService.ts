@@ -4,7 +4,7 @@ import { basePagination } from "@/types";
 import { IFilterClassification } from "@/types/models/Ocurrences/IFilterClassification";
 
 export const ocurrrenceClassificationService = {
-  async getClassifications(): Promise<IOcurrenceClassification[]> {
+  async getClassifications (): Promise<IOcurrenceClassification[]> {
     const response = await api.get<IOcurrenceClassification[]>(
       `/occurrence-classifications`
     );
@@ -12,7 +12,15 @@ export const ocurrrenceClassificationService = {
     return response.data;
   },
 
-  async getClassificationsWithPagination(
+  async getClassificationsByType (typeId: string | number): Promise<IOcurrenceClassification[]> {
+    const response = await api.get<IOcurrenceClassification[]>(
+      `/occurrence-classifications/${typeId}`
+    );
+
+    return response.data;
+  },
+
+  async getClassificationsWithPagination (
     term: string,
     currentPage: number,
     pageSize: number,
@@ -50,7 +58,7 @@ export const ocurrrenceClassificationService = {
     return Promise.resolve({ items: data, count: count });
   },
 
-  async insertClassification(
+  async insertClassification (
     classification: IOcurrenceClassification
   ): Promise<void> {
     try {
@@ -64,7 +72,7 @@ export const ocurrrenceClassificationService = {
     }
   },
 
-  async updateClassification(
+  async updateClassification (
     classification: IOcurrenceClassification
   ): Promise<void> {
     try {
@@ -79,7 +87,7 @@ export const ocurrrenceClassificationService = {
     }
   },
 
-  async deleteClassification(classificationId: number): Promise<void> {
+  async deleteClassification (classificationId: number): Promise<void> {
     try {
       await api.delete(`/occurrence-classifications/${classificationId}`);
     } catch (e) {

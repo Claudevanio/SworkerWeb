@@ -4,7 +4,7 @@ import { IFilterCharacterization } from "@/types/models/Ocurrences/IFilterCharac
 import { basePagination } from "@/types";
 
 export const ocurrenceCharacterizationService = {
-  async getCharacterizations(): Promise<IOcurrenceCharacterization[]> {
+  async getCharacterizations (): Promise<IOcurrenceCharacterization[]> {
     const response = await api.get<IOcurrenceCharacterization[]>(
       `/occurrence-characterizations`
     );
@@ -12,7 +12,17 @@ export const ocurrenceCharacterizationService = {
     return response.data;
   },
 
-  async getCharacterizationsWithPagination(
+  async getCharacterizationsByTypeAsync (
+    typeId: string | number
+  ): Promise<IOcurrenceCharacterization[]> {
+    const response = await api.get<IOcurrenceCharacterization[]>(
+      `/occurrence-characterizations/${typeId}`
+    );
+
+    return response.data;
+  },
+
+  async getCharacterizationsWithPagination (
     term: string,
     currentPage: number,
     pageSize: number,
@@ -44,7 +54,7 @@ export const ocurrenceCharacterizationService = {
     return Promise.resolve({ items: data, count: count });
   },
 
-  async insertCharacterization(
+  async insertCharacterization (
     characterization: IOcurrenceCharacterization
   ): Promise<void> {
     try {
@@ -57,7 +67,7 @@ export const ocurrenceCharacterizationService = {
     }
   },
 
-  async updateCharacterization(
+  async updateCharacterization (
     characterization: IOcurrenceCharacterization
   ): Promise<void> {
     try {
@@ -71,7 +81,7 @@ export const ocurrenceCharacterizationService = {
     }
   },
 
-  async deleteCharacterization(characterizationId: number): Promise<void> {
+  async deleteCharacterization (characterizationId: number): Promise<void> {
     try {
       await api.delete(`/occurrence-characterizations/${characterizationId}`);
     } catch (e) {

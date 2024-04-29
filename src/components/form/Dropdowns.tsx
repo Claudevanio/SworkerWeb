@@ -49,6 +49,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
                 sx: {
                   "& .MuiList-root": {
                     maxHeight: "200px",
+                    maxWidth: "100%",
                   },
                 },
               }}
@@ -62,6 +63,8 @@ export const Dropdown: React.FC<DropdownProps> = ({
                   padding: "0.5rem",
                   fontWeight: 300,
                   color: "#404E67",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
                   "&:disabled": {
                     color: "#020617 !important",
                     "-webkit-text-fill-color": "#020617 !important",
@@ -80,7 +83,12 @@ export const Dropdown: React.FC<DropdownProps> = ({
                 },
               }}
             >
-              {options.map((option) => (
+              {
+              options.length === 0 ? <MenuItem value="" disabled>
+                <em
+                  className='text-base-7'
+                >Sem opções disponíveis</em>
+              </MenuItem> : options.map((option) => (
                 <MenuItem key={option.value} value={option.value}>
                   <div className="flex items-center">
                     {option.icon && (
@@ -92,8 +100,11 @@ export const Dropdown: React.FC<DropdownProps> = ({
                       />
                     )}
                     <span
-                      className="ml-2"
-                      style={{ color: disabled ? "#020617" : "#404E67" }}
+                      className=""
+                      style={{ color: disabled ? "#020617" : "#404E67",
+                        overflow: "hidden", 
+                        textOverflow: "ellipsis", 
+                       }}
                     >
                       {option.label}
                     </span>
