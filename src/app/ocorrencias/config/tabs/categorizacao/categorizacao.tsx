@@ -91,12 +91,13 @@ export function Categorizacao({
                 variant="secondary"
                 value={selected.includes(characterization.id)}
                 onChange={() => {
-                  setSelected((prev) => {
-                    if (prev.includes(characterization.id)) {
-                      return prev.filter((v) => v !== characterization.id);
-                    }
-                    return [...prev, characterization.id];
-                  });
+                  if (selected.includes(characterization.id)) {
+                    setSelected((prev) =>
+                      prev.filter((item) => item !== characterization.id)
+                    );
+                  } else {
+                    setSelected((prev) => [...prev, characterization.id]);
+                  }
                 }}
               />
             </div>
@@ -178,8 +179,7 @@ export function Categorizacao({
           <ExportButton
             disabled={selected.length < 1}
             fileName="categorias.csv"
-            csvData={exportCharacterizations}
-            onClick={() => {}}
+            csvData={exportCharacterizations} 
             hidden={isMobile}
           />
         )}

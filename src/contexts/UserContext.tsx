@@ -36,17 +36,17 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
             onConfirmText: "Fazer login",
             onCloseText: " ",
             onConfirm: () => {
-              process.env.NODE_ENV === "development" ?
-              Authservice.login({
-                userName: "ivoxps@gmail.com",
-                password: "#3dP3R@5wk0R",
-              }).then((response) => {
-                if (typeof response.data === "string") {
-                  Cookies.set("token", response.data);
-                  router.refresh();
-                  return;
-                }
-              }) :
+              // process.env.NODE_ENV === "development" ?
+              // Authservice.login({
+              //   userName: "ivoxps@gmail.com",
+              //   password: "#3dP3R@5wk0R",
+              // }).then((response) => {
+              //   if (typeof response.data === "string") {
+              //     Cookies.set("token", response.data);
+              //     router.refresh();
+              //     return;
+              //   }
+              // }) :
               router.push('/login');
             },
           });

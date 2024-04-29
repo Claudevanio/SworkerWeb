@@ -93,12 +93,13 @@ export function Classificacao({
                 variant="secondary"
                 value={selected.includes(classification.id)}
                 onChange={() => {
-                  setSelected((prev) => {
-                    if (prev.includes(classification.id)) {
-                      return prev.filter((v) => v !== classification.id);
-                    }
-                    return [...prev, classification.id];
-                  });
+                  if (selected.includes(classification.id)) {
+                    setSelected((prev) =>
+                      prev.filter((item) => item !== classification.id)
+                    );
+                  } else {
+                    setSelected((prev) => [...prev, classification.id]);
+                  }
                 }}
               />
             </div>
@@ -185,8 +186,7 @@ export function Classificacao({
           <ExportButton
             disabled={selected.length < 1}
             fileName="classificações.csv"
-            csvData={exportClassifications}
-            onClick={() => {}}
+            csvData={exportClassifications} 
             hidden={isMobile}
           />
         )}

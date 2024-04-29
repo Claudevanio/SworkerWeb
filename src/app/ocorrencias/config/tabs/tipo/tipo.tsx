@@ -83,12 +83,14 @@ export function Tipo({
                 variant="secondary"
                 value={selected.includes(type.id)}
                 onChange={() => {
-                  setSelected((prev) => {
-                    if (prev.includes(type.id)) {
-                      return prev.filter((v) => v !== type.id);
-                    }
-                    return [...prev, type.id];
-                  });
+                  if (selected.includes(type.id)) {
+                    setSelected((prev) =>
+                      prev.filter((item) => item !== type.id)
+                    );
+                  }
+                  if (!selected.includes(type.id)) {
+                    setSelected((prev) => [...prev, type.id]);
+                  }
                 }}
               />
             </div>
@@ -156,8 +158,7 @@ export function Tipo({
           <ExportButton
             disabled={selected.length < 1}
             fileName="tipos.csv"
-            csvData={exportTypes}
-            onClick={() => {}}
+            csvData={exportTypes} 
             hidden={isMobile}
           />
         )}

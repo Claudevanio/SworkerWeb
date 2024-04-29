@@ -88,12 +88,12 @@ export function Encerradas({
                 variant="secondary"
                 value={selected.includes(ocurrence.id)}
                 onChange={() => {
-                  setSelected((prev) => {
-                    if (prev.includes(ocurrence.id)) {
-                      return prev.filter((v) => v !== ocurrence.id);
-                    }
-                    return [...prev, ocurrence.id];
-                  });
+                  if (selected.includes(ocurrence.id)) {
+                    setSelected((prev) => prev.filter((item) => item !== ocurrence.id));
+                  }
+                  if (!selected.includes(ocurrence.id)) {
+                    setSelected((prev) => [...prev, ocurrence.id]);
+                  }
                 }}
               />
             </div>
@@ -150,6 +150,7 @@ export function Encerradas({
   const rows = ocurrences?.items ?? [];
 
   const handleChangeExportOcurrence = () => {
+    debugger;
     const arrayOcurrence = ocurrences?.items?.filter((item) => {
       return selected.includes(item.id);
     });
@@ -219,8 +220,7 @@ export function Encerradas({
           <ExportButton
             disabled={selected.length < 1}
             fileName="ocorrencias-encerradas.csv"
-            csvData={exportOcurrences}
-            onClick={() => {}}
+            csvData={exportOcurrences} 
             hidden={isMobile}
           />
         )}

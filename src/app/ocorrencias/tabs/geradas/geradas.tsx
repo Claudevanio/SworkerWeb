@@ -47,7 +47,7 @@ export function Geradas({
     {} as IOcurrence
   );
 
-  const [selected, setSelected] = useState<number[]>([]);
+  const [selected, setSelected] = useState<IOcurrence[]>([]);
   const [filterOcurrences, setFilterOcurrences] = useState<IFilterOcurrences>(
     {} as IFilterOcurrences
   );
@@ -90,7 +90,7 @@ export function Geradas({
             <div
               className="w-0 group-hover:!w-12 overflow-hidden transition-all items-center gap-1"
               style={
-                selected.includes(ocurrence.id)
+                selected.find((v) => v.id === ocurrence.id)
                   ? {
                       width: "2rem",
                     }
@@ -98,15 +98,16 @@ export function Geradas({
               }
             >
               <CheckBox
-                variant="secondary"
-                value={selected.includes(ocurrence.id)}
+                variant="secondary" 
+                value={selected.find((v) => v.id === ocurrence.id)}
                 onChange={() => {
-                  setSelected((prev) => {
-                    if (prev.includes(ocurrence.id)) {
-                      return prev.filter((v) => v !== ocurrence.id);
-                    }
-                    return [...prev, ocurrence.id];
-                  });
+                  if (selected.find((v) => v.id === ocurrence.id)) {
+                    setSelected((prev) =>
+                      prev.filter((v) => v.id !== ocurrence.id)
+                    );
+                  } else {
+                    setSelected((prev) => [...prev, ocurrence]);
+                  }
                 }}
               />
             </div>
@@ -156,10 +157,19 @@ export function Geradas({
 
   const rows = ocurrences?.items ?? [];
 
-  const handleChangeExportOcurrence = () => {
-    const arrayOcurrence = ocurrences?.items?.filter((item) => {
-      return selected.includes(item.id);
-    });
+  const handleChangeExportOcurrence = () => { 
+    
+     const arrayOcurrence = selected.reduce((acc, current) => {
+      const x = acc.find((item) => item.id === current.id);
+      if (!x) {
+        return acc.concat([current]);
+      } else {
+        return acc;
+      }
+    }, []);
+
+
+
 
     const csvData = [
       [
