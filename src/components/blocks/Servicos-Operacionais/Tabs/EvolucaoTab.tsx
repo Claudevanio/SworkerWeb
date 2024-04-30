@@ -83,10 +83,10 @@ export function EvolucaoTab({
  
   return (
     <div
-      className='flex flex-col gap-4 w-full'
+      className='flex flex-col gap-4 md:gap-8 w-full'
     > 
     <div
-      className='flex sm:items-center justify-between w-full flex-col gap-4 sm:flex-row '
+      className='flex sm:items-center justify-between  w-full flex-col gap-4 sm:flex-row '
     >
       <RoundedTab
         tabs={tabs} 

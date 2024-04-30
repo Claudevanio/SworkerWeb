@@ -16,7 +16,11 @@ export function HomeComponent(){
   const {
     modal,
     permissions,
-    companies
+    companies,
+    companyUnities,
+    equipments,
+    professionals,
+    sectors,
   } = useAdministrator()
 
   const tabs = [
@@ -34,10 +38,13 @@ export function HomeComponent(){
   ] 
 
   const handleLabel = (index: number) => {
-    if(activeTab === 0) return 'Adicionar Permissão'
+    if(activeTab === 0) {
+      'Adicionar Permissão'
+    } 
     if(!subTab){
       return index===0 ? 'Adicionar Permissão' : 'Adicionar Empresa' 
     } 
+
     return (subTab === 0 ? 'Adicionar Empresa' :
     subTab === 1 ? 'Adicionar Unidade' : 
     subTab === 2 ? 'Adicionar Setor' :

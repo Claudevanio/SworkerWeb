@@ -145,7 +145,7 @@ export const Kanban = (
                   ]
               },
           };
-      }, []); // A dependência é um array vazio, garantindo que a função só seja executada uma vez
+      }, []);  
       
       const [stages, setStages] = useState(initialStages);
       
@@ -265,18 +265,20 @@ export const Kanban = (
           </div>
               <Box sx={{
                   display: "flex",
-                  gap: "2rem",
+                  gap: "1.25rem",
                   minWidth: "70vw",
                   height: '100%',
                   overflowX: 'auto',
                   overflowY: 'hidden',
                   marginBottom: '4rem',
                   paddingBottom: '2rem',
-                  '&::-webkit-scrollbar': {
-                      display: 'none',
-                  },
-                  '-ms-overflow-style': 'none',
-                  scrollbarWidth: 'none',
+                  '@media(max-width: 1024px)': {
+                    '&::-webkit-scrollbar': {
+                        display: 'none',
+                    },
+                    '-ms-overflow-style': 'none',
+                    scrollbarWidth: 'none',
+                  }
               }} 
               className='me-[-38px] pr-4'
               id='kanban-operations' 
@@ -289,7 +291,7 @@ export const Kanban = (
                                   {...provided.droppableProps}
                                   ref={provided.innerRef}
                                   sx={{  
-                                      minWidth: "21.5rem",
+                                      minWidth: "18rem",
                                       height: '100%',
                                       minHeight: '38rem',
                                       borderRadius: "4px",
@@ -319,11 +321,11 @@ export const Kanban = (
                                           gap: ".5rem",
                                           alignItems: "center",
                                           width: '100%',
-                                          padding: '0 0rem 2rem',
+                                          padding: '0 0rem 1rem',
                                           maxHeight: '32rem',
                                           overflowY: 'auto', 
                                       }} 
-                                      className="p-8 "
+                                      className="p-6 "
                                       onWheel={
                                         (e) => {
                                           e.stopPropagation();
@@ -339,7 +341,7 @@ export const Kanban = (
                                                   {...provided.draggableProps}
                                                   {...provided.dragHandleProps}
                                                   sx={{ cursor: 'grab', width: '100%' }} 
-                                                  className='w-full bg-primary-100 border-primary-300 border-2 rounded-lg px-6 py-[22px] flex flex-col gap-4'
+                                                  className='w-full bg-primary-100 border-primary-300 border-2 rounded-lg px-4 py-[22px] flex flex-col gap-4'
                                                   onClick={() => {
                                                     router.push(`/servicos-operacionais/${serviceOrder.id}`)
                                                   }}

@@ -62,11 +62,11 @@ export default function Ocorrencias() {
       icon: <ReceiptLongOutlined sx={{ color: COLORS.primary["500"] }} />,
     },
     {
-      label: "Encerradas",
+      label: "Reconhecidas",
       icon: <ReceiptLongOutlined sx={{ color: COLORS.primary["500"] }} />,
     },
     {
-      label: "Reconhecidas",
+      label: "Encerradas",
       icon: <ReceiptLongOutlined sx={{ color: COLORS.primary["500"] }} />,
     },
   ];
