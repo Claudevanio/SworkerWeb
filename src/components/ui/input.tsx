@@ -194,6 +194,11 @@ export const Input: React.FC<IInput> = ({
                     </label>}
                     <TextField
                         {...field} 
+                        value={
+                            mask
+                                ? mask(field.value)
+                                : field.value
+                        }
                         ref={inputRef}
                         onFocus={() => setIsFocused(true)}
                         onBlur={() => setIsFocused(false)}

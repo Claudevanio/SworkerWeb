@@ -7,6 +7,7 @@ export interface IUser {
   password?: string;
   userId: string;
   companyId?: string;
+  professionalId?: string;
   unityId?: string;
   companyName?: string;
 }

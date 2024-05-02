@@ -72,11 +72,13 @@ const Sidebar: React.FC<{}> = () => {
 
   useEffect(() => {
     setIsCollapsed(true);
+    setIsOpen(false);
   }, [currentPage]);
 
   if(currentPage === '/login' || currentPage === "/esqueci-senha") return <></>
 
-  const nomePagina = currentPage.includes('ocorrencias') ? 'Ocorrências' : currentPage.includes('servicos-o') ? 'Serviços Operacionais' : 'Administração';
+  const nomePagina = currentPage.includes('ocorrencias') ? 'Ocorrências' : currentPage.includes('servicos-o') ? 'Serviços Operacionais' :
+    currentPage.includes('perfil') ? 'Perfil' : 'Administração';
 
   return (
     <Box
@@ -334,7 +336,7 @@ const Sidebar: React.FC<{}> = () => {
         <div className="flex flex-col gap-2 pb-24 md:pb-0">
           <h2 className="text-primary-50 text-xs font-bold">PERFIL</h2>
           {
-            <Link href={handleLinkPath("/")}>
+            <Link href={handleLinkPath("/perfil")}>
               <MenuButton
                 variant={currentPage === "/perfil" ? "primary" : "secondary"}
                 className={`w-full gap-2 flex justify-start`}

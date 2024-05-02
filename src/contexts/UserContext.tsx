@@ -11,11 +11,13 @@ import { usePathname, useRouter } from "next/navigation";
 interface UserContextType {
   user: IUser | null;
   setUser: (user: IUser | null) => void;
+  updateUser: (user: IUser) => void;
 }
 
 export const UserContext = createContext<UserContextType>({
   user: null,
   setUser: () => {},
+  updateUser: () => {},
 });
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
@@ -58,9 +60,20 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
   const token = Cookies.get("token"); 
 
+  const updateUser = (user: IUser) => {
+    setUser(user);
+    Cookies.set("user", JSON.stringify(user));
+  }
+
   React.useEffect(() => {
     if (!!user) return;
+    const localUser = Cookies.get("user");
 
+    if (localUser) {
+      const user = JSON.parse(localUser) as IUser;
+      setUser(user);
+      return;
+    }
     // const token = Cookies.get('token');
     if (token) {
       const user = jwtDecode(token) as IUser;
@@ -69,7 +82,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   }, [user, token]);
 
   return (
-    <UserContext.Provider value={{ user, setUser }}>
+    <UserContext.Provider value={{ user, setUser, updateUser }}>
       {children}
     </UserContext.Provider>
   );
