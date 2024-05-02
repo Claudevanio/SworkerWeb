@@ -25,6 +25,19 @@ export const configTaskService = {
     return Promise.resolve({ items: data, count: count });
   },
 
+
+  async searchTaskAsync (name: string): Promise<ITask[]> {
+    const response = await api.get<ITask[]>(`/tasks`, {
+      data: {},
+      params: {
+        name: name,
+        pageSize: 6
+      },
+    });
+
+    return response.data;
+  },
+
   async updateTask (
     Task: ITask
   ): Promise<void> {

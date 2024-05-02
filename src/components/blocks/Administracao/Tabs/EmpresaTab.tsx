@@ -1,18 +1,12 @@
-import { BaseTable } from '@/components/table/BaseTable';
-import { SearchInput } from '@/components/ui';
-import Pagination from '@/components/ui/pagination';
-import { useAdministrator } from '@/contexts/AdministrationProvider';
-import { useDialog } from '@/hooks/use-dialog';
-import { ICompany } from '@/types';
-import { masks } from '@/utils';
-import { DeleteOutline, EditOutlined } from '@mui/icons-material';
-import { useState } from 'react';
+ 
+import { useAdministrator } from '@/contexts/AdministrationProvider'; 
 import { RoundedTab } from '../../tabs';
 import { CompanyTab } from './EmpresaTabsFolder/Company';
 import { CompanyUnityTab } from './EmpresaTabsFolder/CompanyUnity';
 import { SectorTab } from './EmpresaTabsFolder/SectorTab';
 import { ProfessionalTab } from './EmpresaTabsFolder/Professionals';
 import { EquipmentsTab } from './EmpresaTabsFolder/Equipments';
+import { useEffect } from 'react';
 
 export function EmpresasTab({
   activeTab,
@@ -42,17 +36,51 @@ export function EmpresasTab({
     tabIndex: 4,
   }] 
 
+  const {
+    companies,
+    companyUnities,
+    equipments,
+    professionals,
+    sectors,
+  } = useAdministrator() 
+
+  useEffect(
+    () => {
+      if(activeTab === 0){
+        companies.reset()
+        return
+      }
+      if(activeTab === 1){
+        companyUnities.reset()
+        return
+      }
+      if(activeTab === 2){
+        sectors.reset()
+        return
+      }
+      if(activeTab === 3){
+        professionals.reset()
+        return
+      }
+      if(activeTab === 4){
+        equipments.reset()
+        return
+      }
+    },
+    [activeTab]
+  )
+
   const currentTab = () => {
     switch (activeTab) {
-      case 0:
+      case 0: 
         return <CompanyTab/>
-      case 1:
+      case 1: 
         return <CompanyUnityTab/>
-      case 2:
+      case 2: 
         return <SectorTab/>
-      case 3:
+      case 3: 
         return <ProfessionalTab/>
-      case 4:
+      case 4: 
         return <EquipmentsTab/>
     }
   }

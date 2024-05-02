@@ -44,6 +44,7 @@ interface CustomizedTableProps {
   hideMobileView?: boolean;
   isRecognize?: boolean;
   onChangeOrder?: (order: any) => void;
+  key?: string;
 }
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -98,7 +99,8 @@ export function OrdenableTable({
   hideMobileView,
   showAllActions = false,
   warning,
-  onChangeOrder 
+  onChangeOrder,
+  key = 'number', 
 }: CustomizedTableProps) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
@@ -130,10 +132,12 @@ export function OrdenableTable({
     const updatedRows = newRows.map((row, index) => {
       return {
         ...row,
-        number: index + 1,
+        [key]: index + 1,
       };
     });
     
+    console.log(updatedRows);
+
     onChangeOrder && onChangeOrder(updatedRows);
   }
 

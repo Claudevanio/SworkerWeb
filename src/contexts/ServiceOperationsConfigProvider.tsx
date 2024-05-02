@@ -6,9 +6,11 @@ import { ocurrenceCharacterizationService } from "@/services/Ocurrences";
 import { configContextService } from "@/services/OperationalService/configContextService";
 import { configTaskGroupService } from '@/services/OperationalService/configTaskGroupService';
 import { configTaskService } from '@/services/OperationalService/configTasks';
+import { TagsService } from '@/services/OperationalService/TagsService';
 import { IEquipmentType, basePagination } from "@/types";
 import { IOcurrenceCharacterization } from "@/types/models/Ocurrences/IOcurrenceCharacterization";
 import { IContext } from "@/types/models/ServiceOrder/IContext";
+import { ITags, ITagsTypes } from '@/types/models/ServiceOrder/ITags';
 import { ITask } from '@/types/models/ServiceOrder/ITask';
 import { ITaskGroup } from '@/types/models/ServiceOrder/ITaskGroup';
 import { useQuery } from "@tanstack/react-query";
@@ -25,6 +27,7 @@ interface baseCRUD<T, Y = basicSearchQuery> {
   readonly?: boolean
   create?: (data: T) => void;
   remove?: (data: T) => void;
+  refetch?: () => void;
 }
 
 interface Characterization {
@@ -46,6 +49,9 @@ interface ServiceOperationConfigType {
   taskGroups: baseCRUD<ITaskGroup>;
   equipmentTypes: EquipmentTypes;
   tasks: baseCRUD<ITask>
+  tags: baseCRUD<ITags> & {
+    types: ITagsTypes[] | undefined;
+  }
 }
 
 const crudInitialState = {
@@ -67,7 +73,11 @@ export const ServiceOperationConfigContext =
     characterizations: crudInitialState,
     taskGroups: crudInitialState,
     equipmentTypes: crudInitialState,
-    tasks: crudInitialState
+    tasks: crudInitialState,
+    tags: {
+      ...crudInitialState,
+      types: undefined,
+    },
   });
 
 export const ServiceOperationsConfigProvider = ({
@@ -184,17 +194,7 @@ const removeTaskGroup = async (taskGroup: ITaskGroup) => {
 }
 
  // #endregion
-
- function handleCloseModal() {
-  setCurrentContext(undefined);
-  setCurrentTaskGroup(undefined);
-  setCurrentTask(undefined);
-  setReadOnly(false)
-  closeModal();
-}
-
-  // #endregion
-
+ 
   // #region Characterizations
 
   const { data: characterizations } = useQuery<
@@ -277,7 +277,84 @@ const removeTaskGroup = async (taskGroup: ITaskGroup) => {
 
   // #endregion
 
+  // #region Tags
 
+  const [tagQueryObject, setTagQueryObject] = useState<basicSearchQuery>({
+    page: 0,
+    pageSize: 10,
+    term: undefined,
+  });
+
+  const [currentTag, setCurrentTag] = useState<ITags | undefined>(undefined);
+
+  const selectTag = (tag: ITags, readonly = false) => {
+    setCurrentTag(tag);
+    setReadOnly(readonly);
+  };
+
+  const {
+    isLoading: isLoadingTags,
+    data: tags,
+    refetch: refetchTags,
+  } = useQuery<basePagination<ITags> | undefined>({
+    queryKey: ["searchTags", tagQueryObject],
+    queryFn: () =>
+      TagsService.listTagsAsync(
+        {
+          currentPage: tagQueryObject.page,
+          pageSize: tagQueryObject.pageSize,
+          term: tagQueryObject.term,
+          ...tagQueryObject,   
+        }
+      ) as any,
+    refetchOnWindowFocus: false,
+  });
+
+  const updateTag = async (tag: ITags) => {
+    await TagsService.updateTags(tag);
+    setTagQueryObject({ ...tagQueryObject, page: 0 });
+    refetchTags();
+  };
+
+  const createTag = async (tag: ITags) => {
+    await TagsService.createTags(tag);
+    setTagQueryObject({ ...tagQueryObject, page: 0 });
+    refetchTags();
+  };
+
+  const removeTag = async (tag: ITags) => {
+    if (!tag) return;
+    try {
+      await TagsService.removeTags(tag);
+      setTagQueryObject({ ...tagQueryObject, page: 0 });
+      refetchTags();
+    } catch (e) {
+      confirmDialog({
+        title: "Erro ao excluir",
+        subtitle: "Não foi possível excluir a tag",
+        message: e.message,
+      });
+    }
+  };
+
+  const types = useQuery<ITagsTypes[] | undefined>({
+    queryKey: ["searchTagsTypes"],
+    queryFn: () => TagsService.getTypes() as any,
+    refetchOnWindowFocus: false,
+  });
+
+
+  // #endregion
+
+  function handleCloseModal() {
+    setCurrentContext(undefined);
+    setCurrentTaskGroup(undefined);
+    setCurrentTask(undefined);
+    setCurrentTag(undefined);
+    setReadOnly(false)
+    closeModal();
+  }
+   
 
   return (
     <ServiceOperationConfigContext.Provider
@@ -295,7 +372,8 @@ const removeTaskGroup = async (taskGroup: ITaskGroup) => {
           selectCurrent: selectContext,
           setFilter: setContextQueryObject,
           filters: contextQueryObject,
-          readonly: readonly,
+          readonly: readonly, 
+          refetch: refetchContexts,
         },
         characterizations: {
           data: characterizations,
@@ -310,7 +388,8 @@ const removeTaskGroup = async (taskGroup: ITaskGroup) => {
           filters: taskGroupQueryObject,
           readonly: readonly,
           create: createTaskGroup,
-          remove: removeTaskGroup
+          remove: removeTaskGroup,
+          refetch: refetchTaskGroups,
         },
         equipmentTypes: {
           data: equipmentTypes
@@ -324,8 +403,23 @@ const removeTaskGroup = async (taskGroup: ITaskGroup) => {
           selectCurrent: selectTask,
           setFilter: setTaskQueryObject,
           filters: taskQueryObject,
-          readonly: readonly
-        }
+          readonly: readonly,
+          refetch: refetchTasks,
+        },
+        tags: {
+          data: tags,
+          isLoading: isLoadingTags,
+          update: updateTag,
+          create: createTag,
+          remove: removeTag,
+          current: currentTag,
+          selectCurrent: selectTag,
+          setFilter: setTagQueryObject,
+          filters: tagQueryObject,
+          types: types.data,
+          readonly: readonly,
+          refetch: refetchTags,
+        },
       }}
     >
       {children}

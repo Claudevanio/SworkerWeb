@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SimpleTab } from "../tabs/simple-tab";
 import { PageTitle } from "../title";
 import {
@@ -13,6 +13,7 @@ import ContextoTab from "./Tabs/ContextoTab";
 import { ModalTabs } from "./Tabs/handleModalTabs";
 import { TaskGroupTab } from './Tabs/TaskGroupTab';
 import { TaskTab } from './Tabs/TaskTab';
+import { TagsTab } from './Tabs/TagsTab';
 
 export function ServicoOperacionalConfigComponent() {
   const [activeTab, setActiveTab] = useState<number | undefined>(0);
@@ -51,7 +52,31 @@ export function ServicoOperacionalConfigComponent() {
     }
   };
 
-  const {modal} = useServiceOperations()
+  const {
+    modal,
+    ...data
+  } = useServiceOperations()
+
+  useEffect(() => { 
+    if (activeTab !== undefined) {
+      switch (activeTab) {
+        case 0:
+          data.contexts.refetch();
+          break;
+        case 1:
+          data.taskGroups.refetch();
+          break;
+        case 2:
+          data.tasks.refetch();
+          break;
+        case 3:
+          data.tags.refetch();
+          break;
+        default:
+          break;
+      }
+    }
+  }, [activeTab]);
 
   return (
     <>
@@ -101,6 +126,17 @@ export function ServicoOperacionalConfigComponent() {
           }
         >
           <TaskTab />
+        </div>
+        <div
+          className="flex flex-col gap-4"
+          style={
+            activeTab !== undefined && activeTab === 3
+              ? {}
+              : { display: "none" }
+          }
+        >
+          <TagsTab
+          />
         </div>
       </div>
       <ModalTabs tab={activeTab} />

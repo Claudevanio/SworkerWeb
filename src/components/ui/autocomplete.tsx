@@ -79,6 +79,9 @@ export function AutoComplete(
         },
         input: {
           height: '2.5rem',
+          minHeight: '1.25rem',
+          padding: '1rem',
+          width: '100%',
           fontWeight: 300,
           color: "#404E67",
           overflow: "hidden",
@@ -99,6 +102,7 @@ export function AutoComplete(
           color: "#020617 !important",
           "-webkit-text-fill-color": "#020617 !important",
         },
+        width: '100%',
     }} />}
       />
   </div>

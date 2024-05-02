@@ -2,7 +2,9 @@ import { useServiceOperations } from "@/contexts/ServiceOperationsConfigProvider
 import { ServicosOperacionaisConfigModals } from "../Overlay";
 
 export function ModalTabs({ tab }: { tab: number }) {
-  const { modal, contexts, taskGroups, tasks } = useServiceOperations();
+  const { modal, contexts, taskGroups, tasks,
+    tags
+   } = useServiceOperations();
 
   if (!modal.isOpen) return null;
  
@@ -31,6 +33,15 @@ export function ModalTabs({ tab }: { tab: number }) {
       onClose={modal.close}
       current={tasks.current}
       readonly={tasks.readonly}
+    />
+  )
+  if(tab === 3)
+    return (
+    <ServicosOperacionaisConfigModals.ModalTags
+      isOpen={modal.isOpen}
+      onClose={modal.close}
+      current={tags.current}
+      readonly={tags.readonly}
     />
   )
 }

@@ -19,6 +19,7 @@ interface baseCRUD<T, Y = basicSearchQuery> {
   selectCurrent?: (data: T, readonly?: boolean) => void;
   filters?: Y;
   readonly?: boolean;
+  reset?: () => void;
 }
 
 const crudInitialState = { data: undefined, isLoading: false, create: () => {}, update: () => {}, remove: () => {}, setFilter: () => {} };
@@ -114,6 +115,11 @@ export const AdministratorProvider = ({ children }: { children: React.ReactNode 
     refetchCompanies();
   }
 
+  const resetCompanies = () => {
+    setCompanyQueryObject({ ...companyQueryObject, page: 0 });
+    refetchCompanies();
+  }
+
   //#endregion
 
   //#region Permissions
@@ -164,6 +170,11 @@ export const AdministratorProvider = ({ children }: { children: React.ReactNode 
 
     const selectCurrentPermission = (permission: IRole) => { 
       setCurrentPermission(permission);
+    }
+
+    const resetPermissions = () => {
+      setPermissionsQueryObject({ ...permissionsQueryObject, page: 0 });
+      refetchPermissions();
     }
     
   //#endregion
@@ -216,6 +227,11 @@ export const AdministratorProvider = ({ children }: { children: React.ReactNode 
       refetchCompanyUnits();
     }
 
+    const resetCompanyUnities = () => {
+      setCompanyUnityQueryObject({ ...companyUnityQueryObject, page: 0 });
+      refetchCompanyUnits();
+    }
+
   //#endregion
 
   //#region Professionals
@@ -234,7 +250,7 @@ export const AdministratorProvider = ({ children }: { children: React.ReactNode 
     term: undefined,
   });
 
-  const { isLoading: isLoadingProfessionals, data: professionals } = useQuery<basePagination<IProfessional> | undefined>({
+  const { isLoading: isLoadingProfessionals, data: professionals, refetch: professionalsRefetch } = useQuery<basePagination<IProfessional> | undefined>({
     queryKey: ['searchProfessionals', professionalQueryObject],
     queryFn: () => professionalService.listProfessionalAsync({
       pageSize: professionalQueryObject.pageSize,
@@ -254,12 +270,14 @@ export const AdministratorProvider = ({ children }: { children: React.ReactNode 
     const response = await professionalService.addProfessionalAsync(currentUnityId, professional);
     if (response) {
       setProfessionalQueryObject({ ...professionalQueryObject, page: 0 });
+      professionalsRefetch();
     }
   }
 
   const updateProfessional = async (professional: IProfessional) => {
     await professionalService.updateProfessionalAsync(currentUnityId, professional);
     setProfessionalQueryObject({ ...professionalQueryObject, page: 0 });
+    professionalsRefetch();
   }
 
   const removeProfessional = async (professional: IProfessional) => {
@@ -268,7 +286,10 @@ export const AdministratorProvider = ({ children }: { children: React.ReactNode 
     // setProfessionalQueryObject({ ...professionalQueryObject, page: 0 });
   } 
 
-  
+  const resetProfessionals = () => {
+    setProfessionalQueryObject({ ...professionalQueryObject, page: 0 });
+    professionalsRefetch();
+  }  
     
   //#endregion
   
@@ -309,6 +330,10 @@ export const AdministratorProvider = ({ children }: { children: React.ReactNode 
       await SectorService.removeSectorAsync(sector.id!);
       setSectorQueryObject({ ...sectorQueryObject, page: 0 });
     } 
+
+    const resetSectors = () => {
+      setSectorQueryObject({ ...sectorQueryObject, page: 0 });
+    }
     
   //#endregion
 
@@ -360,6 +385,11 @@ export const AdministratorProvider = ({ children }: { children: React.ReactNode 
       refetchEquipments();
     }
 
+    const resetEquipments = () => {
+      setEquipmentQueryObject({ ...equipmentQueryObject, page: 0 });
+      refetchEquipments();
+    }
+
 
   //#endregion
 
@@ -396,7 +426,8 @@ export const AdministratorProvider = ({ children }: { children: React.ReactNode 
         filters: permissionsQueryObject,
         current: currentPermission,
         selectCurrent: selectCurrentPermission,
-        permissions: permissionsList
+        permissions: permissionsList,
+        reset: resetPermissions,
       },
       companies: {
         data: companies,
@@ -409,6 +440,7 @@ export const AdministratorProvider = ({ children }: { children: React.ReactNode 
         current: currentCompany,
         selectCurrent: selectCompany,
         readonly: companyReadOnly,
+        reset: resetCompanies,
       },
       companyUnities: {
         data: companyUnities,
@@ -422,6 +454,7 @@ export const AdministratorProvider = ({ children }: { children: React.ReactNode 
         current: currentCompanyUnity,
         selectCurrent: selectCompanyUnity,
         readonly: companyUnityReadOnly,
+        reset: resetCompanyUnities,
       },    
       professionals: {
         data: professionals,
@@ -434,6 +467,7 @@ export const AdministratorProvider = ({ children }: { children: React.ReactNode 
         current: currentProfessional,
         selectCurrent: selectProfessional,
         readonly: professionalReadOnly,
+        reset: resetProfessionals,
       },
       sectors: {
         data: sectors,
@@ -446,6 +480,7 @@ export const AdministratorProvider = ({ children }: { children: React.ReactNode 
         current: currentSector,
         selectCurrent: selectSector,
         readonly: sectorReadOnly,
+        reset: resetSectors,
       },
       equipments: {
         data: equipments,
@@ -458,6 +493,7 @@ export const AdministratorProvider = ({ children }: { children: React.ReactNode 
         current: currentEquipment,
         selectCurrent: selectEquipment,
         readonly: equipmentReadOnly,
+        reset: resetEquipments,
       },
       
       
