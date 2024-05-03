@@ -1,3 +1,4 @@
+import { COLORS } from '@/utils';
 import { Column, ColumnConfig } from '@ant-design/charts';
 
 export const ColumnChart = ({
@@ -5,7 +6,7 @@ export const ColumnChart = ({
   xField,
   yField,
   height = 400,
-  color = '#00B5B8'
+  color = COLORS.primary['600'],
 } :{
   data: any[];
   xField: string;

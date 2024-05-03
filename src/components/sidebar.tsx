@@ -15,6 +15,7 @@ import { AccountCircleOutlined, AdminPanelSettingsOutlined, ArticleOutlined, Clo
 import { useUser } from '@/hooks/useUser'; 
 import Cookies from 'js-cookie';
 import { Authservice } from '@/services';
+import { COLORS } from '@/utils';
 
 const Sidebar: React.FC<{}> = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -118,7 +119,7 @@ const Sidebar: React.FC<{}> = () => {
             visibility: isOpen ? "visible" : "hidden",
           },
           "& .MuiDrawer-paper": {
-            backgroundColor: "#020617",
+            backgroundColor: COLORS.base['8'],
             width: drawerWidth,
             boxSizing: "border-box",
             position: "relative",

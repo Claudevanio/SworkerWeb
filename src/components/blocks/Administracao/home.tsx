@@ -59,6 +59,7 @@ export function HomeComponent(){
       <div
         className='w-full p-4 lg:p-8'
       >
+        
         <PageTitle
           title='Administração'
           subtitle='Veja aqui o andamento e configuração de todos os serviços da empresa'

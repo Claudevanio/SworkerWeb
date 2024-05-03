@@ -17,6 +17,7 @@ import { Person } from '@mui/icons-material';
 import { Authservice } from '@/services';
 import { useModal } from '@/hooks';
 import { useDialog } from '@/hooks/use-dialog';
+import { Logo } from '@/components/Logo';
 
 const schema = Yup.object({ 
     userName: Yup.string().required('Email é obrigatório').email('O e-mail deve ser válido'),
@@ -87,7 +88,11 @@ export default function Login(){
   }
 
   return (
-      <div className="w-full flex flex-col h-full items-center justify-center bg-primary-50 gap-12 md:gap-20 min-h-[560px]"> 
+      <div className="w-full flex flex-col h-full items-center justify-center bg-primary-50 gap-12 md:gap-20 min-h-[560px]">
+        <Logo
+        width='130px'
+        height='100px'
+        /> 
         <h1 className='text-[2rem] text-primary-700 font-bold w-3/4 text-center'>Sworker</h1> 
       <div 
         className='w-3/4 h-fit justify-center md:pt-0 md:w-[33.25rem]  flex flex-col md:justify-center gap-1 items-center p-4 bg-white rounded-xl'

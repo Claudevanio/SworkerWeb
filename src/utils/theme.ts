@@ -1,86 +1,65 @@
 'use client';
 import { createTheme } from '@mui/material';
 import { Nunito } from "next/font/google";
+import { ENVIROMENTCOLORS } from './constants';
 
 const nunito = Nunito({ subsets: ["latin"] });
-
-export const COLORS = {
+interface ColorPalette {
   primary: {
-    '50': '#EFF6FF',
-    '100': '#DBEAFE',
-    '200': '#BFDBFE',
-    '300': '#93C5FD',
-    '400': '#60A5FA',
-    '500': '#3B82F6',
-    '600': '#2563EB',
-    '700': '#1D4ED8',
-    'default': '#3B82F6',
-  },
+    [key: string]: string;
+    default: string;
+  };
   base: {
-    '1': "#FCFEFF",
-    '2': '#F1F5F9',
-    '3': '#E2E8F0',
-    '4': '#94A3B8',
-    '5': '#2F465E',
-    '6': '#1E293B',
-    '7': '#0F172A',
-    '8': '#020617'
-  },
-  secondary: '#00B5B8',
-  sidebarHighlight: '#3B82F633',
-  danger: '#EB5757',
+    [key: string]: string;
+  };
+  secondary: string;
+  sidebarHighlight: string;
+  danger: string;
   erro: {
-    '0': '#FFDADB',
-    '1': '#F0C0C2',
-    '2': '#FF6C6C',
-    '3': '#FF0000',
-    '4': '#990000',
-  },
+    [key: string]: string;
+  };
   sucesso: {
-    '0': '#EAFFDA',
-    '1': '#B8F7AE',
-    '2': '#5CE271',
-    '3': '#009918',
-    '4': '#158D28',
-  },
-  success: '#27AE60',
+    [key: string]: string;
+  };
+  success: string;
   warning: {
-    '1': '#E9C186',
-    '2': '#FFA012',
-    '3': '#DC8B13',
-    '4': '#A46405',
-  },
-  info: '#2F80ED',
-  highlight: '#00B5B8',
-  dark: '#212121',
+    [key: string]: string;
+  };
+  info: string;
+  highlight: string;
+  dark: string;
   gray: {
-    '1': '#343A40',
-    '2': '#979797',
-    '3': '#D9D9D9',
-  }
+    [key: string]: string;
+  };
+}
+
+const COLORSENV: ColorPalette = JSON.parse(ENVIROMENTCOLORS);
+
+export const COLORS: ColorPalette = {
+  ...COLORSENV,
 }
 
 export const theme = createTheme({
   palette: {
     primary: {
-      main: '#2563EB',
+      main: COLORS.primary['600'],
       contrastText: '#ffffff',
     },
     secondary: {
-      main: '#333',
+      main: COLORS.base['8'],
       contrastText: '#ffffff',
     },
     info: {
-      main: '#2F80ED',
+      main: COLORS.info,
     },
     success: {
-      main: '#27AE60',
+      main: COLORS.success,
     },
     warning: {
-      main: '#DC8B13',
+      main: COLORS.warning['3'],
     },
     error: {
-      main: '#EB5757',
+      main: COLORS.danger,
     },
   },
   typography: {

@@ -7,7 +7,7 @@ export const BarChart = ({
   xField,
   yField,
   height = 400,
-  color = '#00B5B8',
+  color = COLORS.primary['600'],
   typeOrder 
 } :{
   data: any[];

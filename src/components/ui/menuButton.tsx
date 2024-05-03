@@ -1,3 +1,4 @@
+import { COLORS } from '@/utils';
 import { Button as MuiButton, SxProps } from '@mui/material';
 
 interface MenuButtonProps {
@@ -30,8 +31,8 @@ export const MenuButton: React.FC<MenuButtonProps> = ({
       style={
         variant ===  'primary' ?
         {
-        backgroundColor: '#3B82F633',
-        border: '2px solid #60A5FA',
+        backgroundColor: COLORS.sidebarHighlight,
+        border: '2px solid ' + COLORS.primary['400'],
         borderRadius: '40px', 
       } : {}
     }
