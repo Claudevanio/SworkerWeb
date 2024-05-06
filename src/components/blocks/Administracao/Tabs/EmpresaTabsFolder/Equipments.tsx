@@ -8,7 +8,7 @@ import { useAdministrator } from '@/contexts/AdministrationProvider';
 import { useModal } from '@/hooks';
 import { useDialog } from '@/hooks/use-dialog';
 import { equipmentService } from '@/services/Administrator/equipmentService';
-import { ICompany, IEquipmentClassification } from '@/types';
+import { ICompany, IEquipment, IEquipmentClassification } from '@/types';
 import { masks } from '@/utils';
 import { DeleteOutline, EditOutlined, Restore } from '@mui/icons-material';
 import { useState } from 'react'; 
@@ -23,13 +23,13 @@ export function EquipmentsTab() {
 
   const {openDialog} = useDialog() 
 
-  const [selected, setSelected] = useState<string[]>([])
+  const [selected, setSelected] = useState<IEquipment[]>([])
 
   const columns = [
     {
       label: 'UID',
       key: 'uid',
-      Formatter: (uid: string) => {
+      rowFormatter: (row: IEquipment) => {
         return (
           <div
             className='flex items-center gap-2 group '
@@ -37,7 +37,7 @@ export function EquipmentsTab() {
             <div
               className='w-0 group-hover:!w-12 overflow-hidden transition-all items-center gap-2 hidden md:flex'
               style={
-                selected.includes(uid) ? {
+                selected.find(v => v.uid === row.uid) ? {
                   width: '3rem'
                 } : {}
               }
@@ -45,23 +45,21 @@ export function EquipmentsTab() {
               <CheckBox 
                 variant='secondary'
                 value={
-                  selected.includes(uid)
+                  selected.find(v => v.uid === row.uid)
                 }
                 onChange={
                   () => {
-                    setSelected(prev => {
-                      if(prev.includes(uid)){
-                        return prev.filter(v => v !== uid)
-                      }
-                      return [...prev, uid]
-                    }) 
+                    if(selected.find(v => v.uid === row.uid)) {
+                      setSelected(prev => prev.filter(v => v.uid !== row.uid))
+                    } else 
+                    setSelected(prev => [...prev, row])
                   }
                 }
               />
             </div>
               <span
                 className=''>
-                {uid}
+                  {row.uid}
               </span>
           </div>
         )
@@ -89,10 +87,21 @@ export function EquipmentsTab() {
       },
       mobileTitle: true
     }, 
+    {
+      label: 'Tipo',
+      key: 'classification',
+      Formatter: (classification: IEquipmentClassification) => {
+        return (
+          classification?.type?.description
+        )
+      },
+      mobileTitle: true
+    }, 
   ] 
 
   async function handleExportQrCode() {
-   await equipmentService.getQrcodes(selected)
+    const selectedUids = selected.map(v => v.uid)
+   await equipmentService.getQrcodes(selectedUids)
   //  console.log(response)
   }
 

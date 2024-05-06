@@ -87,7 +87,9 @@ export default function CardOcurrence({
         )}
         <Typography fontWeight={500} fontSize="0.9rem">
           {Number(percentage) >= 0 ? "+" : ""}
-          {Number(percentage)}% nos últimos {days} dias ({dayStart} {month} -{" "}
+          {Number(percentage).toLocaleString('pt-br', {
+            maximumFractionDigits: 1
+          })}% nos últimos {days} dias ({dayStart} {month} -{" "}
           {dayEnd} {month})
         </Typography>
       </Stack>

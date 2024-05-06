@@ -25,14 +25,16 @@ export function ProfessionalTab() {
       }
     },
     {
-      label: 'Unidade',
-      key: 'unityProfessionals',
-      Formatter: (company: ICompanyUnity) => {
+      label: 'CPF',
+      key: 'cpf',
+      Formatter: (cpf: string) => {
         return (
-          company[0].companyUnityName
+          masks.CPFMask(cpf)
         )
       },
-      hideOnDesktop: true
+      style:{
+        gridColumn: 'span 2'
+      }
     },
     {
       label: 'Telefone',
@@ -45,17 +47,17 @@ export function ProfessionalTab() {
       hideOnDesktop: true
     },
     {
-      label: 'CPF',
-      key: 'cpf',
-      Formatter: (cpf: string) => {
-        return (
-          masks.CPFMask(cpf)
-        )
-      },
-    },
-    {
       label: 'E-mail',
       key: 'email',
+    },
+    {
+      label: 'Unidade',
+      key: 'unityProfessionals',
+      Formatter: (company: ICompanyUnity) => {
+        return (
+          company[0].companyUnityName
+        )
+      }, 
     },
     // {
     //   label: 'Unidade',

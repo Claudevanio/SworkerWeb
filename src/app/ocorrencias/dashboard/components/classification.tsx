@@ -21,7 +21,7 @@ export default function Classification({
   }, 0);
 
   return (
-    <>
+    <> 
       <Stack
         flexDirection={isMobile ? "column" : "row"}
         mt={2}
@@ -61,7 +61,7 @@ export default function Classification({
           />
         </Stack>
         <Stack width="49%" gap={2} justifyContent="space-between">
-          {classificationCards.slice(4, 6).map((item, index) => (
+          {classificationCards.slice(4, 7).map((item, index) => (
             <CardCategory
               hide={item.number < 0}
               key={index}

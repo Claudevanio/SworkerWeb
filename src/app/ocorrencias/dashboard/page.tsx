@@ -53,18 +53,9 @@ export default function OcorrenciasDashboard() {
 
   const getOcurrences = async () => {
     const ocurrencesResponse =
-      await ocurrenceService.listOcurrenceRecognitionAsync(
-        null,
-        null,
-        null,
-        {
-          registerDateStart: today.toISOString(),
-          registerDateEnd: plusGapDaysAfter.toISOString(),
-        } as IFilterOcurrences,
-        null
-      );
+      await ocurrenceService.getAllRecognizeOcurrenceAsync();
 
-    setOcurrences(ocurrencesResponse.items);
+    setOcurrences(ocurrencesResponse);
   };
 
   const getClassifications = async () => {
@@ -77,9 +68,21 @@ export default function OcorrenciasDashboard() {
   const getTypes = async () => {
     const typesResponse = await ocurrenceTypeService.getTypes();
 
-    console.log(typesResponse, "Types response");
+    const ocurrences = await Promise.all(
+      typesResponse.data.data.map(async (type) => {
+        const ocurrencesResponse = await ocurrrenceClassificationService.getClassificationsByType(
+          type.id
+        );
+        return {
+          ...type,
+          classifications: ocurrencesResponse,
+        };
+      }
+    )
+  ); 
+ 
 
-    setTypes(typesResponse.data.data);
+    setTypes(ocurrences);
   };
 
   const gainOrFall = (current, previous) => {
@@ -147,8 +150,7 @@ export default function OcorrenciasDashboard() {
 
   useEffect(() => {
     getCounts();
-    getOcurrences();
-    getClassifications();
+    getOcurrences(); 
     getTypes();
   }, []);
 
@@ -200,32 +202,18 @@ export default function OcorrenciasDashboard() {
           statusOcurrence={"Encerradas"}
           width={isMobile ? "auto" : "32%"}
         />
-      </Stack>
+      </Stack> 
       {types.length > 0 &&
-        types?.map((type, index) => {
-          const ocurrenceFiltred = ocurrences.filter(
-            (occurrence) => occurrence.occurrence?.occurrenceTypeId == type.id
-          );
-
-          const classificationsFiltred = classifications.filter(
-            (classification) => classification.type?.id == type.id
-          );
-
-          const arrayByClassifications = [];
-
-          
-          classificationsFiltred.forEach(
+        types?.filter((type) => type.classifications.length > 0).map((type, index) => { 
+  
+          const arrayByClassifications = type.classifications.map(
             (classification: IOcurrenceClassification) => {
               console.log(classification, "Classification");
-              const obj = {
+              return {
                 icon: AccessTimeOutlined,
-                number: ocurrenceFiltred.filter(
-                  (item) => item.classificationId == classification.id
-                ).length,
+                number:ocurrences.filter((ocurrence) => ocurrence.classificationId === classification.id).length,
                 description: classification.description,
               };
-
-              arrayByClassifications.push(obj);
             }
           );
 

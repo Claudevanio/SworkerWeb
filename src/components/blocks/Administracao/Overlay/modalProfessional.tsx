@@ -10,9 +10,11 @@ import React, { useEffect } from 'react';
 import { useAdministrator } from '@/contexts/AdministrationProvider';
 import { masks, regex } from '@/utils';
 import { CustomSwitch } from '@/components/ui/switch'; 
-import { Userservice } from '@/services';
+import { RoleService, Userservice } from '@/services';
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 import CustomizedAccordions from '../components/customizedAccordion';
+import { useQuery } from '@tanstack/react-query';
+import { SectorService } from '@/services/Administrator/sectorService';
 
 const schema = Yup.object({ 
   name: Yup.string().required('O nome é obrigatório'),
@@ -48,6 +50,24 @@ export function ModalProfessional({
     }
   });
 
+  const {
+    data: sectorsList
+  } = useQuery<any>({
+    queryKey: ['sectors'],
+    queryFn: () => SectorService.getAll(),
+    refetchOnWindowFocus: false,
+  })
+
+  const {
+    data: userInfo
+  } = useQuery<Array<{
+    roleId: string,
+  }>>({
+    queryKey: ['userInfo', current?.userId],
+    queryFn: () => RoleService.getRolesByUserIdAsync(current?.userId ?? ''),
+    refetchOnWindowFocus: false,
+    enabled: !!current?.userId
+  })
   const {sectors, professionals, companyUnities, permissions} = useAdministrator();
 
   async function onSubmit(data: FormFields){ 
@@ -61,6 +81,7 @@ export function ModalProfessional({
     }
     
     const newUser = Userservice.createUser(userData)
+
 
     // const professionalData : IProfessional = {
     //   active: data.active,
@@ -100,6 +121,17 @@ export function ModalProfessional({
     )
 
   }, [isOpen])
+  
+
+  useEffect(() => {
+    if(!userInfo)
+      return; 
+    if(!userInfo[0])
+      return;
+    debugger
+    methods.setValue('roleId', userInfo[0].roleId)
+  }, [methods, userInfo])
+
 
   const sectorsIds = methods.watch('sectorsIds');
 
@@ -207,7 +239,7 @@ export function ModalProfessional({
           />
 
           </div>
-        </div>
+        </div> 
 
         <div
               style={{ 
@@ -225,26 +257,34 @@ export function ModalProfessional({
                       className='flex flex-col gap-0 w-full'
                     >
                       {
-                        sectors.data?.items.filter(sector => sector.unityId === unity.id).length === 0 ? (
+                        !sectorsList ? (
                           <div
-                          className='flex justify-between items-center gap-4 border-base-2 md:border-primary-300 border-x-2 py-2 border-y-[1px] w-full pl-10 pr-4'
+                            className='flex justify-between items-center gap-4 border-base-2 md:border-primary-300 border-x-2 py-2 border-y-[.5px] w-full pl-10 pr-4'
+                          >
+                            Carregando...
+                          </div>
+                        ) : sectorsList?.filter(sector => sector.companyUnityId === unity.id).length === 0 ? (
+                          <div
+                          className='flex justify-between items-center gap-4 border-base-2 md:border-primary-300 border-x-2 py-2 border-y-[.5px] w-full pl-10 pr-4'
                         >
                             Nenhum setor encontrado
                           </div>
-                        ) : sectors.data?.items.filter(sector => sector.unityId === unity.id).map((sector, index, array) => (
+                        ) :  sectorsList?.filter(sector => sector.companyUnityId === unity.id).map((sector, index, array) => (
                           <div
                             key={index}
-                            className='flex justify-between items-center gap-4 border-base-2 md:border-primary-300 border-2 border-y-1 w-full pl-10 pr-4'
+                            className='flex justify-between items-center gap-4 border-base-2 md:border-primary-300 border-2 border-y-[.5px] w-full pl-10 pr-4'
                           >
-                            {sector.name}
+                            {sector.description}
                             <CheckBox
                               label=''
                               value={
-                                sectorsIds.includes(sector.id)
+                                sectorsIds && sectorsIds.includes(sector.id)
                               }
                               onChange={
                                 () => {
-                                  if(sectorsIds.includes(sector.id)){
+                                  if(!sectorsIds)
+                                    return;
+                                  if(sectorsIds?.includes(sector.id)){
                                     methods.setValue('sectorsIds', sectorsIds.filter(id => id !== sector.id))
                                   } else {
                                     methods.setValue('sectorsIds', [...sectorsIds, sector.id])

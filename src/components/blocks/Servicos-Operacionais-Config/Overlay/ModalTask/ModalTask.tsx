@@ -480,10 +480,7 @@ export function ModalTask({
         } 
         {
           currentStep === 3 && <div
-          className='flex flex-col gap-4'> 
-          {
-            JSON.stringify(methods.formState.errors) 
-          }
+          className='flex flex-col gap-4'>  
             {
               resourcesList && resourcesList.map((resource, index) => (
                 <ResourcesStep

@@ -470,12 +470,7 @@ export default function ServicoDetailPage(){
                     className='text-base-7 font-bold text-base capitalize'
                   >
                     {professional.name?.toLowerCase()}
-                  </p>
-                  {/* {
-                   JSON.stringify(dataProfessional?.find(
-                    (data) => data?.data?.professional?.id === professional.professionalId
-                   )) ?? 'Não encontrado informações sobre o profissional'
-                  } */}
+                  </p> 
                   <BaseTable
                     columns={[
                       {

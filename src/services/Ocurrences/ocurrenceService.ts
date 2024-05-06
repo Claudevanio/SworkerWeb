@@ -102,6 +102,11 @@ export const ocurrenceService = {
     return response.data;
   },
 
+  async getAllRecognizeOcurrenceAsync (): Promise<IOcurrenceRecognize[]> {
+    const response = await api.get<IOcurrenceRecognize[]>(`/recognized-occurrences`);
+    return response.data;
+  },
+
   async listOcurrenceRecognitionAsync (
     term: string,
     currentPage: number,
