@@ -27,18 +27,31 @@ export function TagsTab(){
   } = useDialog()
 
   const rows = tags.data?.items ?? [];
-
-  const order = [
-    'description',
-    'UID',
-    'HWID',
-    'Modo',
-    'Status',
-    'Tipo'
-  ]
-
+ 
   const [selected, setSelected] = useState<ITags[]>([]);
 
+  function mapCSVData(data: ITags[]) : string[][] {
+    const obj = data.map((item) => ({
+      Nome: item.description,
+      UID: item.uid,
+      HWID: item.hwid,
+      Modo: item.mode === 1 ? 'Passivo' : 'Ativo',
+      Status: item.status === 0 ? 'Ativo' : 'Inativo',
+      Tipo: tags.types.find(type => type.id === item.tagTypeId)?.description
+    }))
+
+    if (obj.length === 0) {
+      return [];
+    }
+
+    const firstArray = Object.keys(obj[0]);
+
+    const csvData = obj.map((item) => firstArray.map((key) => item[key]));
+
+    return [firstArray, ...csvData];
+
+  }
+ 
 
   const columns : {
     label: string;
@@ -137,17 +150,8 @@ export function TagsTab(){
       <div className="flex justify-end items-center gap-6">
         <ExportButton
           disabled={selected.length === 0}
-          onClick={
-            () => {
-              const uids = selected.map(v => v.uid);
-              const uniqueUids = uids.reduce((acc, uid) => {
-                if (!acc.includes(uid)) {
-                   acc.push(uid);
-                }
-                return acc;
-               }, [] as string[]);
-              TagsService.exportTags(uniqueUids)
-            }
+          csvData={
+            selected.length > 0 ? mapCSVData(selected) : []
           }
         />
         <FiltroButton

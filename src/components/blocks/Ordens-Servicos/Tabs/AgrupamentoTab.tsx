@@ -1,5 +1,5 @@
 import { BaseTable } from '@/components/table/BaseTable';
-import { SearchInput } from '@/components/ui';
+import { FiltroButton, SearchInput } from '@/components/ui';
 import Pagination from '@/components/ui/pagination';
 import { useAdministrator } from '@/contexts/AdministrationProvider';
 import { useDialog } from '@/hooks/use-dialog';
@@ -61,6 +61,17 @@ export function AgrupamentoTab({
     <div
       className='flex flex-col gap-4 w-full'
     > 
+    <div
+      className='flex gap-4 w-full md:hidden'
+    >
+    <div
+      className='w-full'
+    />
+      <FiltroButton onClick={openFilterModal}
+        className=' !h-12 w-full'
+      />
+
+    </div>
     <RoundedTab
       tabs={tabs} 
       activeTab={activeTab}

@@ -13,7 +13,7 @@ export function RoundedTab({ tabs, activeTab, setActiveTab }: {
   return (
     <> 
       <Box 
-        className={`flex gap-2 overflow-x-auto scrollbar-hide bg-primary-50 rounded-full  md:w-fit  ${tabs.length >4 ? `me-[-32px] md:me-0` : ' w-fit '} pr-4 md:pr-0`}
+        className={`flex gap-2 overflow-x-auto scrollbar-hide bg-primary-50 rounded-full  md:w-fit  ${tabs.length >3 ? `me-[-32px] md:me-0` : ' w-fit '} pr-4 md:pr-0`}
         sx={{
           '&::-webkit-scrollbar': {
             display: 'none'

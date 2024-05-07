@@ -184,7 +184,7 @@ export const SectorTab = (
           className='flex flex-col gap-6 w-full'
         >  
           <div
-            className='flex justify-end  items-center w-full gap-6'
+            className='justify-end  items-center w-full gap-6 hidden md:flex'
           >
             <FiltroButton onClick={openFilterModal}
               className=' !h-12'

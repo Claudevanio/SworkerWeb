@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from "yup";
 import { Form } from '@/components/form/Form';
-import { IconButton, MenuItem, Select } from '@mui/material';
+import { IconButton, MenuItem, Select, useMediaQuery } from '@mui/material';
 import { Field } from '@/components/form/Fields';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -15,6 +15,8 @@ import Cookies from 'js-cookie';
 import { Person } from '@mui/icons-material';
 import { Authservice } from '@/services';
 import { useDialog } from '@/hooks/use-dialog';
+import { Logo } from '@/components/Logo';
+import { inputLogoLoginFieldsOverlay, LoginBgLogoPath } from '@/utils';
 
 const schema = Yup.object({ 
     userName: Yup.string().required('Email é obrigatório').email('O e-mail deve ser válido'), 
@@ -78,13 +80,55 @@ export function EsqueciSenhaPageComponent(){
     // console.log(response)
   }
 
+  const isMobile = useMediaQuery('(max-width:768px)');
+
 
   return (
-      <div className="w-full flex flex-col h-full items-center justify-center bg-primary-50 gap-12 md:gap-20 min-h-[560px]"> 
-        <h1 className='text-[2rem] text-primary-700 font-bold w-3/4 text-center'>Sworker</h1> 
-      <div 
-        className='w-3/4 h-fit justify-center md:pt-0 md:w-[33.25rem]  flex flex-col md:justify-center gap-1 items-center p-4 bg-white rounded-xl'
-      >  
+    <div
+      className='w-full h-full relative bg-primary-50'
+    >
+         {
+          LoginBgLogoPath && LoginBgLogoPath !== '' && <div 
+          style={{
+            backgroundImage: `url(${LoginBgLogoPath})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat', 
+            width: '100%',
+            height: '100%', 
+            position: 'absolute',
+            zIndex: 0
+          }}
+        />}
+        <div className="w-full flex flex-col h-full items-center py-10 pb-24 md:p-0 md:justify-center gap-12 md:gap-20 min-h-[560px] relative">
+       
+          <Logo
+          width={
+            isMobile ? '50%' : '300px'
+          }
+          height={
+            isMobile ?  'unset' : '184px'
+          }
+          className='relative z-[1]'
+          />  
+          <div 
+            className='w-3/4 h-fit justify-center md:pt-0 md:w-[33.25rem]  flex flex-col md:justify-center gap-1 items-center p-4 bg-white rounded-xl my-4 relative'
+          >  
+          {
+            inputLogoLoginFieldsOverlay && inputLogoLoginFieldsOverlay !== '' && <div
+                style={{
+                  backgroundImage: `url(${inputLogoLoginFieldsOverlay})`,
+                  backgroundSize: 'contain',
+                  backgroundPosition: 'center',
+                  backgroundRepeat: 'no-repeat',
+                  backgroundBlendMode: 'luminosity',
+                  width: isMobile ? '85%' : '100%',
+                  height: isMobile ? '90%' : '100%',
+                  opacity: 0.1,
+                  position: 'absolute',
+                }}
+              />
+          } 
       <h1
         className='text-[18px] text-[#020617] font-bold w-full pt-4'
       >
@@ -160,7 +204,7 @@ export function EsqueciSenhaPageComponent(){
                   Enviar 
                 </Button>
                 <Link href='/login'
-                  className='text-[#FF6C6C] cursor-pointer text-center'
+                  className='text-[#FF6C6C] relative z-[1] cursor-pointer text-center'
                 >
                   Cancelar
                 </Link>
@@ -169,5 +213,6 @@ export function EsqueciSenhaPageComponent(){
           }
         </div>  
       </div>
+    </div>
   );
 }

@@ -125,6 +125,7 @@ export const HistoricoTab = (
                   width={40}
                   height={40}
                   alt='warning'
+                  className='min-w-0 shrink-0 '
                 />
               </Tooltip>
             }
@@ -171,11 +172,11 @@ export const HistoricoTab = (
                   >
                     {
                       row.id && <Image
-                        className='md:hidden'
+                        className='md:hidden  shrink-0'
                         src='/Warning.svg'
                         width={20}
                         height={20}
-                        alt='warning'
+                        alt='warning' 
                       />
                     }
                     {row.code}</div>

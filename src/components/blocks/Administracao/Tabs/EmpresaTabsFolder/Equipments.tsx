@@ -25,6 +25,30 @@ export function EquipmentsTab() {
 
   const [selected, setSelected] = useState<IEquipment[]>([])
 
+  
+  function mapCSVData(data: IEquipment[]) : string[][] {
+    const obj = data.map((item) => ({
+      UID: item.uid,
+      HWID: item.hwid,
+      Marca: item.brand,
+      Fabricante: item.manufacturer,
+      Classificação: item.classification.description,
+      Tipo: item.classification.type.description
+    }))
+
+    if (obj.length === 0) {
+      return [];
+    }
+
+    const firstArray = Object.keys(obj[0]);
+
+    const csvData = obj.map((item) => firstArray.map((key) => item[key]));
+
+    return [firstArray, ...csvData];
+
+  }
+ 
+
   const columns = [
     {
       label: 'UID',
@@ -37,7 +61,7 @@ export function EquipmentsTab() {
             <div
               className='w-0 group-hover:!w-12 overflow-hidden transition-all items-center gap-2 hidden md:flex'
               style={
-                selected.find(v => v.uid === row.uid) ? {
+                selected.find(v => v.id === row.id) ? {
                   width: '3rem'
                 } : {}
               }
@@ -45,11 +69,11 @@ export function EquipmentsTab() {
               <CheckBox 
                 variant='secondary'
                 value={
-                  selected.find(v => v.uid === row.uid)
+                  selected.find(v => v.id === row.id)
                 }
                 onChange={
                   () => {
-                    if(selected.find(v => v.uid === row.uid)) {
+                    if(selected.find(v => v.id === row.id)) {
                       setSelected(prev => prev.filter(v => v.uid !== row.uid))
                     } else 
                     setSelected(prev => [...prev, row])
@@ -98,13 +122,7 @@ export function EquipmentsTab() {
       mobileTitle: true
     }, 
   ] 
-
-  async function handleExportQrCode() {
-    const selectedUids = selected.map(v => v.uid)
-   await equipmentService.getQrcodes(selectedUids)
-  //  console.log(response)
-  }
-
+ 
   const [isFilterModalOpen, openFilterModal, closeFilterModal] = useModal()
 
   const [isHistoryModalOpen, openHistoryModal, closeHistoryModal] = useModal()
@@ -134,9 +152,15 @@ export function EquipmentsTab() {
         <FiltroButton onClick={openFilterModal}
           className=' !h-12'
         />
-        <ExportButton onClick={handleExportQrCode}
+        <ExportButton 
+          csvData={
+            selected.length > 0
+              ? mapCSVData(selected)
+              : mapCSVData([])
+          }
           className=' !h-12 hidden md:flex'
           disabled={selected.length === 0}
+          fileName='equipamentos.csv'
           /> 
       </div> 
 

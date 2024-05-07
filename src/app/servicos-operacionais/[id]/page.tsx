@@ -265,14 +265,16 @@ export default function ServicoDetailPage(){
         />
       </Link> 
       <DetailCard.Card>
-        <DetailCard.Title>
+        <DetailCard.Title
+          wrap
+        >
           <h1
             className='text-base-8 text-lg font-bold'
           >
-            Detalhes do Serviço
+            Identificação do Serviço
           </h1>
           <Link
-            href='/servicos-operacionais/1/tratamento-de-ocorrencia'
+            href='/ocorrencias?tab=1'
             className=' text-primary-500 underline'
           >
             Ir para tratamento de ocorrencia
@@ -349,7 +351,7 @@ export default function ServicoDetailPage(){
             </div>
           ) : (
             <div
-              className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'
+              className='grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-4'
             >
               {
                 ocurrencesTableData.map((ocurrence : IOcurrence) => {

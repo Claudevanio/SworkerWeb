@@ -14,11 +14,16 @@ import { ocurrenceCharacterizationService } from "@/services/Ocurrences/ocurrenc
 import { Encerradas } from "./tabs/encerradas/encerradas";
 import { ReceiptLongOutlined } from "@mui/icons-material";
 import { COLORS } from "@/utils";
+import { useSearchParams } from 'next/navigation';
 
 export default function Ocorrencias() {
   const isMobile = useMediaQuery("(max-width:768px)");
 
-  const [activeTab, setActiveTab] = useState<number | undefined>();
+  const searchParams = useSearchParams();
+
+  const [activeTab, setActiveTab] = useState<number | undefined>(
+    searchParams.get('tab') ? parseInt(searchParams.get('tab') as string) : 0
+  );
 
   const [classifications, setClassifications] = useState<
     IOcurrenceClassification[]
@@ -50,7 +55,7 @@ export default function Ocorrencias() {
   };
 
   useEffect(() => {
-    setActiveTab(0);
+    setActiveTab( searchParams.get('tab') ? parseInt(searchParams.get('tab') as string) : 0);
     getClassifications();
     getTypes();
     getCharacterizations();

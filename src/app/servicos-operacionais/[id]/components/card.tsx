@@ -1,10 +1,21 @@
-function Title({ children }: { children: React.ReactNode | React.ReactNode[] }) {
+import { Box } from '@mui/material';
+
+function Title({ children, wrap }: { children: React.ReactNode | React.ReactNode[], wrap?: boolean}) {
   return (
-    <div className="flex flex-row items-center w-full bg-primary-100 rounded-t-lg py-6 px-8 " 
+    <Box className="flex flex-row items-center w-full bg-primary-100 rounded-t-lg py-6 px-8 "
+    sx={{
+      '@media (max-width: 768px)':wrap ? {
+        flexDirection: wrap ? 'column !important' : 'row',
+        gap: '1rem',
+        padding: '1rem',
+        alignItems: 'start !important',
+        justifyContent: 'start !important',
+      } : {}
+    }} 
     style={children && Array.isArray(children) && children.length ? { justifyContent: 'space-between' } : {justifyContent: 'center'}}
-    >
+    > 
       {children}
-    </div>
+    </Box>
   );
 }
 

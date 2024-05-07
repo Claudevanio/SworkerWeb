@@ -349,7 +349,7 @@ const Sidebar: React.FC<{}> = () => {
           }
           <MenuButton
             variant={getButtonVariant("cadastro-usuario")}
-            className={`w-full gap-2 flex justify-start text-erro-2`}
+            className={`w-full gap-2 flex justify-start !text-erro-2`}
             onClick={logout}
           >
             <LogoutOutlined />
