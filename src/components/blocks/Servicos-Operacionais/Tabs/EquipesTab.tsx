@@ -24,6 +24,15 @@ type ProfessionalData = {
   totalProgrammed: number;
 };
 
+const formatDuration = (seconds: number) => {
+  const duration = dayjs().startOf('day').add(seconds, 'second');
+  const hours = duration.hour();
+  const minutes = duration.minute();
+  const secondsLeft = duration.second();
+  const getInMinutes = minutes > 0 ? hours * 60 + minutes + 'min ' : hours * 60 + minutes + 'min ' + secondsLeft + 's';
+  return getInMinutes;
+}
+
  
 function handleProfissionalData(tasksData: ServiceOrderTask[]): Array<ProfessionalData> {
   const aggregatedDataMap = new Map<string | number, ProfessionalData>();
@@ -181,7 +190,8 @@ export function EquipesTab(
           [
             {
               label: 'Equipe',
-              key: 'name'
+              key: 'name',
+              mobileTitle: true
             }, 
             {
               label: 'Quantidade total',
@@ -189,7 +199,8 @@ export function EquipesTab(
             },
             {
               label: 'Tempo total',
-              key: 'totalTime'
+              key: 'totalTime',
+              Formatter: (value: number) => formatDuration(value)
             }
           ]
         }

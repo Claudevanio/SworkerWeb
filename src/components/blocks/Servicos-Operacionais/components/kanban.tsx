@@ -271,8 +271,12 @@ export const Kanban = (
                   overflowX: 'auto',
                   overflowY: 'hidden',
                   marginBottom: '4rem',
-                  paddingBottom: '2rem',
-                  '@media(max-width: 1024px)': {
+                  paddingBottom: '2rem', 
+                  '&::-webkit-scrollbar': {
+                      width: '.5rem',
+                      height: '.75rem',
+                  },
+                  '@media(max-width: 768px)': {
                     '&::-webkit-scrollbar': {
                         display: 'none',
                     },

@@ -74,6 +74,16 @@ export function TarefasTab(
   } )
 
   const dataForBarChart = [ ...dataProgrammedTask, ...dataOnDemandTask,]
+  
+  const formatDuration = (seconds: number) => {
+    const duration = dayjs().startOf('day').add(seconds, 'second');
+    const hours = duration.hour();
+    const minutes = duration.minute();
+    const secondsLeft = duration.second();
+    const getInMinutes = hours * 60 + minutes + 'min ' + secondsLeft + 's';
+    return getInMinutes;
+  }
+
  
  
   return(
@@ -89,7 +99,8 @@ export function TarefasTab(
         columns={[
           {
             label: 'Procedimento',
-            key: 'name'
+            key: 'name',
+            mobileTitle: true
           },
           {
             label: 'Tempo previsto',
@@ -99,7 +110,7 @@ export function TarefasTab(
             label: 'Tempo Médio',
             key: 'programmed',
             rowFormatter: (serviceOrder: ServiceOrderTask) => (serviceOrder.serviceOrdersProgrammed.length + serviceOrder.serviceOrdersOnDemand.length > 0 ? 
-              (serviceOrder.programmed + serviceOrder.onDemand) / (serviceOrder.serviceOrdersProgrammed.length + serviceOrder.serviceOrdersOnDemand.length) : 0
+              formatDuration((serviceOrder.programmed + serviceOrder.onDemand) / (serviceOrder.serviceOrdersProgrammed.length + serviceOrder.serviceOrdersOnDemand.length)) : 0
             )
           },
           {
@@ -117,7 +128,7 @@ export function TarefasTab(
                 const variancia = somaQuadradosDiferencas / 2;   
                 const desvioPadrao = Math.sqrt(variancia);
 
-                return desvioPadrao;
+                return formatDuration(desvioPadrao);
             }
           }
           

@@ -55,7 +55,7 @@ export function PermissionsTab() {
       className='flex flex-col gap-4 w-full'
     >  
       <SearchInput
-        value={permissions.filters.term}
+        value={permissions.filters.term ?? ''}
         onChange={(v) => permissions.setFilter(prev => ({
           ...prev,
           term: v === '' ? undefined : v,

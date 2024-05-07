@@ -31,6 +31,17 @@ export const BarChart = ({
       showCrosshairs: true,
       shared: true,
     },  
+    label: {
+      position: 'right',
+      style: {
+        fill: COLORS['base']['7'] as any,
+        fontWeight: 'bold',
+      },
+      formatter: (v, item) => {
+        return `${item._origin['type'] === typeOrder[0] ? '' : item._origin[xField]}`;
+      }
+      
+    },
     columnBackground: COLORS['base']['1'] as any,
     barStyle: {
       radius: [20, 20, 0, 0], 

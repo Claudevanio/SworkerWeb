@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { SimpleTab } from '../tabs/simple-tab';
 import { PageTitle } from '../title';
 import { ApartmentOutlined, FolderSharedOutlined } from '@mui/icons-material';
@@ -53,6 +53,14 @@ export function HomeComponent(){
     )
   }
 
+  useEffect(() => {
+    if(activeTab !== 0)
+      return; 
+    permissions.reset()
+    return;
+    
+  }, [activeTab])
+
 
   return ( 
     <>
@@ -81,7 +89,11 @@ export function HomeComponent(){
             activeTab !== undefined && activeTab === 0 ? {  } : {display: 'none'}
           }
         >
-          <PermissionsTab/>
+          {
+            activeTab === 0 && (
+              <PermissionsTab/>
+            )
+          }
         </div>
         <div
           className='flex flex-col gap-4'
@@ -89,14 +101,18 @@ export function HomeComponent(){
             activeTab !== undefined && activeTab === 1 ? {  } : {display: 'none'}
           }
         >
-          <EmpresasTab
-            activeTab={
-              subTab
-            }
-            setActiveTab={
-              setSubTab
-            }
-          />
+          {
+            activeTab === 1 && (
+              <EmpresasTab
+                activeTab={
+                  subTab
+                }
+                setActiveTab={
+                  setSubTab
+                }
+              />
+            )
+          }
         </div>
       </div>
       <ModalTabs

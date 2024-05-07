@@ -98,25 +98,25 @@ export const AdministratorProvider = ({ children }: { children: React.ReactNode 
   const addCompany = async (company: ICompany) => {
     const response = await companyService.createCompanyAsync(company);
     if (response) {
-      setCompanyQueryObject({ ...companyQueryObject, page: 0 });
+      setCompanyQueryObject({ ...companyQueryObject, page: 0, term: undefined });
       refetchCompanies();
     }
   }
 
   const updateCompany = async (company: ICompany) => {
     await companyService.updateCompanyAsync(company);
-    setCompanyQueryObject({ ...companyQueryObject, page: 0 });
+    setCompanyQueryObject({ ...companyQueryObject, page: 0, term: undefined });
     refetchCompanies();
   }
 
   const removeCompany = async (company: ICompany) => {
     await companyService.removeCompanyAsync(company.id!);
-    setCompanyQueryObject({ ...companyQueryObject, page: 0 });
+    setCompanyQueryObject({ ...companyQueryObject, page: 0, term: undefined });
     refetchCompanies();
   }
 
   const resetCompanies = () => {
-    setCompanyQueryObject({ ...companyQueryObject, page: 0 });
+    setCompanyQueryObject({ ...companyQueryObject, page: 0, term: undefined });
     refetchCompanies();
   }
 
@@ -148,7 +148,7 @@ export const AdministratorProvider = ({ children }: { children: React.ReactNode 
     const addPermission = async (permission: IRole) => {
       const response = await RoleService.addRoleAsync(permission); 
       if (response) {
-        setPermissionsQueryObject({ ...permissionsQueryObject, page: 0 });
+        setPermissionsQueryObject({ ...permissionsQueryObject, page: 0, term: undefined });
         refetchPermissions();
       }
     }
@@ -157,14 +157,14 @@ export const AdministratorProvider = ({ children }: { children: React.ReactNode 
     const updatePermission = async (permission: IRole) => {
       const response = await RoleService.updateRoleAsync(permission as any);
       if (response) {
-        setPermissionsQueryObject({ ...permissionsQueryObject, page: 0 });
+        setPermissionsQueryObject({ ...permissionsQueryObject, page: 0, term: undefined });
         refetchPermissions();
       }
     }
 
     const removePermission = async (permission: IRole) => {
       await RoleService.removeRoleAsync(permission as any);
-      setPermissionsQueryObject({ ...permissionsQueryObject, page: 0 });
+      setPermissionsQueryObject({ ...permissionsQueryObject, page: 0, term: undefined });
       refetchPermissions();
     }
 
@@ -173,7 +173,7 @@ export const AdministratorProvider = ({ children }: { children: React.ReactNode 
     }
 
     const resetPermissions = () => {
-      setPermissionsQueryObject({ ...permissionsQueryObject, page: 0 });
+      setPermissionsQueryObject({ ...permissionsQueryObject, page: 0, term: undefined });
       refetchPermissions();
     }
     
@@ -204,31 +204,31 @@ export const AdministratorProvider = ({ children }: { children: React.ReactNode 
     const addCompanyUnity = async (companyUnity: ICompanyUnity) => {
       const response = await companyUnityService.createCompanyUnityAsync(companyUnity);
       if (response) {
-        setCompanyUnityQueryObject({ ...companyUnityQueryObject, page: 0 });
+        setCompanyUnityQueryObject({ ...companyUnityQueryObject, page: 0, term: undefined });
         refetchCompanyUnits();
       }
     }
 
     const updateCompanyUnity = async (companyUnity: ICompanyUnity) => {
       await companyUnityService.updateCompanyUnityAsync(companyUnity);
-      setCompanyUnityQueryObject({ ...companyUnityQueryObject, page: 0 });
+      setCompanyUnityQueryObject({ ...companyUnityQueryObject, page: 0, term: undefined });
       refetchCompanyUnits();
     }
 
     const removeCompanyUnity = async (companyUnity: ICompanyUnity) => {
       await companyUnityService.removeCompanyUnityAsync(companyUnity.id!);
-      setCompanyUnityQueryObject({ ...companyUnityQueryObject, page: 0 });
+      setCompanyUnityQueryObject({ ...companyUnityQueryObject, page: 0, term: undefined });
       refetchCompanyUnits();
     }
 
     const inactivateCompanyUnity = async (companyUnity: ICompanyUnity) => {
       await companyUnityService.inactivateCompanyUnityAsync(companyUnity.id!);
-      setCompanyUnityQueryObject({ ...companyUnityQueryObject, page: 0 });
+      setCompanyUnityQueryObject({ ...companyUnityQueryObject, page: 0, term: undefined });
       refetchCompanyUnits();
     }
 
     const resetCompanyUnities = () => {
-      setCompanyUnityQueryObject({ ...companyUnityQueryObject, page: 0 });
+      setCompanyUnityQueryObject({ ...companyUnityQueryObject, page: 0, term: undefined });
       refetchCompanyUnits();
     }
 
@@ -269,25 +269,25 @@ export const AdministratorProvider = ({ children }: { children: React.ReactNode 
   const addProfessional = async (professional: IProfessional) => {
     const response = await professionalService.addProfessionalAsync(currentUnityId, professional);
     if (response) {
-      setProfessionalQueryObject({ ...professionalQueryObject, page: 0 });
+      setProfessionalQueryObject({ ...professionalQueryObject, page: 0, term: undefined });
       professionalsRefetch();
     }
   }
 
   const updateProfessional = async (professional: IProfessional) => {
     await professionalService.updateProfessionalAsync(currentUnityId, professional);
-    setProfessionalQueryObject({ ...professionalQueryObject, page: 0 });
+    setProfessionalQueryObject({ ...professionalQueryObject, page: 0, term: undefined });
     professionalsRefetch();
   }
 
   const removeProfessional = async (professional: IProfessional) => {
     console.log(professional);
     // await professionalService.(currentUnityId, professional.id!);
-    // setProfessionalQueryObject({ ...professionalQueryObject, page: 0 });
+    // setProfessionalQueryObject({ ...professionalQueryObject, page: 0, term: undefined });
   } 
 
   const resetProfessionals = () => {
-    setProfessionalQueryObject({ ...professionalQueryObject, page: 0 });
+    setProfessionalQueryObject({ ...professionalQueryObject, page: 0, term: undefined });
     professionalsRefetch();
   }  
     
@@ -317,22 +317,22 @@ export const AdministratorProvider = ({ children }: { children: React.ReactNode 
     const addSector = async (sector: ISector) => {
       const response = await SectorService.createSectorAsync(sector);
       if (response) {
-        setSectorQueryObject({ ...sectorQueryObject, page: 0 });
+        setSectorQueryObject({ ...sectorQueryObject, page: 0, term: undefined });
       }
     }
 
     const updateSector = async (sector: ISector) => {
       await SectorService.updateSectorAsync(sector);
-      setSectorQueryObject({ ...sectorQueryObject, page: 0 });
+      setSectorQueryObject({ ...sectorQueryObject, page: 0, term: undefined });
     }
 
     const removeSector = async (sector: ISector) => {
       await SectorService.removeSectorAsync(sector.id!);
-      setSectorQueryObject({ ...sectorQueryObject, page: 0 });
+      setSectorQueryObject({ ...sectorQueryObject, page: 0, term: undefined });
     } 
 
     const resetSectors = () => {
-      setSectorQueryObject({ ...sectorQueryObject, page: 0 });
+      setSectorQueryObject({ ...sectorQueryObject, page: 0, term: undefined });
     }
     
   //#endregion
@@ -367,26 +367,26 @@ export const AdministratorProvider = ({ children }: { children: React.ReactNode 
     const addEquipment = async (equipment: IEquipment) => {
       const response = await equipmentService.createEquipmentAsync(equipment);
       if (response) {
-        setEquipmentQueryObject({ ...equipmentQueryObject, page: 0 });
+        setEquipmentQueryObject({ ...equipmentQueryObject, page: 0, term: undefined });
         refetchEquipments();
       }
     }
 
     const updateEquipment = async (equipment: IEquipment) => {
       await equipmentService.updateEquipmentAsync(equipment);
-      setEquipmentQueryObject({ ...equipmentQueryObject, page: 0 });
+      setEquipmentQueryObject({ ...equipmentQueryObject, page: 0, term: undefined });
       refetchEquipments();
     }
 
     const removeEquipment = async (equipment: IEquipment) => { 
       console.log(equipment)
       await equipmentService.removeEquipmentAsync(equipment.id!);
-      setEquipmentQueryObject({ ...equipmentQueryObject, page: 0 });
+      setEquipmentQueryObject({ ...equipmentQueryObject, page: 0, term: undefined });
       refetchEquipments();
     }
 
     const resetEquipments = () => {
-      setEquipmentQueryObject({ ...equipmentQueryObject, page: 0 });
+      setEquipmentQueryObject({ ...equipmentQueryObject, page: 0, term: undefined });
       refetchEquipments();
     }
 

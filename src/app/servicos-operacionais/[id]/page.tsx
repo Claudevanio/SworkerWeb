@@ -17,7 +17,7 @@ import { BaseTable } from '@/components/table/BaseTable';
 import { LineChart } from '@/components/charts/line';
 import { RoundedTab } from '@/components/blocks/tabs';
 import usePagination from '@/hooks/use-pagination';
-import { IconButton } from '@mui/material';
+import { Box, IconButton } from '@mui/material';
 import { useModal } from '@/hooks';
 import { ModalOcurrenceDetail } from './components/ModalOcurrenceDetail';
 interface Step {
@@ -87,6 +87,16 @@ function generateLabelsAndValues(tasksSteps: Task[]): { label: string; value: nu
   }
 
   return labelsAndValues;
+}
+
+
+const formatDuration = (seconds: number) => {
+  const duration = dayjs().startOf('day').add(seconds, 'second');
+  const hours = duration.hour();
+  const minutes = duration.minute();
+  const secondsLeft = duration.second(); 
+  const getInMinutes = minutes > 0 ? +(hours * 60 + +minutes) + 'min ' : +(hours * 60 + minutes) + 'min ' + secondsLeft + 's';
+  return getInMinutes;
 }
 
 
@@ -193,7 +203,7 @@ export default function ServicoDetailPage(){
   const dataTable = new Array(4).fill(0).map((_, index) => {
     return {
       checkInDate: dayjs().subtract(index, 'day').toDate(),
-      checkOutDate: dayjs().subtract(index, 'day').add(10, 'hour').toDate(),
+      checkOutDate: dayjs().subtract(index, 'day').add(4, 'minute').toDate(),
     }
   })
 
@@ -215,6 +225,32 @@ export default function ServicoDetailPage(){
     setSelectedOcurrence(row)
     openModal()
   }
+
+  // const [dataPerProfessional, setDataPerProfessional] = useState<any[]>([])
+
+  // const fetchProfessionalDataPerProfessional = useCallback(async (professionalId: number) => {
+  //   try {
+  //     const response = await serviceOrderService.getServiceOrderByProfessionalIdAsync(professionalId.toString())
+  //     setDataPerProfessional((prev) => [...prev, response])
+  //   } catch (error) {
+  //     console.error(error)
+  //   }
+  // }, [id])
+
+  // useEffect(() => {
+  //   if (!serviceDetail)
+  //     return  
+
+  //   const professionals = serviceDetail?.professionals.map((professional) => professional?.professionalId)
+
+  //   professionals.forEach((professional) => {
+  //     fetchProfessionalDataPerProfessional(professional)
+  //   })
+
+    
+  // }, [serviceDetail, fetchProfessionalDataPerProfessional])
+
+
 
   return (
     <div
@@ -431,10 +467,18 @@ export default function ServicoDetailPage(){
             Evolução de atividades
           </h1>
         </DetailCard.Title>
-        <div
+        <Box
           className='overflow-x-auto flex flex-row px-10'
-        >
-                <div
+          sx={{
+            '@media (min-width: 768px)': {
+                '&::-webkit-scrollbar': {
+                  width: '.5rem',
+                  height: '.75rem',
+              },
+            }
+          }}
+        > 
+            <div
                   className='min-w-[1200px] w-full mr-4 mx-2'
                 >
                   <BarChart
@@ -446,7 +490,7 @@ export default function ServicoDetailPage(){
                     color={[ COLORS.base['3'], COLORS.primary['700']]}
                   />
                 </div>
-        </div>
+        </Box>
       </DetailCard.Card>
 
       <DetailCard.Card>
@@ -479,12 +523,12 @@ export default function ServicoDetailPage(){
                         Formatter: (data) => dayjs(data).format('DD/MM/YYYY - HH:mm')
                       },
                       {
-                        label: 'Duracao',
+                        label: 'Duração',
                         key: 'checkOutDate',
                         rowFormatter: (row) => {
                           const checkInDate = dayjs(row.checkInDate)
                           const checkOutDate = dayjs(row.checkOutDate)
-                          return checkOutDate.diff(checkInDate, 'second') + 's'
+                          return formatDuration(checkOutDate.diff(checkInDate, 'second'))
                         }
                       }
                     ]}
@@ -541,7 +585,7 @@ export default function ServicoDetailPage(){
                 activeTab={activeTab}
                 setActiveTab={setActiveTab} 
                 />
-            </div>
+            </div> 
               {
                 activeTab === 0 ? ( 
                   <div
