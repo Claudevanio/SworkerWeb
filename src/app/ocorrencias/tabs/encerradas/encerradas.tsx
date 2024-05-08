@@ -238,6 +238,7 @@ export function Encerradas({
               icon: <Check />,
             },
           ]}
+          showAllActions
         />
         <Pagination
           currentPage={filter.page ?? 0}

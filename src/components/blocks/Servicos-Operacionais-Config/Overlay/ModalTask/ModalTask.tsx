@@ -62,24 +62,43 @@ export function ModalTask({
     isAdding?: boolean;
   }>>([]); 
 
+  const [initialResources, setInitialResources] = React.useState<Array<{
+    id: number;
+    taskId: number;
+    classification: string;
+    description: string;
+    isAdding?: boolean;
+  }>>([]);
+
   const [currentStep, setCurrentStep] = React.useState(readonly ? 3 : 1);
 
   const [currentOcurrence, setCurrentOcurrence] = React.useState<IOcurrence | undefined>(undefined);
 
   const [currentTaskSteps, setCurrentTaskSteps] = React.useState<ITaskSteps>();
 
-  async function onSubmit(data: any){ 
-    if(currentStep === 1){ 
-      if(data.code == current?.code && data.name == current?.name && data.professionalsCount == current?.professionalsCount && data.estimatedTime == current?.estimatedTime && data.taskGroupId == current?.taskGroup.id && data.reviewTask == current?.reviewTask && data.taskRandom == current?.taskRandom && data.digitalSignature == current?.digitalSignature && data.ocurrencyIdIncomplete === current?.occurrenceIdIncomplete){
-        setCurrentStep(2);
-        return;
-      }
+  const {
+    openDialog
+  } = useDialog();
+  
 
+  async function onSubmit(data: any){ 
+    if(currentStep === 1){  
+      setCurrentStep(2);
+      return;
+    }
+    if(currentStep == 2){
+      // await submitSteps();
+      setCurrentStep(currentStep + 1);
+      return;
+    }
+    let currentId = current?.id ?? undefined;
+
+    try{ 
       const newData : ITask = {
-        code: data.code,
-        name: data.name,
-        professionalsCount: +(data.professionalsCount),
-        estimatedTime: +(data.estimatedTime),
+          code: data.code,
+          name: data.name,
+          professionalsCount: +(data.professionalsCount),
+          estimatedTime: +(data.estimatedTime),
         taskGroupId: +(data.taskGroupId),
         reviewTask: data.reviewTask,
         taskRandom: data.taskRandom,
@@ -88,34 +107,62 @@ export function ModalTask({
       }
       if(currentId){
         newData.id = currentId;
-        const newApiData = await configTaskService.updateTask(newData);
-        setCurrentStep(2);
-        return;
+        await configTaskService.updateTask(newData);  
+      } else {
+        const newApiData = await configTaskService.createTask(newData);
+        if(!newApiData?.data?.id)
+          return;
+        currentId = newApiData?.data?.id;
+        setCurrentId(newApiData?.data?.id);  
       }
-      const newApiData = await configTaskService.createTask(newData);
-      setCurrentId(newApiData?.data?.id);
       
-      setCurrentStep(2);
-      return;
+    } catch(e){
+      openDialog({
+        title: 'Erro ao criar tarefa',
+        onConfirm: () => {},
+        onConfirmText: 'Ok',
+        message: e.message
+      })
     }
-    if(currentStep < 3){
-      setCurrentStep(currentStep + 1);
-      return;
-    }
- 
-    const resourcesToSend = resourcesList.map((resource) => {
+    debugger
+    await submitSteps(currentId);
+
+    // const resourcesToSend is the difference between the initial resources and the current resources
+    const resourcesToSend = resourcesList.filter((resource) => {
+      return !initialResources.find((r) => r.id === resource.id);
+    }).map((resource) => {
+      return {
+        resourceId: resource.id,
+        taskId: currentId,
+      }
+    });
+    
+    const resourcesToDelete = initialResources.filter((resource) => {
+      return !resourcesList.find((r) => r.id === resource.id);
+    }).map((resource) => {
       return {
         resourceId: resource.id,
         taskId: currentId,
       }
     });
 
+
+
     try{
-      resourcesToSend.forEach(async (resource) => {
+      await Promise.all(resourcesToDelete.map(async (resource) => {
+        await configTaskService.removeTaskResource(resource.taskId, resource.resourceId);
+      }))
+
+      await Promise.all(resourcesToSend.map(async (resource) => {
         await configTaskService.createTasksResources(resource.taskId, resource.resourceId);
-      });
+      }))
     } catch(e){
-      console.log(e);
+      openDialog({
+        title: 'Erro ao criar recursos',
+        onConfirm: () => {},
+        onConfirmText: 'Ok',
+        message: e.message
+      })
     } finally{
 
     }
@@ -211,6 +258,9 @@ export function ModalTask({
   useEffect(() => {
     if(!tasksSteps.data)
       return;
+    tasksSteps.data.forEach((step) => {
+      (step as any).draggable = Math.floor(Math.random() * 1000);
+    })
     setMockSteps(tasksSteps.data);
   }, [tasksSteps.data])
 
@@ -239,42 +289,78 @@ export function ModalTask({
     refetchOnWindowFocus: false,
   });
 
+  const taskTypes = useQuery({
+    queryKey: ['taskTypes'],
+    queryFn: configTaskService.getTypes,
+    refetchOnWindowFocus: false,
+  }); 
 
 
   useEffect(() => {
     if(!resources.data)
       return;
     setResourcesList(resources.data);
+    setInitialResources(resources.data);
   }, [resources.data])
 
-  async function onSubmitStep(data: ITaskSteps){
+  async function submitSteps(currentId: string | number){
+    await Promise.all(mockSteps.map(async (step) => {
+      const dataToSend = {
+        ...step,
+        taskId: currentId,
+      } as any
+      if(step.id){
+        await configTaskService.updateTaskStep(currentId, dataToSend);
+        return;
+      }
+      await configTaskService.createTaskStep(currentId, dataToSend);
+      })
+    )
+  }
+
+  async function onSubmitStep(data: ITaskSteps){ 
     debugger
-    if(data.id){
+
+    if(data.id || data.draggable){
       try{
         const newData = {
           ...currentTaskSteps,
           ...data
-        }
-        setMockSteps(mockSteps.map((s) => s.number === currentTaskSteps.number ? newData : s));
-        await configTaskService.updateTaskStep(currentId, newData);
-
-
+        }  
+        // await configTaskService.updateTaskStep(currentId, newData); 
+        const index = mockSteps.findIndex((s) => s.id === currentTaskSteps.id || s.draggable === currentTaskSteps.draggable);
+        const updatedMockSteps = [...mockSteps];
+        updatedMockSteps[index] = newData;
+        setMockSteps(updatedMockSteps);
         return;
       } catch(e){
-        console.log(e);
+        openDialog({
+          title: 'Erro ao atualizar passo',
+          onConfirm: () => {},
+          onConfirmText: 'Ok',
+          message: e.message
+        })
       } finally{
         return;
       }
     }
     try{
-      const dataToSend = {
-        ...data,
-        taskId: currentId,
-      }
-      const response = await configTaskService.createTaskStep(currentId, dataToSend);
-      data.id = response.data.id;
+      // const dataToSend = {
+      //   ...data,
+      //   taskId: currentId,
+      // }
+      // const response = await configTaskService.createTaskStep(currentId, dataToSend);
+      // data.id = response.data.id;
+      const random = Math.floor(Math.random() * 1000);
+      (data as any).draggable = random;
       setMockSteps([...mockSteps, data]);
     } catch(e){
+      openDialog({
+        title: 'Erro ao criar passo',
+        onConfirm: () => {},
+        onConfirmText: 'Ok',
+        message: e.message
+      })
     }
   }
 
@@ -452,7 +538,8 @@ export function ModalTask({
                       message: 'Deseja realmente excluir este passo?',
                       onConfirm: () => {
                         setMockSteps(mockSteps.filter((step) => step.number !== row.number));
-                      }
+                      },
+                      onConfirmText: 'Excluir'
                     })
                   }
                 }
@@ -463,8 +550,15 @@ export function ModalTask({
                   label: 'Número',
                 },
                 {
-                  key: 'description',
-                  label: 'Descrição',
+                  key: 'taskTypeId',
+                  label: 'Tipo',
+                  Formatter: (taskTypeId) => {
+                    return  taskTypes.data?.find((t: any) => t.id == taskTypeId)?.description
+                  }
+                },
+                {
+                  key: 'taskTypeComplement',
+                  label: 'Descrição', 
                 },
                 // {
                 //   key: 'type',
@@ -535,17 +629,24 @@ export function ModalTask({
           }
         }
       />
-      <ModalNewStep
-        isOpen={isNewStepModalOpen}
-        onClose={closeNewStepModal}
-        current={currentTaskSteps}
-        onSubmit={
-          (step) => {
-            onSubmitStep(step);
-            closeNewStepModal();
+      {
+        isNewStepModalOpen && <ModalNewStep
+          isOpen={isNewStepModalOpen}
+          onClose={
+            () => {
+              setCurrentTaskSteps(undefined);
+              closeNewStepModal();
+            }
           }
-        }
-      />
+          current={currentTaskSteps}
+          onSubmit={
+            (step) => {
+              onSubmitStep(step);
+              closeNewStepModal();
+            }
+          }
+        />
+      }
 
 
     </Modal>

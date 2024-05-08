@@ -178,6 +178,21 @@ export const CardsGrid = ({
                 Editar
               </p>
             )}
+
+            {actions?.some((action) => action.label === "Encerrar") && (
+              <p
+                className="text-erro-3 text-sm"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  actions
+                    .find((action) => action.label === "Encerrar")
+                    ?.onClick(row);
+                }}
+              >
+                Encerrar
+              </p>
+            )}
+
             </div>
           </AccordionDetails>
         </Accordion>

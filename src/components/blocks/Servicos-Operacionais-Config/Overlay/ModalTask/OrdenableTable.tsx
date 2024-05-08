@@ -219,8 +219,9 @@ export function OrdenableTable({
                       
                     {!isLoading && rows && rows.map((row, index) => (
                       <Draggable
-                        key={row.id}
-                        draggableId={row.id.toString()}
+                        key={row.id ? row.id : row?.draggable }
+                        draggableId={row.id ?row.id.toString() : row?.draggable.toString()
+                        }
                         index={index} 
                         >{
                           (provided, snapshot) => {

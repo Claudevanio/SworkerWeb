@@ -279,7 +279,8 @@ export function BaseTable({
         </Table>
       </TableContainer>
 
-      {actions && (
+      {actions &&
+      (
         <Menu
           open={!!anchorEl}
           onClose={() => setAnchorEl(null)}

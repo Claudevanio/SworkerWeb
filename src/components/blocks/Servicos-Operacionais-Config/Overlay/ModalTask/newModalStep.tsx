@@ -96,8 +96,7 @@ export function ModalNewStep({
   });
  
 
-  React.useEffect(() => {
-    debugger
+  React.useEffect(() => { 
     if(!isOpen)
       return;
     if(current){
@@ -120,6 +119,8 @@ export function ModalNewStep({
   async function onSubmitForm(data: any){  
     if(current?.id)
       data.id = current.id;
+    if(current?.draggable)
+      data.draggable = current.draggable;
     onSubmit(data); 
   }
 

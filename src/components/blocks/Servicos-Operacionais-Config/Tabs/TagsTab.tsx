@@ -63,6 +63,7 @@ export function TagsTab(){
     {
       label: 'Nome',
       key: 'description',
+      mobileTitle: true,
       rowFormatter: (row) => { 
         return (
           <div

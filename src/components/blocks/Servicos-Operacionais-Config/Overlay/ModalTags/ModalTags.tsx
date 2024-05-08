@@ -394,6 +394,7 @@ export function ModalTags({
                       () => {
                         if (methodsTaskAdd.getValues('taskId')) {
                           methodsTaskAdd.handleSubmit(onSubmitTask)();
+                          setIsAddingTask(false);
                         }
                       }
                     }

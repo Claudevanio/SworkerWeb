@@ -102,6 +102,11 @@ export const configTaskService = {
     return response.data;
   },
 
+  async removeTaskResource (taskId: string | number, resourceId: string | number): Promise<void> {
+    await api.delete(`/tasks/${taskId}/resources/${resourceId}`, {
+    });
+  },
+
   async getTypes (): Promise<ITaskType[]> {
     const response = await api.get<ITaskType[]>('/task-types',
       {

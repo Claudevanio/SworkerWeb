@@ -19,6 +19,7 @@ export interface ITaskSteps {
   taskId: number;
   subTaskId: number;
   taskTypeId: number;
+  draggable?: number;
   taskTypeComplement: string;
   number: string;
   description: string;

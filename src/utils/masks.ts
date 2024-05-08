@@ -113,8 +113,9 @@ export const YearMask = (v: string) => {
   return isValue;
 }
 
-export const NUMBER = (v: string) => {
-  let isValue = v;
+export const NUMBER = (v?: string) => {
+  if (!v) return;
+  let isValue = v.toString();
   isValue = isValue.replace(/\D/g, "");
   return isValue;
 }
