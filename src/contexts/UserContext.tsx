@@ -99,6 +99,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     queryKey: ['searchCompanies'],
     queryFn: () => companyService.getAll() as any,
     refetchOnWindowFocus: false,
+    enabled: !!user?.id
   });
  
 
