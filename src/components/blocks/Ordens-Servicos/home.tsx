@@ -18,15 +18,15 @@ export function OrdensSevicoComponent(){
   const [isFilterModalOpen, openFilterModal, closeFilterModal] = useModal()
 
   const tabs = [
+    { label: 'Agrupamentos',
+      icon: <JoinInnerOutlined
+      className='text-primary-500'/>, 
+    },
     { label: 'Histórico',
       icon: <History
         className='text-primary-500'
       />, 
      },
-    { label: 'Agrupamentos',
-      icon: <JoinInnerOutlined
-      className='text-primary-500'/>, 
-    },
   ] 
  
 
@@ -54,7 +54,7 @@ export function OrdensSevicoComponent(){
         <div
           className='flex flex-col gap-4'
           style={
-            activeTab !== undefined && activeTab === 0 ? {  } : {display: 'none'}
+            activeTab !== undefined && activeTab === 1 ? {  } : {display: 'none'}
           }
         >
           <HistoricoTab
@@ -64,7 +64,7 @@ export function OrdensSevicoComponent(){
         <div
           className='flex flex-col gap-4'
           style={
-            activeTab !== undefined && activeTab === 1 ? {  } : {display: 'none'}
+            activeTab !== undefined && activeTab === 0 ? {  } : {display: 'none'}
           }
         > 
             <AgrupamentoTab

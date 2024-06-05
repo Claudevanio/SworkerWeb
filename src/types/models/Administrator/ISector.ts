@@ -1,9 +1,9 @@
 import { ICompanyUnity } from './ICompanyUnity';
 
 export interface ISector {
-  id: string;
-  name: string;
+  id?: string;
   description?: string;
-  unityId: string;
-  unity?: ICompanyUnity
+  hasErros?: boolean;
+  companyId: string | number;
+  erros?: any;
 }

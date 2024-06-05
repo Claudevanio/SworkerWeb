@@ -34,13 +34,7 @@ interface ServiceOrderContextType {
       count: number;
     }>; 
     isLoading?: boolean;
-  }
-  professionals: {
-    data: IProfessional[];
-    isLoading: boolean;
-    setFilter: React.Dispatch<React.SetStateAction<{ standardSupervisor: boolean; companyId: string; }>>;
-    filter: { standardSupervisor: boolean; companyId: string; };
-  }
+  } 
 }
 
 interface basicSearchQuery { 
@@ -64,16 +58,7 @@ export const ServiceOrderContext = createContext<ServiceOrderContextType>({
   status: {
     data: [],
     isLoading: false,
-  },
-  professionals: {
-    data: [],
-    isLoading: false,
-    setFilter: () => {},
-    filter: {
-      standardSupervisor: true,
-      companyId: ''
-    },
-  }
+  }, 
  });
 
 export const ServiceOrderProvider = ({ children }: { children: React.ReactNode }) => { 
@@ -85,18 +70,26 @@ export const ServiceOrderProvider = ({ children }: { children: React.ReactNode }
   // #region Commons
   const [isModalOpen, openModal, closeModal] = useModal()
 
+  const {
+    currentCompany
+  } = useUser()
+
   // #endregion 
 
   //#region serviceOrder
+  
+
+  
     const [serviceOrderFilters, setServiceOrderFilters] = useState<basicSearchQuery>({ term: '', page: 0, pageSize: 999, start: dayjs().subtract(30, 'day').toDate().toISOString(), end: dayjs().toDate().toISOString() });
 
     const { data: serviceOrders, isLoading: serviceOrdersLoading } = useQuery({
       queryKey: ['serviceOrdersData', serviceOrderFilters],
-      queryFn: () => serviceOrderService.listServiceOrderAsync({
+      queryFn: () => serviceOrderService.listServiceOrderByCompanyAsync(currentCompany?.id ?? '', {
         ...serviceOrderFilters,
         currentPage: serviceOrderFilters?.page ?? 0,
       }), 
       refetchOnWindowFocus: false,
+      enabled: !!currentCompany,
     });
 
     const changeStatus = async (id: string, statusId: number, sourceId?: number) => {
@@ -141,29 +134,11 @@ export const ServiceOrderProvider = ({ children }: { children: React.ReactNode }
     })
     
   // #endregion
-
-
-  
+ 
   const {
     user
   } = useUser()
-
-  const [professionalQueryObject, setProfessionalQueryObject] = useState({ 
-    standardSupervisor: true,
-    companyId: user?.companyId ?? ''
-  })
-
-  const { isLoading: isLoadingProfessionals, data: professionals } = useQuery<basePagination<IProfessional> | undefined>({
-    queryKey: ['searchProfessionals', professionalQueryObject],
-    queryFn: () => professionalService.listProfessionalAsync({ 
-      standardSupervisor: professionalQueryObject.standardSupervisor,
-      companyId: professionalQueryObject.companyId,
-    }) as any,
-    refetchOnWindowFocus: false,
-    enabled: !!(professionalQueryObject.companyId && professionalQueryObject.companyId !== ''),
-  });
   
-
   function handleCloseModal() { 
     closeModal();    
   }
@@ -185,13 +160,7 @@ export const ServiceOrderProvider = ({ children }: { children: React.ReactNode }
       status: {
         data: serviceOrderStatuses,
         isLoading: isLoadingServiceOrderStatuses
-      },
-      professionals: {
-        data: professionals?.items,
-        isLoading: isLoadingProfessionals,
-        setFilter: setProfessionalQueryObject,
-        filter: professionalQueryObject
-      }
+      }, 
     }}>
   { children }
     </ServiceOrderContext.Provider>

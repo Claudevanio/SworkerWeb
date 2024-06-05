@@ -11,7 +11,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { set } from 'react-hook-form';
 import { usePathname, useRouter } from 'next/navigation';
-import { AccountCircleOutlined, AdminPanelSettingsOutlined, ArticleOutlined, Close, Feedback, Handshake, HomeOutlined, KeyboardArrowDown, LegendToggle, ListAltOutlined, LogoutOutlined, MenuOutlined, PendingActions, PersonAddAlt1, ReportGmailerrorredOutlined, SettingsOutlined, ViewKanbanOutlined } from '@mui/icons-material';
+import { AccountCircleOutlined, AdminPanelSettingsOutlined, ApartmentOutlined, ArticleOutlined, Close, Feedback, Handshake, HomeOutlined, KeyboardArrowDown, KeyboardArrowRight, LegendToggle, ListAltOutlined, LogoutOutlined, MenuOutlined, PendingActions, PersonAddAlt1, ReportGmailerrorredOutlined, SettingsOutlined, TurnLeft, ViewKanbanOutlined } from '@mui/icons-material';
 import { useUser } from '@/hooks/useUser'; 
 import Cookies from 'js-cookie';
 import { Authservice } from '@/services';
@@ -40,14 +40,23 @@ const Sidebar: React.FC<{}> = () => {
 
   const getButtonVariant = (path: string) =>
     currentPage.includes(path) ? "primary" : "secondary";
-
+  
+  const { setUser, user,
+    currentCompany,
+    selectCompany
+  } = useUser();
+  
   const handleLinkPath = (path: string) => {
-    if (!currentPage) return "";
-    // const currentPath = currentPage.split("/").slice(0, -1).join("/");
-    return (path) as string;
-  };
+    if(path === "/" || path === "/perfil") return path; 
+    
+    if(currentCompany) {
+      return `/empresa/${currentCompany?.id}${path}`
+    }
 
-  const { setUser, user } = useUser();
+    return ""
+
+    // const currentPath = currentPage.split("/").slice(0, -1).join("/");
+  };
 
   const router = useRouter();
 
@@ -80,6 +89,8 @@ const Sidebar: React.FC<{}> = () => {
 
   const nomePagina = currentPage.includes('ocorrencias') ? 'Ocorrências' : currentPage.includes('servicos-o') ? 'Serviços Operacionais' :
     currentPage.includes('perfil') ? 'Perfil' : 'Administração';
+
+  const disabledLinkClassNames = !currentCompany?.id && "cursor-normal pointer-events-none text-primary-400";
 
   return (
     <Box
@@ -136,19 +147,24 @@ const Sidebar: React.FC<{}> = () => {
         }}
       >
         <div className="flex flex-col gap-10 ">
-          <div className="gap-2 flex pb-4 cursor-pointer items-center ">
-            <Avatar />
-            <div>
-              <h2 className="text-primary-50 text-[20px] font-bold">
-                {user?.companyName}
-              </h2>
-              <p className="text-base-4 text-xs font-medium">{user?.name}</p>
+          <div>
+            <div className="gap-2 flex pb-4 cursor-pointer items-center ">
+              <Avatar />
+              <div>
+                <h2 className="text-primary-50 text-[20px] font-bold">
+                  {user?.companyName}
+                </h2>
+                <p className="text-base-4 text-xs font-medium">{user?.name}</p>
+              </div>
             </div>
+            
           </div>
           <div className="flex flex-col gap-2">
             <h2 className="text-primary-50 text-xs font-bold">MENU</h2>
+            
             {
-              <Link href={handleLinkPath("/")}>
+              <Link href={handleLinkPath("/")} 
+              >
                 <MenuButton
                   variant={currentPage === "/" ? "primary" : "secondary"}
                   className={`w-full gap-2 flex justify-start`}
@@ -157,7 +173,33 @@ const Sidebar: React.FC<{}> = () => {
                   Administração
                 </MenuButton>
               </Link>
-            }
+            } 
+              <div>
+                <h2 className="text-primary-50 text-sm mt-4 font-bold text-center cursor-pointer hover:text-primary-700 hover:underline" 
+                onClick={selectCompany}
+                >Selecionar empresa</h2> 
+              </div>
+          </div>
+          <div className="flex flex-col gap-2">
+            <h2 className="text-primary-50 text-xs font-bold truncate">MENU DA EMPRESA 
+              {
+                currentCompany && (
+                  <span className="text-primary-50 text-xs font-bold"> - {currentCompany.name}</span>
+                )
+              }
+             </h2>
+             
+             <Link href={handleLinkPath("/gestao")}
+              className={disabledLinkClassNames}
+             >
+                <MenuButton
+                  variant={currentPage === "/gestao" ? "primary" : "secondary"}
+                  className={`w-full gap-2 flex justify-start ` }
+                >
+                  <ApartmentOutlined />
+                  Gestão
+                </MenuButton>
+              </Link> 
 
             <Accordion
               expanded={accordionExpanded}
@@ -206,7 +248,8 @@ const Sidebar: React.FC<{}> = () => {
                   gap: "8px",
                 }}
               >
-                <Link href={handleLinkPath("/servicos-operacionais")}>
+                <Link href={handleLinkPath("/servicos-operacionais")}
+                className={disabledLinkClassNames}>
                   <MenuButton
                     variant={
                       currentPage === "/servicos-operacionais"
@@ -221,6 +264,7 @@ const Sidebar: React.FC<{}> = () => {
                 </Link>
                 <Link
                   href={handleLinkPath("/servicos-operacionais/ordens-servico")}
+                  className={disabledLinkClassNames}
                 >
                   <MenuButton
                     variant={
@@ -236,6 +280,7 @@ const Sidebar: React.FC<{}> = () => {
                 </Link>
                 <Link
                   href={handleLinkPath("/servicos-operacionais/config")}
+                  className={disabledLinkClassNames}
                   passHref
                 >
                   <MenuButton
@@ -292,7 +337,8 @@ const Sidebar: React.FC<{}> = () => {
                   gap: "8px",
                 }}
               >
-                <Link href={handleLinkPath("/ocorrencias/dashboard")}>
+                <Link href={handleLinkPath("/ocorrencias/dashboard")}
+                className={disabledLinkClassNames}>
                   <MenuButton
                     variant={
                       currentPage === "/ocorrencias/dashboard"
@@ -305,7 +351,8 @@ const Sidebar: React.FC<{}> = () => {
                     Dashboard
                   </MenuButton>
                 </Link>
-                <Link href={handleLinkPath("/ocorrencias")}>
+                <Link href={handleLinkPath("/ocorrencias")}
+                className={disabledLinkClassNames}>
                   <MenuButton
                     variant={
                       currentPage === "/ocorrencias" ? "primary" : "secondary"
@@ -316,7 +363,8 @@ const Sidebar: React.FC<{}> = () => {
                     Ocorrências
                   </MenuButton>
                 </Link>
-                <Link href={handleLinkPath("/ocorrencias/config")}>
+                <Link href={handleLinkPath("/ocorrencias/config")}
+                className={disabledLinkClassNames}>
                   <MenuButton
                     variant={
                       currentPage === "/ocorrencias/config"

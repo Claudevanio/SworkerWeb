@@ -9,11 +9,11 @@ import { DeleteOutline, EditOutlined } from '@mui/icons-material';
 import { useEffect, useState } from 'react';
 import { RoundedTab } from '../../tabs';  
 import { useServiceOrder } from '@/contexts'; 
-import { EquipesTab } from './EquipesTab';
-import { UnidadesTab } from './UnidadesTab';
-import { EmpresasTab } from './EmpresasTab';
+// import { EquipesTab } from './EquipesTab';
+// import { UnidadesTab } from './UnidadesTab';
+// import { EmpresasTab } from './EmpresasTab';
 import { useUser } from '@/hooks/useUser';
-import { SectorTab } from './SectorTab';
+// import { SectorTab } from './SectorTab';
 export function AgrupamentoTab({ 
   openFilterModal,
 } : {  
@@ -39,8 +39,7 @@ export function AgrupamentoTab({
 ]
 
   const {
-    serviceOrders,
-    professionals
+    serviceOrders, 
   } = useServiceOrder()
 
 
@@ -48,14 +47,14 @@ export function AgrupamentoTab({
     user
   } = useUser()
 
-  useEffect(() => {
-    if(activeTab !==3){
-      professionals.setFilter({
-        ...professionals.filter,
-        companyId: user?.companyId
-      })
-    }
-  }, [activeTab])
+  // useEffect(() => {
+  //   if(activeTab !==3){
+  //     professionals.setFilter({
+  //       ...professionals.filter,
+  //       companyId: user?.companyId
+  //     })
+  //   }
+  // }, [activeTab])
  
   return (
     <div
@@ -77,7 +76,7 @@ export function AgrupamentoTab({
       activeTab={activeTab}
       setActiveTab={setActiveTab} 
     />
-    {
+    {/* {
       activeTab === 0 ? (
         <div>
           <EquipesTab
@@ -111,7 +110,7 @@ export function AgrupamentoTab({
           />
         </div>
       ) : null
-    }
+    } */}
     </div>
   );
 }

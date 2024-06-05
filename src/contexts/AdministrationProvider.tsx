@@ -11,7 +11,7 @@ import React, { createContext, useEffect, useState } from 'react';
 interface baseCRUD<T, Y = basicSearchQuery> {
   data: basePagination<T> | undefined;
   isLoading: boolean;
-  create: (data: T) => void;
+  create: (data: T) => any;
   update: (data: T) => void;
   remove: (data: T) => void;
   setFilter: React.Dispatch<React.SetStateAction<Y>>;
@@ -34,16 +34,12 @@ type SearchEquipment = basicSearchQuery & {
 }
 interface AdministratorContextType {
   permissions: baseCRUD<IRole> & {permissions?: IPermissions[]};
-  companies: baseCRUD<ICompany>;
-  companyUnities: baseCRUD<ICompanyUnity> & { inactivate?: (companyUnity: ICompanyUnity) => void };
-  professionals: baseCRUD<IProfessional>;
+  companies: baseCRUD<ICompany>; 
   modal: {
     isOpen: boolean;
     open: () => void;
     close: () => void;
-  }
-  sectors: baseCRUD<ISector>;
-  equipments: baseCRUD<IEquipment, SearchEquipment>;
+  } 
 }
 
 interface basicSearchQuery { 
@@ -54,11 +50,7 @@ interface basicSearchQuery {
 
 export const AdministratorContext = createContext<AdministratorContextType>({
   permissions: crudInitialState ,
-  companies: crudInitialState,
-  companyUnities: crudInitialState,
-  professionals: crudInitialState,
-  sectors: crudInitialState,
-  equipments: crudInitialState,
+  companies: crudInitialState,  
   modal: { 
   } as any
  });
@@ -178,234 +170,11 @@ export const AdministratorProvider = ({ children }: { children: React.ReactNode 
     }
     
   //#endregion
-
-  //#region CompanyUnities
-
-    const [currentCompanyUnity, setCurrentCompanyUnity] = useState<ICompanyUnity | undefined>(undefined);
-    const [companyUnityReadOnly, setCompanyUnityReadOnly] = useState<boolean>(false);
-    
-    const [companyUnityQueryObject, setCompanyUnityQueryObject] = useTriggerEffect<basicSearchQuery>({
-      page: 0,
-      pageSize: 3,
-      term: undefined,
-    });
-
-    const { isLoading: isLoadingCompanyUnities, data: companyUnities, refetch: refetchCompanyUnits } = useQuery<basePagination<ICompanyUnity> | undefined>({
-      queryKey: ['searchCompanyUnities', companyUnityQueryObject],
-      queryFn: () => companyUnityService.listCompanyUnityAsync(companyUnityQueryObject.term, companyUnityQueryObject.page, companyUnityQueryObject.pageSize) as any,
-      refetchOnWindowFocus: false,
-    });
-
-    const selectCompanyUnity = (companyUnity: ICompanyUnity, readonly = false) => {
-      setCurrentCompanyUnity(companyUnity);
-      setCompanyUnityReadOnly(readonly);
-    }
-
-    const addCompanyUnity = async (companyUnity: ICompanyUnity) => {
-      const response = await companyUnityService.createCompanyUnityAsync(companyUnity);
-      if (response) {
-        setCompanyUnityQueryObject({ ...companyUnityQueryObject, page: 0, term: undefined });
-        refetchCompanyUnits();
-      }
-    }
-
-    const updateCompanyUnity = async (companyUnity: ICompanyUnity) => {
-      await companyUnityService.updateCompanyUnityAsync(companyUnity);
-      setCompanyUnityQueryObject({ ...companyUnityQueryObject, page: 0, term: undefined });
-      refetchCompanyUnits();
-    }
-
-    const removeCompanyUnity = async (companyUnity: ICompanyUnity) => {
-      await companyUnityService.removeCompanyUnityAsync(companyUnity.id!);
-      setCompanyUnityQueryObject({ ...companyUnityQueryObject, page: 0, term: undefined });
-      refetchCompanyUnits();
-    }
-
-    const inactivateCompanyUnity = async (companyUnity: ICompanyUnity) => {
-      await companyUnityService.inactivateCompanyUnityAsync(companyUnity.id!);
-      setCompanyUnityQueryObject({ ...companyUnityQueryObject, page: 0, term: undefined });
-      refetchCompanyUnits();
-    }
-
-    const resetCompanyUnities = () => {
-      setCompanyUnityQueryObject({ ...companyUnityQueryObject, page: 0, term: undefined });
-      refetchCompanyUnits();
-    }
-
-  //#endregion
-
-  //#region Professionals
-  
-
-  const currentUnityId = '1';
-
-  const [professionalReadOnly, setProfessionalReadOnly] = useState<boolean>(false);
-  
-  const [currentProfessional, setCurrentProfessional] = useState<IProfessional | undefined>(undefined);
-
-
-  const [professionalQueryObject, setProfessionalQueryObject] = useTriggerEffect<basicSearchQuery>({
-    page: 0,
-    pageSize: 3,
-    term: undefined,
-  });
-
-  const { isLoading: isLoadingProfessionals, data: professionals, refetch: professionalsRefetch } = useQuery<basePagination<IProfessional> | undefined>({
-    queryKey: ['searchProfessionals', professionalQueryObject],
-    queryFn: () => professionalService.listProfessionalAsync({
-      pageSize: professionalQueryObject.pageSize,
-      currentPage: professionalQueryObject.page,
-      term: professionalQueryObject.term,
-      companyId: currentUnityId,
-    }) as any,
-    refetchOnWindowFocus: false,
-  });
-
-  const selectProfessional = (professional: IProfessional, readonly = false) => {
-    setCurrentProfessional(professional);
-    setProfessionalReadOnly(readonly);
-  }
-
-  const addProfessional = async (professional: IProfessional) => {
-    const response = await professionalService.addProfessionalAsync(currentUnityId, professional);
-    if (response) {
-      setProfessionalQueryObject({ ...professionalQueryObject, page: 0, term: undefined });
-      professionalsRefetch();
-    }
-  }
-
-  const updateProfessional = async (professional: IProfessional) => {
-    await professionalService.updateProfessionalAsync(currentUnityId, professional);
-    setProfessionalQueryObject({ ...professionalQueryObject, page: 0, term: undefined });
-    professionalsRefetch();
-  }
-
-  const removeProfessional = async (professional: IProfessional) => {
-    console.log(professional);
-    // await professionalService.(currentUnityId, professional.id!);
-    // setProfessionalQueryObject({ ...professionalQueryObject, page: 0, term: undefined });
-  } 
-
-  const resetProfessionals = () => {
-    setProfessionalQueryObject({ ...professionalQueryObject, page: 0, term: undefined });
-    professionalsRefetch();
-  }  
-    
-  //#endregion
-  
-  //#region Sector
-    const [currentSector, setCurrentSector] = useState<ISector | undefined>(undefined);
-    const [sectorReadOnly, setSectorReadOnly] = useState<boolean>(false);
-
-    const [sectorQueryObject, setSectorQueryObject] = useTriggerEffect<basicSearchQuery>({
-      page: 0,
-      pageSize: 3,
-      term: undefined,
-    });
-
-    const { isLoading: isLoadingSectors, data: sectors } = useQuery<basePagination<ISector> | undefined>({
-      queryKey: ['searchSectors', sectorQueryObject],
-      queryFn: () => SectorService.listSectorAsync(sectorQueryObject.term, sectorQueryObject.page, sectorQueryObject.pageSize) as any,
-      refetchOnWindowFocus: false,
-    });
-
-    const selectSector = (sector: ISector, readonly = false) => {
-      setCurrentSector(sector);
-      setSectorReadOnly(readonly);
-    }
-
-    const addSector = async (sector: ISector) => {
-      const response = await SectorService.createSectorAsync(sector);
-      if (response) {
-        setSectorQueryObject({ ...sectorQueryObject, page: 0, term: undefined });
-      }
-    }
-
-    const updateSector = async (sector: ISector) => {
-      await SectorService.updateSectorAsync(sector);
-      setSectorQueryObject({ ...sectorQueryObject, page: 0, term: undefined });
-    }
-
-    const removeSector = async (sector: ISector) => {
-      await SectorService.removeSectorAsync(sector.id!);
-      setSectorQueryObject({ ...sectorQueryObject, page: 0, term: undefined });
-    } 
-
-    const resetSectors = () => {
-      setSectorQueryObject({ ...sectorQueryObject, page: 0, term: undefined });
-    }
-    
-  //#endregion
-
-  //#region Equipment
-    
-    const [currentEquipment, setCurrentEquipment] = useState<IEquipment | undefined>(undefined);
-    const [equipmentReadOnly, setEquipmentReadOnly] = useState<boolean>(false);
-
-    const [equipmentQueryObject, setEquipmentQueryObject] = useTriggerEffect<SearchEquipment>({
-      page: 0,
-      pageSize: 5,
-      term: undefined,
-    });
-
-    const { isLoading: isLoadingEquipments, data: equipments, 
-      refetch: refetchEquipments
-     } = useQuery<basePagination<IEquipment> | undefined>({
-      queryKey: ['searchEquipments', equipmentQueryObject],
-      queryFn: () => equipmentService.getEquipmentsAsync({
-        ...equipmentQueryObject,
-        currentPage: equipmentQueryObject.page,
-      }) as any,
-      refetchOnWindowFocus: false,
-    });
-
-    const selectEquipment = (equipment: IEquipment, readonly = false) => {
-      setCurrentEquipment(equipment);
-      setEquipmentReadOnly(readonly);
-    }
-
-    const addEquipment = async (equipment: IEquipment) => {
-      const response = await equipmentService.createEquipmentAsync(equipment);
-      if (response) {
-        setEquipmentQueryObject({ ...equipmentQueryObject, page: 0, term: undefined });
-        refetchEquipments();
-      }
-    }
-
-    const updateEquipment = async (equipment: IEquipment) => {
-      await equipmentService.updateEquipmentAsync(equipment);
-      setEquipmentQueryObject({ ...equipmentQueryObject, page: 0, term: undefined });
-      refetchEquipments();
-    }
-
-    const removeEquipment = async (equipment: IEquipment) => { 
-      console.log(equipment)
-      await equipmentService.removeEquipmentAsync(equipment.id!);
-      setEquipmentQueryObject({ ...equipmentQueryObject, page: 0, term: undefined });
-      refetchEquipments();
-    }
-
-    const resetEquipments = () => {
-      setEquipmentQueryObject({ ...equipmentQueryObject, page: 0, term: undefined });
-      refetchEquipments();
-    }
-
-
-  //#endregion
-
+ 
   function handleCloseModal() {
-    setCurrentCompany(undefined);
-    setCurrentCompanyUnity(undefined);
+    setCurrentCompany(undefined); 
     setCurrentPermission(undefined);
-    setCompanyReadOnly(false);
-    setCompanyUnityReadOnly(false);
-    setCurrentCompanyUnity(undefined);
-    setCurrentSector(undefined);
-    setSectorReadOnly(false);
-    setCurrentProfessional(undefined);
-    setProfessionalReadOnly(false);
-    setCurrentEquipment(undefined);
-    setEquipmentReadOnly(false);
+    setCompanyReadOnly(false); 
     closeModal();    
   }
   
@@ -441,61 +210,7 @@ export const AdministratorProvider = ({ children }: { children: React.ReactNode 
         selectCurrent: selectCompany,
         readonly: companyReadOnly,
         reset: resetCompanies,
-      },
-      companyUnities: {
-        data: companyUnities,
-        isLoading: isLoadingCompanyUnities,
-        create: addCompanyUnity,
-        update: updateCompanyUnity,
-        remove: removeCompanyUnity,
-        setFilter: setCompanyUnityQueryObject,
-        inactivate: inactivateCompanyUnity,
-        filters: companyUnityQueryObject,
-        current: currentCompanyUnity,
-        selectCurrent: selectCompanyUnity,
-        readonly: companyUnityReadOnly,
-        reset: resetCompanyUnities,
       },    
-      professionals: {
-        data: professionals,
-        isLoading: isLoadingProfessionals,
-        create: addProfessional,
-        update: updateProfessional,
-        remove: removeProfessional,
-        setFilter: setProfessionalQueryObject,
-        filters: professionalQueryObject,
-        current: currentProfessional,
-        selectCurrent: selectProfessional,
-        readonly: professionalReadOnly,
-        reset: resetProfessionals,
-      },
-      sectors: {
-        data: sectors,
-        isLoading: isLoadingSectors,
-        create: addSector,
-        update: updateSector,
-        remove: removeSector,
-        setFilter: setSectorQueryObject,
-        filters: sectorQueryObject,
-        current: currentSector,
-        selectCurrent: selectSector,
-        readonly: sectorReadOnly,
-        reset: resetSectors,
-      },
-      equipments: {
-        data: equipments,
-        isLoading: isLoadingEquipments,
-        create: addEquipment,
-        update: updateEquipment,
-        remove: removeEquipment,
-        setFilter: setEquipmentQueryObject,
-        filters: equipmentQueryObject,
-        current: currentEquipment,
-        selectCurrent: selectEquipment,
-        readonly: equipmentReadOnly,
-        reset: resetEquipments,
-      },
-      
       
     }}>
   { children }

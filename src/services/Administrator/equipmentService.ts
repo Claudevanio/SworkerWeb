@@ -127,6 +127,42 @@ export const equipmentService = {
 
   },
 
+  async getEquipmentsByCompanyAsync ({
+    uid,
+    hwid,
+    brand,
+    manufacturer,
+    classification,
+    active,
+    inspectionExpired,
+    term,
+    currentPage,
+    pageSize,
+    companyId,
+  }: {
+    uid?: string;
+    hwid?: string;
+    brand?: string;
+    manufacturer?: string;
+    classification?: string;
+    active?: boolean;
+    inspectionExpired?: boolean;
+    term?: string;
+    currentPage?: number;
+    pageSize?: number;
+    companyId: string;
+  }): Promise<basePagination<IEquipment>> {
+    const response = await api.get(`/companies/${companyId}/equipaments`, {
+      params: { uid, hwid, brand, manufacturer, classification, active, inspectionExpired, term, offSet: currentPage + 1, itensPerPage: pageSize, },
+    });
+    debugger
+    const data = {
+      items: response.data.items,
+      count: response.data.totalItems
+    }
+    return data as basePagination<IEquipment>;
+  },
+
   async getEquipments ({
     uid,
     hwid,

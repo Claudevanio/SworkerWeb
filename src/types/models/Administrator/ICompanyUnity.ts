@@ -6,7 +6,7 @@ export interface ICompanyUnity {
   name: string;
   phone: number;
   active: boolean;
-  companyId: string;
+  sectorId: string;
   address?: {
     companyUnityId: number;
     zipCode: string;

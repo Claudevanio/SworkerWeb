@@ -9,6 +9,7 @@ import { Dropdown } from '@/components/form';
 import React from 'react';
 import { useAdministrator } from '@/contexts/AdministrationProvider';
 import { masks, regex } from '@/utils';
+import { companyService } from '@/services';
 
 const schema = Yup.object({ 
   name: Yup.string().required('O nome é obrigatório'),
@@ -25,12 +26,14 @@ export function ModalCompany({
   isOpen,
   onClose,
   current,
-  readonly
+  readonly,
+  onConfirm
 } : {
   isOpen: boolean;
   onClose: () => void;
   current?: ICompany;
   readonly?: boolean;
+  onConfirm?: () => void;
 }
 ){
  
@@ -40,8 +43,21 @@ export function ModalCompany({
       active: true
     }
   });
+  const addCompany = async (company: ICompany) => {
+    const response = await companyService.createCompanyAsync(company); 
+  }
 
-  const {companies} = useAdministrator();
+  const updateCompany = async (company: ICompany) => {
+    await companyService.updateCompanyAsync(company);
+  }
+
+  const companies: {
+    create: (company: ICompany) => Promise<void>;
+    update: (company: ICompany) => Promise<void>;
+  } = {
+    create: addCompany,
+    update: updateCompany
+  }
 
   async function onSubmit(data: FormFields){ 
 
@@ -56,6 +72,7 @@ export function ModalCompany({
         ...newData,
         id: current.id
       });
+      if(onConfirm) onConfirm();
       onClose();
       return;
     }
@@ -63,6 +80,7 @@ export function ModalCompany({
     
     await companies.create(newData);    
     
+    if(onConfirm) onConfirm();
     onClose(); 
   }
 

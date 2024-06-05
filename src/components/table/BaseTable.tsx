@@ -245,7 +245,10 @@ export function BaseTable({
                             actions.map((action, index) => (
                               <IconButton
                                 key={index}
-                                onClick={() => action.onClick(row)}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  action.onClick(row)
+                                }}
                                 sx={{
                                   width: "32px",
                                   height: "32px",

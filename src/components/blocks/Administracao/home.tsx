@@ -16,11 +16,7 @@ export function HomeComponent(){
   const {
     modal,
     permissions,
-    companies,
-    companyUnities,
-    equipments,
-    professionals,
-    sectors,
+    companies, 
   } = useAdministrator()
 
   const tabs = [
@@ -46,8 +42,8 @@ export function HomeComponent(){
     } 
 
     return (subTab === 0 ? 'Adicionar Empresa' :
-    subTab === 1 ? 'Adicionar Unidade' : 
-    subTab === 2 ? 'Adicionar Setor' :
+    subTab === 2 ? 'Adicionar Unidade' : 
+    subTab === 1 ? 'Adicionar Setor' :
     subTab === 3 ? 'Adicionar Profissional' :
     'Adicionar Equipamento' 
     )
@@ -70,7 +66,7 @@ export function HomeComponent(){
         
         <PageTitle
           title='Administração'
-          subtitle='Veja aqui o andamento e configuração de todos os serviços da empresa'
+          subtitle='Veja aqui o andamento e configuração de serviços administrativos.'
           button={{
             label: handleLabel(activeTab || 0),
             onClick: modal.open,

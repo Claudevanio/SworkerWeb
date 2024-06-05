@@ -12,6 +12,7 @@ import { TrendingUp } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
 import { Tooltip } from '@mui/material';
 import Image from 'next/image'; 
+import { useUser } from '@/hooks/useUser';
 
 export const HistoricoTab = (
   {
@@ -22,6 +23,10 @@ export const HistoricoTab = (
 ) => { 
 
   const router = useRouter();
+
+  const {
+    currentCompany
+  } = useUser();
 
   const {
     serviceOrders

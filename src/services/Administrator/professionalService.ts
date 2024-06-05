@@ -63,5 +63,21 @@ export const professionalService = {
   async getProfessionalsCompanyUnitiesHistoryAsync (companyId: string, professionalId: string): Promise<any[]> {
     const response = await api.get<any[]>(`/companies/${companyId}/professionals/${professionalId}/company-unities/history`);
     return response.data;
-  }
+  },
+
+  async getUnits (professionalId: any): Promise<any[]> {
+    const response = await api.get<any[]>(`/professionals/${professionalId}/unities`);
+    return response.data;
+  },
+
+  async signUnit (professionalId: string, unitId: string): Promise<any> {
+    const response = await api.put<any>(`/professionals/${professionalId}/singin/${unitId}`);
+    return response.data;
+  },
+
+  async unsignUnit (professionalId: string, unitId: string): Promise<any> {
+    const response = await api.put<any>(`/professionals/${professionalId}/singout/${unitId}`);
+    return response.data;
+  },
+
 };

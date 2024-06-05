@@ -14,6 +14,7 @@ export interface IProfessional {
   unity: ICompanyUnity;
   cpf: string;
   active?: boolean;
+  unityId?: string;
   sectorsIds: string[];
   sectors?: ISector[];
 

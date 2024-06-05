@@ -5,7 +5,7 @@ export interface IUser {
   userName: string;
   email: string;
   password?: string;
-  userId: string;
+  userId?: string;
   companyId?: string;
   professionalId?: string;
   unityId?: string;

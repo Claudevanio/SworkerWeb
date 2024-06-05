@@ -8,6 +8,11 @@ export const RoleService = {
     return response.data;
   },
 
+  async getAll (): Promise<IRole[]> {
+    const response = await authApi.get<IRole[]>('/roles/all');
+    return response.data;
+  },
+
   async listRolesAsync (term: string, currentPage: number, pageSize: number): Promise<basePagination<IRole>> {
     const response = await authApi.get<IRole[]>('/roles', {
       params: { term, currentPage, pageSize }

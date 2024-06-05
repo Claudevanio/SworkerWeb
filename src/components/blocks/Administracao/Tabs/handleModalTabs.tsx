@@ -11,11 +11,7 @@ export function ModalTabs({
   const {
     modal,
     companies,
-    permissions,
-    companyUnities,
-    sectors,
-    professionals,
-    equipments
+    permissions, 
   } = useAdministrator()
 
   if(!modal.isOpen)
@@ -35,35 +31,7 @@ export function ModalTabs({
         onClose={modal.close}
         current={companies.current}
         readonly={companies.readonly}
-      />
-    case 1:
-      return <AdministrationModals.ModalCompanyUnity
-        isOpen={modal.isOpen}
-        onClose={modal.close}
-        current={companyUnities.current}
-        readonly={companyUnities.readonly}
-      />
-    case 2:
-      return <AdministrationModals.ModalSector
-        isOpen={modal.isOpen}
-        onClose={modal.close}
-        current={sectors.current}
-        readonly={sectors.readonly}
-      />
-    case 3:
-      return <AdministrationModals.ModalProfessional
-        isOpen={modal.isOpen}
-        onClose={modal.close}
-        current={professionals.current}
-        readonly={professionals.readonly}
-      />  
-    case 4:
-      return <AdministrationModals.ModalEquipments
-        isOpen={modal.isOpen}
-        onClose={modal.close}
-        current={equipments.current}
-        readonly={equipments.readonly}
-      />
+      /> 
   } 
   
 }

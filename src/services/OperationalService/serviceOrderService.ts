@@ -47,6 +47,11 @@ export const serviceOrderService = {
     return response.data;
   },
 
+  async listDay (): Promise<any[]> {
+    const response = await api.get<any[]>('/service-orders/list-day');
+    return response.data;
+  },
+
   async getServiceOrderTaskStepsAsync (id: string): Promise<any[]> {
     const response = await api.get<any[]>(`/service-orders/${id}/task-steps`);
     return response.data;
@@ -93,6 +98,16 @@ export const serviceOrderService = {
   async listServiceOrderAsync (filters: any): Promise<any[]> {
     console.log(filters)
     const response = await api.get<any[]>('/service-orders', { params: filters });
+    return response.data;
+  },
+
+  async listServiceOrderByCompanyAsync (companyId: string, filters: any): Promise<any[]> {
+    const response = await api.get<any[]>(`/companies/${companyId}/service-orders`, {
+      params: {
+        offSet: filters.currentPage,
+        itensPerPage: filters.pageSize,
+      }
+    });
     return response.data;
   },
 
