@@ -113,7 +113,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     const { companyId } = params;
 
     
-    if (cachedCompany && !companyId || companyId == JSON.parse(cachedCompany).id) {
+    if ((cachedCompany && !companyId) || (cachedCompany && companyId == JSON.parse(cachedCompany).id)) {
       const company = JSON.parse(cachedCompany) as ICompany;
       setCurrentCompany(company);
       return;
