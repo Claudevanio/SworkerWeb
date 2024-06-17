@@ -51,9 +51,11 @@ export default function OcorrenciasDashboard() {
   >([]);
   const [types, setTypes] = useState<IOcurrenceType[]>([]);
 
+  const { currentCompany } = useUser();
+
   const getOcurrences = async () => {
     const ocurrencesResponse =
-      await ocurrenceService.getAllRecognizeOcurrenceAsync();
+      await ocurrenceService.getAllRecognizeOcurrenceAsync(currentCompany?.id);
 
     setOcurrences(ocurrencesResponse);
   };
