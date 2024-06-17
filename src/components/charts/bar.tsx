@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import { COLORS } from '@/utils';
 import { BarConfig, Bar } from '@ant-design/charts';
 
@@ -8,8 +8,8 @@ export const BarChart = ({
   yField,
   height = 400,
   color = COLORS.primary['600'],
-  typeOrder 
-} :{
+  typeOrder
+}: {
   data: any[];
   xField: string;
   yField: string;
@@ -17,41 +17,35 @@ export const BarChart = ({
   color?: string | string[];
   typeOrder?: string[];
 }) => {
-
-  const chartConfig : BarConfig = {
+  const chartConfig: BarConfig = {
     data,
     seriesField: 'type',
     isStack: true,
     xField,
     yField,
-    height,   
+    height,
     autoFit: true,
     color,
     tooltip: {
       showCrosshairs: true,
-      shared: true,
-    },  
+      shared: true
+    },
     label: {
       position: 'right',
       style: {
         fill: COLORS['base']['7'] as any,
-        fontWeight: 'bold',
+        fontWeight: 'bold'
       },
       formatter: (v, item) => {
         return `${item._origin['type'] === typeOrder[0] ? '' : item._origin[xField]}`;
       }
-      
     },
     columnBackground: COLORS['base']['1'] as any,
     barStyle: {
-      radius: [20, 20, 0, 0], 
-    },
+      radius: [20, 20, 0, 0]
+    }
   };
   // return <div></div>
 
-  return (
-    <Bar 
-      {...chartConfig}
-    />
-  );
-}
+  return <Bar {...chartConfig} />;
+};

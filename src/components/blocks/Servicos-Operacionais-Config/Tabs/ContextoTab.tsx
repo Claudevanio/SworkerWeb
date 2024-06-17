@@ -1,8 +1,8 @@
-import { BaseTable } from "@/components/table/BaseTable";
-import Pagination from "@/components/ui/pagination";
-import { useServiceOperations } from "@/contexts/ServiceOperationsConfigProvider";
-import { IContext } from "@/types/models/ServiceOrder/IContext";
-import { EditOutlined } from "@mui/icons-material";
+import { BaseTable } from '@/components/table/BaseTable';
+import Pagination from '@/components/ui/pagination';
+import { useServiceOperations } from '@/contexts/ServiceOperationsConfigProvider';
+import { IContext } from '@/types/models/ServiceOrder/IContext';
+import { EditOutlined } from '@mui/icons-material';
 
 export default function ContextoTab() {
   const { contexts, modal, equipmentTypes } = useServiceOperations();
@@ -11,32 +11,30 @@ export default function ContextoTab() {
 
   const columns = [
     {
-      label: "Nome",
-      key: "name",
-      mobileTitle: true,
+      label: 'Nome',
+      key: 'name',
+      mobileTitle: true
     },
     {
-      label: "Aplicação",
-      key: "application",
+      label: 'Aplicação',
+      key: 'application'
     },
     {
-      label: "Tipo",
-      key: "type",
+      label: 'Tipo',
+      key: 'type',
       Formatter: (typeId: any) => {
-        const filteredType = equipmentTypes.data.find(
-          (type) => type.id === typeId
-        );
+        const filteredType = equipmentTypes.data.find(type => type.id === typeId);
 
         return <div>{filteredType?.description}</div>;
-      },
+      }
     },
     {
-      label: "Caracterização",
-      key: "characterization",
+      label: 'Caracterização',
+      key: 'characterization',
       Formatter: (characterization: any) => {
         return <div>{characterization?.description}</div>;
-      },
-    },
+      }
+    }
   ];
 
   return (
@@ -46,33 +44,31 @@ export default function ContextoTab() {
         isLoading={contexts.isLoading}
         actions={[
           {
-            label: "Detalhes",
+            label: 'Detalhes',
             onClick: (data: IContext) => {
               contexts.selectCurrent(data, true);
               modal.open();
             },
-            icon: <EditOutlined />,
+            icon: <EditOutlined />
           },
           {
-            label: "Editar",
+            label: 'Editar',
             onClick: (data: IContext) => {
               contexts.selectCurrent(data);
               modal.open();
             },
-            icon: <EditOutlined />,
-          },
+            icon: <EditOutlined />
+          }
         ]}
         rows={rows}
       />
       <Pagination
         currentPage={contexts.filters.page ?? 0}
-        totalPages={Math.ceil(
-          contexts?.data?.count / contexts.filters.pageSize
-        )}
-        onChange={(page) =>
-          contexts?.setFilter((prev) => ({
+        totalPages={Math.ceil(contexts?.data?.count / contexts.filters.pageSize)}
+        onChange={page =>
+          contexts?.setFilter(prev => ({
             ...prev,
-            page,
+            page
           }))
         }
       />

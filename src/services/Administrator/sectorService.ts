@@ -2,21 +2,12 @@ import { basePagination, ISector } from '@/types';
 import { api } from '../api';
 
 export const SectorService = {
-  async countSectorAsync (): Promise<number> {
+  async countSectorAsync(): Promise<number> {
     const response = await api.get<number>('/sectors/count');
     return response.data;
   },
 
-  async listSectorAsync (
-    {
-      page,
-      pageSize,
-      term
-    }: {
-      page: number;
-      pageSize: number;
-      term: string;
-    }): Promise<basePagination<ISector>> {
+  async listSectorAsync({ page, pageSize, term }: { page: number; pageSize: number; term: string }): Promise<basePagination<ISector>> {
     const response = await api.get<{
       pageSize: number;
       term: string;
@@ -33,25 +24,22 @@ export const SectorService = {
     const data = {
       items: response.data?.items,
       count: response.data?.totalItems
-    }
-
-
+    };
 
     return data as basePagination<ISector>;
   },
 
-  async listSectorByCompanyAsync (
-    {
-      page,
-      pageSize,
-      term,
-      companyId
-    }: {
-      page: number;
-      pageSize: number;
-      term: string;
-      companyId: string;
-    }): Promise<basePagination<ISector>> {
+  async listSectorByCompanyAsync({
+    page,
+    pageSize,
+    term,
+    companyId
+  }: {
+    page: number;
+    pageSize: number;
+    term: string;
+    companyId: string;
+  }): Promise<basePagination<ISector>> {
     const response = await api.get<{
       pageSize: number;
       term: string;
@@ -61,19 +49,19 @@ export const SectorService = {
       params: {
         offSet: page,
         itensPerPage: pageSize,
-        term,
+        term
       }
     });
 
     const data = {
       items: response.data?.items,
       count: response.data?.totalItems
-    }
+    };
 
     return data as basePagination<ISector>;
   },
 
-  async getAll (): Promise<ISector[]> {
+  async getAll(): Promise<ISector[]> {
     const response = await api.get<{
       pageSize: number;
       term: string;
@@ -84,23 +72,23 @@ export const SectorService = {
     return response.data?.items;
   },
 
-  async updateSectorAsync (item: ISector): Promise<void> {
+  async updateSectorAsync(item: ISector): Promise<void> {
     await api.put<ISector>(`/sector`, item);
   },
 
-  async createSectorAsync (item: ISector): Promise<ISector> {
+  async createSectorAsync(item: ISector): Promise<ISector> {
     const response = await api.post<ISector>(`/sector`, item);
     return response.data;
   },
 
-  async removeSectorAsync (id: string): Promise<void> {
+  async removeSectorAsync(id: string): Promise<void> {
     // await api.delete<void>(`/sector`,);
   },
 
-  async getSectorByIdAsync (id: string): Promise<ISector> {
+  async getSectorByIdAsync(id: string): Promise<ISector> {
     const response = await api.get<ISector>(`/sectors/${id}`, {
       params: { id }
     });
     return response.data;
-  },
+  }
 };

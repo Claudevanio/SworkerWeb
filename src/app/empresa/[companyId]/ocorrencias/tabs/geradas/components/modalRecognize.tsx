@@ -1,16 +1,16 @@
-import { Button, Dropdown, Form, Input } from "@/components";
-import { useDialog } from "@/hooks/use-dialog";
-import { ocurrenceService } from "@/services/Ocurrences";
-import { IOcurrence } from "@/types/models/Ocurrences/IOcurrence";
-import { IOcurrenceClassification } from "@/types/models/Ocurrences/IOcurrenceClassification";
-import { IOcurrenceRecognize } from "@/types/models/Ocurrences/IOcurrenceRecognize";
-import { masks } from "@/utils";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { Button as ButtonMUI, Stack, Switch, Typography } from "@mui/material";
-import dayjs from "dayjs";
-import { Dispatch, SetStateAction } from "react";
-import { useForm } from "react-hook-form";
-import * as Yup from "yup";
+import { Button, Dropdown, Form, Input } from '@/components';
+import { useDialog } from '@/hooks/use-dialog';
+import { ocurrenceService } from '@/services/Ocurrences';
+import { IOcurrence } from '@/types/models/Ocurrences/IOcurrence';
+import { IOcurrenceClassification } from '@/types/models/Ocurrences/IOcurrenceClassification';
+import { IOcurrenceRecognize } from '@/types/models/Ocurrences/IOcurrenceRecognize';
+import { masks } from '@/utils';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { Button as ButtonMUI, Stack, Switch, Typography } from '@mui/material';
+import dayjs from 'dayjs';
+import { Dispatch, SetStateAction } from 'react';
+import { useForm } from 'react-hook-form';
+import * as Yup from 'yup';
 
 const schemaRecognize = Yup.object({
   classification: Yup.number(),
@@ -19,7 +19,7 @@ const schemaRecognize = Yup.object({
   occurrenceCategorization: Yup.number(),
   occurrenceDate: Yup.string(),
   locale: Yup.string(),
-  description: Yup.string(),
+  description: Yup.string()
 });
 
 export default function ModalRecognize({
@@ -43,10 +43,10 @@ export default function ModalRecognize({
       occurrenceType: currentOcurrence.occurrenceTypeId,
       occurrenceCategorization: currentOcurrence.characterization?.id,
       observation: currentOcurrence.observation,
-      occurrenceDate: dayjs(currentOcurrence.registerDate).format("DD/MM/YYYY"),
+      occurrenceDate: dayjs(currentOcurrence.registerDate).format('DD/MM/YYYY'),
       locale: currentOcurrence.local,
-      description: currentOcurrence.description,
-    },
+      description: currentOcurrence.description
+    }
   });
 
   const { confirmDialog } = useDialog();
@@ -65,14 +65,14 @@ export default function ModalRecognize({
       professionalId: currentOcurrence.professional.id,
       recognized: currentOcurrence.acknowledged,
       registerDate: currentOcurrence.registerDate,
-      supervisorId: 1,
+      supervisorId: 1
     } as IOcurrenceRecognize;
     try {
       await ocurrenceService.recognizeOcurrenceAsync(newOcurrenceRecognize);
     } catch (e) {
       confirmDialog({
-        title: "Houve um erro ao reconhecer a ocorrência",
-        message: e.message,
+        title: 'Houve um erro ao reconhecer a ocorrência',
+        message: e.message
       });
     }
 
@@ -81,18 +81,14 @@ export default function ModalRecognize({
   }
 
   return (
-    <Form
-      onSubmit={(data) => onSubmit(data as FormFields)}
-      className="flex flex-col gap-4 pb-4"
-      {...methodsRecognize}
-    >
+    <Form onSubmit={data => onSubmit(data as FormFields)} className="flex flex-col gap-4 pb-4" {...methodsRecognize}>
       <Stack flexDirection="row" alignItems="center">
         <Switch
           checked={currentOcurrence.acknowledged}
-          onChange={(e) =>
+          onChange={e =>
             setCurrentOcurrence({
               ...currentOcurrence,
-              acknowledged: e.target.checked,
+              acknowledged: e.target.checked
             })
           }
         />
@@ -105,10 +101,10 @@ export default function ModalRecognize({
           required
           error={methodsRecognize.formState.errors.classification}
           disabled={false}
-          options={classifications.map((item) => {
+          options={classifications.map(item => {
             return {
               label: item?.description,
-              value: item?.id,
+              value: item?.id
             };
           })}
         />
@@ -120,21 +116,13 @@ export default function ModalRecognize({
           options={[
             {
               label: currentOcurrence.occurrenceType?.typeName,
-              value: currentOcurrence.occurrenceTypeId,
-            },
+              value: currentOcurrence.occurrenceTypeId
+            }
           ]}
         />
       </div>
 
-      <Input
-        name="observation"
-        label="Observação"
-        required
-        placeholder="Texto descritivo"
-        disabled={false}
-        minRows={5}
-        multiline={true}
-      />
+      <Input name="observation" label="Observação" required placeholder="Texto descritivo" disabled={false} minRows={5} multiline={true} />
       <div className="flex gap-4 md:gap-6 flex-col md:flex-row justify-between">
         <Dropdown
           name="occurrenceCategorization"
@@ -144,47 +132,18 @@ export default function ModalRecognize({
           options={[
             {
               label: currentOcurrence.characterization?.description,
-              value: currentOcurrence.characterization?.id,
-            },
+              value: currentOcurrence.characterization?.id
+            }
           ]}
         />
-        <Input
-          name="occurrenceDate"
-          label="Data da ocorrência"
-          required
-          placeholder="DD/MM/AAAA"
-          disabled={true}
-          mask={masks.DATE}
-        />
+        <Input name="occurrenceDate" label="Data da ocorrência" required placeholder="DD/MM/AAAA" disabled={true} mask={masks.DATE} />
       </div>
       <Stack width="50%">
-        <Input
-          name="locale"
-          label="Local"
-          required
-          placeholder="Local"
-          disabled={true}
-        />
+        <Input name="locale" label="Local" required placeholder="Local" disabled={true} />
       </Stack>
-      <Input
-        name="description"
-        label="Descrição"
-        required
-        placeholder="Texto descritivo"
-        disabled={true}
-        minRows={5}
-        multiline={true}
-      />
-      <Stack
-        flexDirection="row"
-        justifyContent="space-between"
-        alignItems="center"
-      >
-        <ButtonMUI
-          onClick={() => handleClose()}
-          variant="text"
-          sx={{ color: "black" }}
-        >
+      <Input name="description" label="Descrição" required placeholder="Texto descritivo" disabled={true} minRows={5} multiline={true} />
+      <Stack flexDirection="row" justifyContent="space-between" alignItems="center">
+        <ButtonMUI onClick={() => handleClose()} variant="text" sx={{ color: 'black' }}>
           Cancelar
         </ButtonMUI>
         <Button type="submit">Salvar</Button>

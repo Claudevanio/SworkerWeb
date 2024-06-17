@@ -5,6 +5,11 @@ export interface IOcurrence {
   occurrenceType: ListOccurrenceTypeModel;
   occurrenceTypeId: number;
   professional: ListOccurrenceProfessionalModal;
+  professionalName?: string;
+  supervisorId?: number;
+  supervisorName?: string;
+  characterizationDescription?: string;
+  classificationDescription?: string;
   characterization: ListOccurrenceCharacterizationModel;
   serviceOrder: ListOccurrenceServiceOrder;
   context: ListOccurrenceContext;

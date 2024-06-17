@@ -1,29 +1,25 @@
-import { basePagination } from "@/types";
-import { api } from "../api";
-import { IContext } from "@/types/models/ServiceOrder/IContext";
+import { basePagination } from '@/types';
+import { api } from '../api';
+import { IContext } from '@/types/models/ServiceOrder/IContext';
 
 export const configContextService = {
-  async listContextsAsync(
-    term: string,
-    currentPage: number,
-    pageSize: number
-  ): Promise<basePagination<IContext>> {
+  async listContextsAsync(term: string, currentPage: number, pageSize: number): Promise<basePagination<IContext>> {
     const response = await api.get<IContext[]>(`/contexts`, {
       params: {
         term: term,
         currentPage,
-        pageSize,
-      },
+        pageSize
+      }
     });
 
     const data: IContext[] = response.data;
 
-    const responseCount = await api.get("/contexts/count", {
+    const responseCount = await api.get('/contexts/count', {
       params: {
         term: term,
         currentPage,
-        pageSize,
-      },
+        pageSize
+      }
     });
 
     const count: number = responseCount.data.count;
@@ -33,7 +29,7 @@ export const configContextService = {
 
   async updateContext(context: IContext): Promise<void> {
     try {
-      console.log(context, "Current Context")
+      console.log(context, 'Current Context');
       await api.put(`/contexts/${context.id}`, {
         Id: context.id,
         Code: context.code,
@@ -42,10 +38,10 @@ export const configContextService = {
         Parameters: context.parameters,
         Type: context.type,
         CharacterizationId: context.characterizationId,
-        IntervalTime: context.intervalTime,
+        IntervalTime: context.intervalTime
       });
     } catch (e) {
       throw e.response.data;
     }
-  },
+  }
 };

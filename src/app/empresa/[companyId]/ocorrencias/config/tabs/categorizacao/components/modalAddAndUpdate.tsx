@@ -1,17 +1,17 @@
-"use client";
-import { Button, Dropdown, Form, Input } from "@/components";
-import { useDialog } from "@/hooks/use-dialog";
-import { ocurrenceCharacterizationService } from "@/services/Ocurrences/ocurrenceCharacterizationsService";
-import { IOcurrenceCharacterization } from "@/types/models/Ocurrences/IOcurrenceCharacterization";
-import { IOcurrenceType } from "@/types/models/Ocurrences/IOcurrenceType";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { Stack, Button as ButtonMUI } from "@mui/material";
-import { useForm } from "react-hook-form";
-import * as Yup from "yup";
+'use client';
+import { Button, Dropdown, Form, Input } from '@/components';
+import { useDialog } from '@/hooks/use-dialog';
+import { ocurrenceCharacterizationService } from '@/services/Ocurrences/ocurrenceCharacterizationsService';
+import { IOcurrenceCharacterization } from '@/types/models/Ocurrences/IOcurrenceCharacterization';
+import { IOcurrenceType } from '@/types/models/Ocurrences/IOcurrenceType';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { Stack, Button as ButtonMUI } from '@mui/material';
+import { useForm } from 'react-hook-form';
+import * as Yup from 'yup';
 
 const schema = Yup.object({
   category: Yup.string(),
-  occurrenceType: Yup.number(),
+  occurrenceType: Yup.number()
 });
 
 type FormFields = Yup.InferType<typeof schema>;
@@ -21,7 +21,7 @@ export default function ModalAddAndUpdate({
   types,
   characterizationSelected,
   isAdd,
-  refetch,
+  refetch
 }: {
   handleClose: () => void;
   types: IOcurrenceType[];
@@ -33,8 +33,8 @@ export default function ModalAddAndUpdate({
     resolver: yupResolver(schema),
     defaultValues: {
       occurrenceType: characterizationSelected.type?.id,
-      category: characterizationSelected.description,
-    },
+      category: characterizationSelected.description
+    }
   });
 
   const { confirmDialog } = useDialog();
@@ -45,24 +45,20 @@ export default function ModalAddAndUpdate({
 
     if (isAdd) {
       try {
-        await ocurrenceCharacterizationService.insertCharacterization(
-          characterizationSelected
-        );
+        await ocurrenceCharacterizationService.insertCharacterization(characterizationSelected);
       } catch (e) {
         confirmDialog({
-          title: "Houve um erro ao adicionar uma categoria",
-          message: e.message,
+          title: 'Houve um erro ao adicionar uma categoria',
+          message: e.message
         });
       }
     } else {
       try {
-        await ocurrenceCharacterizationService.updateCharacterization(
-          characterizationSelected
-        );
+        await ocurrenceCharacterizationService.updateCharacterization(characterizationSelected);
       } catch (e) {
         confirmDialog({
-          title: "Houve um erro ao editar a categoria",
-          message: e.message,
+          title: 'Houve um erro ao editar a categoria',
+          message: e.message
         });
       }
     }
@@ -72,36 +68,23 @@ export default function ModalAddAndUpdate({
   }
 
   return (
-    <Form
-      onSubmit={(data) => onSubmit(data)}
-      className="flex flex-col gap-4 pb-4"
-      {...methods}
-    >
+    <Form onSubmit={data => onSubmit(data)} className="flex flex-col gap-4 pb-4" {...methods}>
       <Dropdown
         name="occurrenceType"
         label="Tipo de ocorrência"
-        options={types.map((item) => {
+        options={types.map(item => {
           return {
             label: item.description,
-            value: item.id,
+            value: item.id
           };
         })}
       />
-      <Input
-        name="category"
-        label="Categoria"
-        placeholder="Categoria"
-        disabled={false}
-      />
+      <Input name="category" label="Categoria" placeholder="Categoria" disabled={false} />
       <Stack flexDirection="row" justifyContent="space-between">
-        <ButtonMUI
-          onClick={() => handleClose()}
-          variant="text"
-          sx={{ color: "black" }}
-        >
+        <ButtonMUI onClick={() => handleClose()} variant="text" sx={{ color: 'black' }}>
           Cancelar
         </ButtonMUI>
-        <Button sx={{ width: "30%" }} type="submit">
+        <Button sx={{ width: '30%' }} type="submit">
           Salvar
         </Button>
       </Stack>

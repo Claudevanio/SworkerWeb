@@ -1,11 +1,12 @@
-export const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
+export const emailRegex =
+  /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
 
 export const isValidCard = (number: string) => {
   const brand = validationFlag(number);
   if (!brand) return false;
 
   return true;
-}
+};
 
 export const validationFlag = (number: string) => {
   if (!number) return null;
@@ -20,7 +21,9 @@ export const validationFlag = (number: string) => {
   if (/^3[47][0-9]{13}$/.test(isFormatted)) {
     return 'American Express';
   }
-  if (/^65[4-9][0-9]{13}|64[4-9][0-9]{13}|6011[0-9]{12}|(622(?:12[6-9]|1[3-9][0-9]|[2-8][0-9][0-9]|9[01][0-9]|92[0-5])[0-9]{10})$/.test(isFormatted)) {
+  if (
+    /^65[4-9][0-9]{13}|64[4-9][0-9]{13}|6011[0-9]{12}|(622(?:12[6-9]|1[3-9][0-9]|[2-8][0-9][0-9]|9[01][0-9]|92[0-5])[0-9]{10})$/.test(isFormatted)
+  ) {
     return 'Discover';
   }
   if (/^(5018|5081|5044|5020|5038|603845|6304|6759|676[1-3]|6799|6220|504834|504817|504645)[0-9]{8,15}$/.test(isFormatted)) {
@@ -36,12 +39,12 @@ export const validationFlag = (number: string) => {
   return null;
 };
 
-export const CNPJ = /^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/
+export const CNPJ = /^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/;
 
-export const TELEFONE = /^\(?\d{2}\)?\s?9?\d{4}-?\d{4}$/
+export const TELEFONE = /^\(?\d{2}\)?\s?9?\d{4}-?\d{4}$/;
 
-export const CPF = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/
+export const CPF = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
 
-export const DATE = /^\d{2}\/\d{2}\/\d{4}$/
+export const DATE = /^\d{2}\/\d{2}\/\d{4}$/;
 
-export const NUMBER = /^\d+$/
+export const NUMBER = /^\d+$/;

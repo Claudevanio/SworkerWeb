@@ -12,10 +12,13 @@ export interface IProfessional {
   roleId: string;
   standardSupervisor: boolean;
   unity: ICompanyUnity;
+  unityProfessionals: {
+    unityId: string;
+    unityName: string;
+  }[];
   cpf: string;
   active?: boolean;
   unityId?: string;
   sectorsIds: string[];
   sectors?: ISector[];
-
 }

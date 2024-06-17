@@ -1,15 +1,17 @@
-import { IOcurrence, ListOccurrenceProfessionalModal } from "./IOcurrence";
-import { IOcurrenceCharacterization } from "./IOcurrenceCharacterization";
-import { IOcurrenceClassification } from "./IOcurrenceClassification";
+import { IOcurrence, ListOccurrenceProfessionalModal } from './IOcurrence';
+import { IOcurrenceCharacterization } from './IOcurrenceCharacterization';
+import { IOcurrenceClassification } from './IOcurrenceClassification';
 
 export interface IOcurrenceRecognize {
   id: number;
   occurrenceId: number;
-  occurrence: IOcurrence;
   supervisorId: number;
   supervisor: ListOccurrenceProfessionalModal;
   professionalId: number;
   professional: ListOccurrenceProfessionalModal;
+  supervisorName?: string;
+  characterizationDescription?: string;
+  classificationDescription?: string;
   classificationId: number;
   classification: IOcurrenceClassification;
   characterizationId: number;
@@ -23,5 +25,9 @@ export interface IOcurrenceRecognize {
   daysWorkedAfterDayOff: number;
   absenceDays: number;
   recognized: boolean;
+  acknowledged: boolean;
   closed: boolean;
+  occurrence?: IOcurrence & {
+    occurrenceTypeName?: string;
+  };
 }

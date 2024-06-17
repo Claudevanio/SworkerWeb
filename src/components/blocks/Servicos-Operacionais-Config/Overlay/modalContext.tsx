@@ -1,16 +1,16 @@
-import { Modal } from "@/components/ui/modal";
-import * as Yup from "yup";
-import { Form } from "@/components/form/Form";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { Input } from "@/components/ui";
-import { Dropdown } from "@/components/form";
-import React, { useEffect } from "react";
-import { IContext } from "@/types/models/ServiceOrder/IContext";
-import { useServiceOperations } from "@/contexts/ServiceOperationsConfigProvider";
-import { useQuery } from "@tanstack/react-query";
-import { IOcurrenceCharacterization } from "@/types/models/Ocurrences/IOcurrenceCharacterization";
-import { ocurrenceCharacterizationService } from "@/services/Ocurrences";
+import { Modal } from '@/components/ui/modal';
+import * as Yup from 'yup';
+import { Form } from '@/components/form/Form';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { Input } from '@/components/ui';
+import { Dropdown } from '@/components/form';
+import React, { useEffect } from 'react';
+import { IContext } from '@/types/models/ServiceOrder/IContext';
+import { useServiceOperations } from '@/contexts/ServiceOperationsConfigProvider';
+import { useQuery } from '@tanstack/react-query';
+import { IOcurrenceCharacterization } from '@/types/models/Ocurrences/IOcurrenceCharacterization';
+import { ocurrenceCharacterizationService } from '@/services/Ocurrences';
 
 const schema = Yup.object({
   code: Yup.number(),
@@ -19,7 +19,7 @@ const schema = Yup.object({
   type: Yup.number(),
   characterization: Yup.number(),
   interval: Yup.number(),
-  paramters: Yup.string(),
+  paramters: Yup.string()
 });
 
 type FormFields = Yup.InferType<typeof schema>;
@@ -28,7 +28,7 @@ export function ModalContext({
   isOpen,
   onClose,
   current,
-  readonly,
+  readonly
 }: {
   isOpen: boolean;
   onClose: () => void;
@@ -44,8 +44,8 @@ export function ModalContext({
       type: current?.type,
       characterization: current?.characterizationId,
       interval: current?.intervalTime,
-      paramters: current?.parameters,
-    },
+      paramters: current?.parameters
+    }
   });
 
   const { contexts, characterizations, equipmentTypes } = useServiceOperations();
@@ -59,7 +59,7 @@ export function ModalContext({
       parameters: data.paramters,
       type: data.type,
       characterizationId: data.characterization,
-      intervalTime: data.interval,
+      intervalTime: data.interval
     } as IContext;
 
     await contexts.update(newData);
@@ -76,28 +76,10 @@ export function ModalContext({
       width="550px"
       onSubmit={readonly ? undefined : () => methods.handleSubmit(onSubmit)()}
     >
-      <Form
-        onSubmit={(data) => onSubmit(data as FormFields)}
-        className="flex flex-col gap-4 pb-4"
-        {...methods}
-      >
+      <Form onSubmit={data => onSubmit(data as FormFields)} className="flex flex-col gap-4 pb-4" {...methods}>
         <div className="flex gap-4 md:gap-6 flex-col md:flex-row justify-between">
-          <Input
-            name="code"
-            label="Código"
-            required
-            placeholder="Código"
-            error={methods.formState.errors.code}
-            disabled={readonly}
-          />
-          <Input
-            name="name"
-            label="Nome"
-            required
-            placeholder="Nome"
-            error={methods.formState.errors.name}
-            disabled={readonly}
-          />
+          <Input name="code" label="Código" required placeholder="Código" error={methods.formState.errors.code} disabled={readonly} />
+          <Input name="name" label="Nome" required placeholder="Nome" error={methods.formState.errors.name} disabled={readonly} />
         </div>
         <div className="flex gap-4 md:gap-6 flex-col md:flex-row justify-between">
           <Dropdown
@@ -107,13 +89,13 @@ export function ModalContext({
             disabled={readonly}
             options={[
               {
-                label: "1",
-                value: 1,
+                label: '1',
+                value: 1
               },
               {
-                label: "2",
-                value: 2,
-              },
+                label: '2',
+                value: 2
+              }
             ]}
           />
           <Dropdown
@@ -121,12 +103,14 @@ export function ModalContext({
             label="Tipo"
             required
             disabled={readonly}
-            options={equipmentTypes.data?.map(type => {
-              return {
-                label: type.description,
-                value: type.id
-              }
-            }) ?? []}
+            options={
+              equipmentTypes.data?.map(type => {
+                return {
+                  label: type.description,
+                  value: type.id
+                };
+              }) ?? []
+            }
           />
         </div>
         <div className="flex gap-4 md:gap-6 flex-col md:flex-row justify-between">
@@ -136,20 +120,13 @@ export function ModalContext({
             required
             disabled={readonly}
             options={
-              characterizations?.data?.map((characterization) => ({
+              characterizations?.data?.map(characterization => ({
                 label: characterization.description,
-                value: characterization.id,
+                value: characterization.id
               })) ?? []
             }
           />
-          <Input
-            name="interval"
-            label="Intervalo"
-            required
-            placeholder="Intervalo"
-            error={methods.formState.errors.interval}
-            disabled={readonly}
-          />
+          <Input name="interval" label="Intervalo" required placeholder="Intervalo" error={methods.formState.errors.interval} disabled={readonly} />
         </div>
         <Input
           name="paramters"

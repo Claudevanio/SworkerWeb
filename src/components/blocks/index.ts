@@ -1,2 +1,2 @@
-export * from './Administracao/home'
-export * from './title'
+export * from './Administracao/home';
+export * from './title';

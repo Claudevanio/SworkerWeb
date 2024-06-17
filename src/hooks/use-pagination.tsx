@@ -9,7 +9,7 @@ interface PaginationResult<T> {
 
 function usePagination<T>(data: T[], itemsPerPage: number): PaginationResult<T> {
   const [currentPage, setCurrentPage] = useState(0);
- 
+
   const attTableData = useCallback(() => {
     const startIndex = currentPage * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
@@ -23,7 +23,6 @@ function usePagination<T>(data: T[], itemsPerPage: number): PaginationResult<T> 
   const currentTableData = attTableData();
 
   const totalPage = Math.ceil(data.length / itemsPerPage);
-  
 
   return {
     currentPage,

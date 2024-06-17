@@ -9,28 +9,24 @@ import { useUser } from '@/hooks/useUser';
 import { ICompanyUnity, ISector } from '@/types';
 import { masks } from '@/utils';
 import { DeleteOutline, EditOutlined } from '@mui/icons-material';
-import { useEffect, useState } from 'react'; 
+import { useEffect, useState } from 'react';
 
-export function SectorTab() { 
+export function SectorTab() {
+  const { sectors, modal } = useGestao();
 
-  const {sectors, modal} = useGestao()  
+  const { companiesList } = useUser();
 
-  const {companiesList} = useUser()
-  
   const columns = [
     {
       label: 'Setor',
       key: 'description',
-      mobileTitle: true,
-
+      mobileTitle: true
     },
     {
       label: 'Empresa',
       key: 'companyId',
       Formatter: (companyId: any) => {
-        return (
-          companiesList?.find(c => c.id === companyId)?.name ?? 'Não encontrado'
-        )
+        return companiesList?.find(c => c.id === companyId)?.name ?? 'Não encontrado';
       }
     }
     // {
@@ -42,80 +38,73 @@ export function SectorTab() {
     //     )
     //   }
     // }
-  ] 
+  ];
 
-  const [sectorsData, setSectorsData] = useState<ISector[]>(sectors.data?.items ?? [])
+  const [sectorsData, setSectorsData] = useState<ISector[]>(sectors.data?.items ?? []);
 
   useEffect(() => {
-    if(!sectors.filters.term) {
-      setSectorsData(sectors.data?.items ?? [])
-      return
+    if (!sectors.filters.term) {
+      setSectorsData(sectors.data?.items ?? []);
+      return;
     }
-    const filteredSectors = sectorsData.filter((sector) => {
-      return sector.description.toLowerCase().includes(sectors.filters.term?.toLowerCase() ?? '')
-    })
-    setSectorsData(filteredSectors)
+    const filteredSectors = sectorsData.filter(sector => {
+      return sector.description.toLowerCase().includes(sectors.filters.term?.toLowerCase() ?? '');
+    });
+    setSectorsData(filteredSectors);
+  }, [sectors.filters.term, sectors.data]);
 
-  }, [sectors.filters.term, sectors.data])
+  const paginatedSectors = usePagination(sectorsData, 3);
 
-  const paginatedSectors = usePagination(sectorsData, 3)
-
-  const rows = paginatedSectors.currentTableData
+  const rows = paginatedSectors.currentTableData;
 
   return (
-    <>  
+    <>
       <SearchInput
         value={sectors.filters.term}
-        onChange={(v) => sectors.setFilter(prev => ({
-          ...prev,
-          term: v === '' ? undefined : v,
-          page: 1
-        })
-        )}
-      />  
+        onChange={v =>
+          sectors.setFilter(prev => ({
+            ...prev,
+            term: v === '' ? undefined : v,
+            page: 1
+          }))
+        }
+      />
       <BaseTable
         columns={columns}
-        onClickRow={
-          (data : any) => {
-            sectors.selectCurrent(data, true)
-            modal.open()
-          }
-        }
+        onClickRow={(data: any) => {
+          sectors.selectCurrent(data, true);
+          modal.open();
+        }}
         showAllActions
-        actions={[{
-          label: 'Editar',
-          onClick: (data) => {
-            sectors.selectCurrent(data)
-            modal.open() 
-          },
-          icon: <EditOutlined/>
-        },
-        // {
-        //   label: 'Excluir',
-        //   onClick: () => openDialog({
-        //     title: 'Excluir setor',
-        //     subtitle: 'Deseja mesmo excluir?',
-        //     message: 'Este item não poderá ser recuperado depois.',
-        //     onConfirm: () => {},
-        //     onConfirmText: 'Excluir'
-        //   }),
-        //   icon: <DeleteOutline/>
-        // }
-      ]}
+        actions={[
+          {
+            label: 'Editar',
+            onClick: data => {
+              sectors.selectCurrent(data);
+              modal.open();
+            },
+            icon: <EditOutlined />
+          }
+          // {
+          //   label: 'Excluir',
+          //   onClick: () => openDialog({
+          //     title: 'Excluir setor',
+          //     subtitle: 'Deseja mesmo excluir?',
+          //     message: 'Este item não poderá ser recuperado depois.',
+          //     onConfirm: () => {},
+          //     onConfirmText: 'Excluir'
+          //   }),
+          //   icon: <DeleteOutline/>
+          // }
+        ]}
         rows={rows}
       />
       <Pagination
-        currentPage={
-          paginatedSectors.currentPage
-        }
-        totalPages={
-          paginatedSectors.totalPage
-        }
-        onChange={
-          (page) => {
-            paginatedSectors.setCurrentPage(page)
-          }
-        }
+        currentPage={paginatedSectors.currentPage}
+        totalPages={paginatedSectors.totalPage}
+        onChange={page => {
+          paginatedSectors.setCurrentPage(page);
+        }}
       />
     </>
   );

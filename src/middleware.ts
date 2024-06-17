@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { jwtDecode } from "jwt-decode";
+import { jwtDecode } from 'jwt-decode';
 
 interface decodedToken {
   exp: number;
 }
 
-export default function middleware (request: NextRequest) {
+export default function middleware(request: NextRequest) {
   const token = request.cookies.get('token')?.value;
   // const decoded = token ? jwtDecode(token) as decodedToken : undefined;
   // return NextResponse.next();
@@ -14,7 +14,9 @@ export default function middleware (request: NextRequest) {
 
   const signInUrl = new URL('/login', request.nextUrl);
 
-  if (!token || typeof token !== 'string'
+  if (
+    !token ||
+    typeof token !== 'string'
     //  || !decoded || decoded?.exp * 1000 < Date.now()
   ) {
     if (allowedUrls.includes(request.nextUrl.pathname)) {
@@ -24,14 +26,8 @@ export default function middleware (request: NextRequest) {
   }
 }
 
-const allowedUrls = [
-  '/login',
-  '/cadastro',
-  '/esqueci-senha',
-  '/servicos-operacionais',
-];
-
+const allowedUrls = ['/login', '/cadastro', '/esqueci-senha', '/servicos-operacionais'];
 
 export const config = {
-  matcher: ['/', '/dashboard/:path*'],
-}
+  matcher: ['/', '/dashboard/:path*']
+};

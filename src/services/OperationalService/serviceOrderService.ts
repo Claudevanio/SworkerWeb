@@ -1,9 +1,11 @@
 import { ServiceOrder } from '@/types/models/ServiceOrder/serviceOrder';
 import { api } from '../api';
 import dayjs from 'dayjs';
+import { basePagination } from '@/types';
+import { getFilterParam } from '@/utils';
 
 export const serviceOrderService = {
-  async getServiceOrderStatusesAsync (filters?: any): Promise<any[]> {
+  async getServiceOrderStatusesAsync(filters?: any): Promise<any[]> {
     const { page, pageSize, ...rest } = filters;
     const response = await api.get<any[]>('/service-orders/status');
 
@@ -11,139 +13,179 @@ export const serviceOrderService = {
 
     if (!filters) return data;
 
-    const countObj = await Promise.all(data.map(async (status: any) => {
-      const details = await api.get<{ count: number }>(`/service-orders/count?status=${status.id}`, {
-        params: rest
-      });
-      const obj = {
-        ...status,
-        count: details.data.count,
-      }
-      return obj;
-    }))
-
+    const countObj = await Promise.all(
+      data.map(async (status: any) => {
+        const details = await api.get<{ count: number }>(`/service-orders/count?status=${status.id}`, {
+          params: rest
+        });
+        const obj = {
+          ...status,
+          count: details.data.count
+        };
+        return obj;
+      })
+    );
 
     return countObj;
   },
 
-  async getServiceOrderCodeAsync (): Promise<any> {
+  async getServiceOrderStatusAsync(): Promise<any[]> {
+    const response = await api.get<any[]>('/service-orders/status');
+    return response.data;
+  },
+
+  async getServiceOrderCodeAsync(): Promise<any> {
     const response = await api.get<any>('/service-orders/code');
     return response.data;
   },
 
-  async getServiceOrderFilesAsync (id: string): Promise<any> {
+  async getServiceOrderFilesAsync(id: string): Promise<any> {
     const response = await api.get<any>(`/service-orders/files?id=${id}`);
     return response.data;
   },
 
-  async getServiceOrderProfessionalFilesAsync (osId: string, professionalId: string): Promise<any> {
+  async getServiceOrderProfessionalFilesAsync(osId: string, professionalId: string): Promise<any> {
     const response = await api.get<any>(`/${osId}/${professionalId}/files`);
     return response.data;
   },
 
-  async getServiceOrderByProfessionalIdAsync (professionalId: string): Promise<ServiceOrder[]> {
+  async getServiceOrderByProfessionalIdAsync(professionalId: string): Promise<ServiceOrder[]> {
     if (!professionalId || professionalId === '') return [];
     const response = await api.get<ServiceOrder[]>(`/professionals/${professionalId}/service-orders`);
     return response.data;
   },
 
-  async listDay (): Promise<any[]> {
-    const response = await api.get<any[]>('/service-orders/list-day');
+  async listDay(
+    companyId: string,
+  ): Promise<any[]> {
+    const response = await api.get<any[]>(`companies/${companyId}/service-orders/list-day`);
     return response.data;
   },
 
-  async getServiceOrderTaskStepsAsync (id: string): Promise<any[]> {
+  async getServiceOrderTaskStepsAsync(id: string): Promise<any[]> {
     const response = await api.get<any[]>(`/service-orders/${id}/task-steps`);
     return response.data;
   },
 
-  async updateServiceOrderStatus (id: string, statusId: number): Promise<void> {
+  async updateServiceOrderStatus(id: string, statusId: number): Promise<void> {
     try {
       const data = {
         orderServiceId: id,
-        statusId,
-      }
+        statusId
+      };
       await api.put<void>(`/service-orders/${id}/status`, data);
     } catch (e) {
       throw e.response.data;
     }
   },
 
-  async getServiceOrderById (id: string): Promise<ServiceOrder> {
+  async getServiceOrderById(id: string): Promise<ServiceOrder> {
     const response = await api.get<ServiceOrder>(`/service-orders/${id}`);
     return response.data;
   },
 
-  async getServiceOrderDetailById (id: string): Promise<any> {
+  async getServiceOrderDetailById(id: string): Promise<any> {
     const response = await api.get<ServiceOrder>(`/${id}/detail`);
     return response.data;
   },
 
-  async getOcurrencesByServiceOrderId (id: string): Promise<any[]> {
+  async getOcurrencesByServiceOrderId(id: string): Promise<any[]> {
     const response = await api.get<any[]>(`/service-orders/${id}/occurrences?id=${id}`);
     return response.data;
   },
 
-  async getListServiceOrderTaskStepsAsync (ids: string[]): Promise<any[]> {
+  async getListServiceOrderTaskStepsAsync(ids: string[]): Promise<any[]> {
     const response = await api.get<any[]>(`/service-orders/task-steps?ids=${ids}`);
     return response.data;
   },
 
-  async countServiceOrderAsync (filters: any): Promise<number> {
-    const { page, pageSize, ...rest } = filters;
-    const response = await api.get<{ count: number }>('/service-orders/count', { params: { ...rest } });
-    return response.data?.count ?? 0;
-  },
-
-  async listServiceOrderAsync (filters: any): Promise<any[]> {
-    console.log(filters)
+  async listServiceOrderAsync(filters: any): Promise<any[]> {
+    console.log(filters);
     const response = await api.get<any[]>('/service-orders', { params: filters });
     return response.data;
   },
 
-  async listServiceOrderByCompanyAsync (companyId: string, filters: any): Promise<any[]> {
-    const response = await api.get<any[]>(`/companies/${companyId}/service-orders`, {
-      params: {
-        offSet: filters.currentPage,
-        itensPerPage: filters.pageSize,
-      }
-    });
+  async listServicesDay(companyId: string): Promise<any[]> {
+    const response = await api.get<any[]>(`companies/${companyId}/service-orders/list-day`);
     return response.data;
   },
 
-  async listServiceOrderByProfessionalAsync (professionalId: string): Promise<any[]> {
+  async listServiceOrderByCompanyAsync(companyId: string, filters: any): Promise<basePagination<any>> {
+    const { page, pageSize, currentPage, ...rest } = filters;
+    const filter = getFilterParam({
+      ...rest,
+      requestDateInicial: rest?.start,
+      requestDateFinal: rest?.end
+    });
+    const response = await api.get<{
+      items: any[];
+      totalItems: number;
+    }>(`/companies/${companyId}/service-orders`, {
+      params: {
+        offSet: filters.currentPage,
+        itensPerPage: filters.pageSize,
+        filter
+      }
+    });
+    const responseBody: basePagination<any> = {
+      items: response.data.items,
+      count: response.data.totalItems
+    };
+    return responseBody;
+  },
+
+  async listServiceOrderByProfessionalAsync(professionalId: string): Promise<any[]> {
     const response = await api.get<any[]>(`/professionals/${professionalId}/service-orders`);
     return response.data;
   },
 
   dashboardData: {
-    ocurrenceData: async (filters: { start: string; end: string }): Promise<any> => {
-
+    ocurrenceData: async (companyId, filters: { start: string; end: string }): Promise<any> => {
       const dateDiff = dayjs(filters.end).diff(dayjs(filters.start), 'day');
 
-      const UnfilteredParams = {
-        start: dayjs(filters.start).subtract(dateDiff, 'day').format('YYYY-MM-DD'),
-        end: filters.start,
-      }
+      const UnfilteredParams = getFilterParam({
+        registerDateInicial: dayjs(filters.start).subtract(dateDiff, 'day').format('YYYY-MM-DD'),
+        registerDateFinal: filters.start
+      });
 
-      const [
-        geradas,
-        reconhecidas,
-        geradasFiltered,
-        reconhecidasFiltered,
-      ] = await Promise.all([
-        api.get<any>('/occurrences/count', { params: UnfilteredParams }),
-        api.get<any>('/recognized-occurrences/count', { params: UnfilteredParams }),
-        api.get<any>('/occurrences/count', { params: filters }),
-        api.get<any>('/recognized-occurrences/count', { params: filters }),
+      const filterString = getFilterParam({
+        registerDateInicial: filters.start,
+        registerDateFinal: filters.end
+      });
+
+      const [geradas, reconhecidas, geradasFiltered, reconhecidasFiltered] = await Promise.all([
+        api.get<any>(`/companies/${companyId}/occurrences`, {
+          params: {
+            filter: UnfilteredParams,
+            pageSize: 1
+          }
+        }),
+        api.get<any>(`/companies/${companyId}/recognized-occurrences`, {
+          params: {
+            filter: UnfilteredParams,
+            pageSize: 1
+          }
+        }),
+        api.get<any>(`/companies/${companyId}/occurrences`, {
+          params: {
+            filter: filterString,
+            pageSize: 1
+          }
+        }),
+        api.get<any>(`/companies/${companyId}/recognized-occurrences`, {
+          params: {
+            filter: filterString,
+            pageSize: 1
+          }
+        })
       ]);
 
-      const unfilteredGeradasCount = geradas.data.count;
-      const unfilteredReconhecidasCount = reconhecidas.data.count;
+      const unfilteredGeradasCount = geradas.data.totalItems;
+      const unfilteredReconhecidasCount = reconhecidas.data.totalItems;
       const unfilteredClosedCount = unfilteredGeradasCount - unfilteredReconhecidasCount;
 
-      const filteredGeradasCount = geradasFiltered.data.count;
-      const filteredReconhecidasCount = reconhecidasFiltered.data.count;
+      const filteredGeradasCount = geradasFiltered.data.totalItems;
+      const filteredReconhecidasCount = reconhecidasFiltered.data.totalItems;
       const filteredClosedCount = filteredGeradasCount - filteredReconhecidasCount;
 
       let geradasChangePercent;
@@ -170,23 +212,23 @@ export const serviceOrderService = {
         geradas: {
           count: filteredGeradasCount,
           change: geradasChangePercent,
-          unfilteredCount: unfilteredGeradasCount,
+          unfilteredCount: unfilteredGeradasCount
         },
         reconhecidas: {
           count: filteredReconhecidasCount,
           change: reconhecidasChangePercent,
-          unfilteredCount: unfilteredReconhecidasCount,
+          unfilteredCount: unfilteredReconhecidasCount
         },
         closed: {
           count: filteredClosedCount,
           change: closedChangePercent,
-          unfilteredCount: unfilteredClosedCount,
-        },
-      }
-
+          unfilteredCount: unfilteredClosedCount
+        }
+      };
     },
     listTaskSpentTime: async (filters: { start: string; end: string }): Promise<any> => {
-      const response = await api.get<any>('/tasks/spent', { params: filters });
+      const filter = getFilterParam(filters);
+      const response = await api.get<any>('/tasks/spent', { params: { ...filters, filter } });
       return response.data;
     }
   }

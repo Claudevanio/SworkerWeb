@@ -1,6 +1,6 @@
-// 'use client'; 
-// import { useEffect, useState, useCallback } from 'react';  
-// import { useServiceOrder } from '@/contexts'; 
+// 'use client';
+// import { useEffect, useState, useCallback } from 'react';
+// import { useServiceOrder } from '@/contexts';
 // import { BaseTable } from '@/components/table/BaseTable';
 // import Pagination from '@/components/ui/pagination';
 // import { useQuery } from '@tanstack/react-query';
@@ -11,7 +11,7 @@
 // import { TrendingUp } from '@mui/icons-material';
 // import { useRouter } from 'next/navigation';
 // import { Skeleton, Tooltip } from '@mui/material';
-// import Image from 'next/image'; 
+// import Image from 'next/image';
 // import CustomizedGroupAccordion from './customizedGroupAccordeon';
 // import { basePagination, IProfessional } from '@/types';
 // import { professionalService } from '@/services';
@@ -20,14 +20,14 @@
 
 // function formatDate(dateString : string) {
 //   let date = dayjs(dateString);
-   
-//   if (!date.isValid()) { 
-//       date = dayjs(dateString, 'DD/MM/YYYY'); 
-//       if (!date.isValid()) { 
-//           return null;  
+
+//   if (!date.isValid()) {
+//       date = dayjs(dateString, 'DD/MM/YYYY');
+//       if (!date.isValid()) {
+//           return null;
 //       }
 //   }
-   
+
 //   return date.toISOString();
 // }
 
@@ -37,7 +37,7 @@
 //   }: {
 //     openFilterModal: () => void;
 //   }
-// ) => { 
+// ) => {
 
 //   const router = useRouter();
 
@@ -45,9 +45,7 @@
 //     serviceOrders,
 //     status,
 //     professionals
-//   } = useServiceOrder();  
-   
- 
+//   } = useServiceOrder();
 
 //   const [selected, setSelected] = useState<ServiceOrder[]>([]);
 
@@ -76,12 +74,12 @@
 
 //     const csvData = obj.map((item) => firstArray.map((key) => item[key]));
 
-//     return [firstArray, ...csvData]; 
+//     return [firstArray, ...csvData];
 //   }
 
 //   const paginatedProfessionals  = usePagination(professionals.data ?? [], 5);
 
-//   const [selectedGroup, setSelectedGroup] = useState<IProfessional | null>(null); 
+//   const [selectedGroup, setSelectedGroup] = useState<IProfessional | null>(null);
 
 //   useEffect(() => {
 //     if (professionals.data && !selectedGroup) {
@@ -111,14 +109,14 @@
 //     team?: string;
 //     status?: number;
 //   }
-  
+
 //   // Função para filtrar os dados com base nos critérios
 //   const filterServiceOrders = useCallback((serviceOrders: ServiceOrder[], criteria: FilterCriteria): ServiceOrder[] => {
-//     debugger;
+//
 //     if(!serviceOrders) return [];
-//     if(Object.keys(criteria).length === 0) return serviceOrders; 
+//     if(Object.keys(criteria).length === 0) return serviceOrders;
 //     if(Object.values(criteria).every(value => (!value || value === ''))) return serviceOrders;
-//     return serviceOrders.filter(order => { 
+//     return serviceOrders.filter(order => {
 //       if (criteria.date && !dayjs(order.requestDate).isAfter(dayjs(formatDate(criteria.date)).toISOString())) {
 //         return false;
 //       }
@@ -145,11 +143,10 @@
 //       }
 //       if (criteria.status !== undefined && order.status?.id !== criteria.status) {
 //         return false;
-//       } 
+//       }
 //       return true;
 //     });
 //   }, []);
-  
 
 //   const [filteredData, setFilteredData] = useState<ServiceOrder[] | null>(null);
 
@@ -158,22 +155,20 @@
 //       setFilteredData(filterServiceOrders(data, serviceOrders.filter));
 //     }
 //   }, [data, filterServiceOrders, serviceOrders.filter]);
-  
+
 //   const paginatedServiceOrders = usePagination(filteredData ?? [], 3);
-
-
 
 //       return (
 //         <div
 //           className='flex flex-col gap-6 w-full'
-//         >  
+//         >
 //           <div
 //             className='justify-end  items-center w-full gap-6 hidden md:flex'
 //           >
 //             <FiltroButton onClick={openFilterModal}
 //               className=' !h-12'
 //             />
-//             <ExportButton 
+//             <ExportButton
 //                 csvData={
 //                   selected.length > 0
 //                     ? mapCSVData(selected)
@@ -182,8 +177,8 @@
 //                 className=' !h-12 hidden md:flex'
 //                 disabled={selected.length === 0}
 //                 fileName='historico_ordens_servico.csv'
-//               /> 
-//           </div>  
+//               />
+//           </div>
 //           <div
 //             className='bg-primary-50 border-2 border-base-2 rounded-lg px-4 w-full grid grid-cols-2 md:flex justify-between items-center '
 //           >
@@ -204,7 +199,7 @@
 //                   <div
 //                     key={item.id}
 //                     className='flex gap-2 items-center p-2'
-//                   > 
+//                   >
 //                     <div
 //                       className='text-primary-500 font-medium'
 //                     >{item.description}: {item.count ?? 0}</div>
@@ -225,7 +220,7 @@
 //                 className='grid md:grid-cols-3 lg:grid-cols-5 gap-4'
 //               >
 //                 {
-//                   professionals.isLoading && new Array(5).fill(0).map((_, index) => { 
+//                   professionals.isLoading && new Array(5).fill(0).map((_, index) => {
 //                     return (
 //                       <div
 //                         key={index}
@@ -234,14 +229,14 @@
 //                             ? 'bg-primary-700'
 //                             : 'bg-primary-50'
 //                         }`}
-//                       > 
+//                       >
 //                       <div
 //                         className='bg-base-3 w-12 h-12 rounded-full flex-shrink-0'
 //                       />  <Skeleton
 //                           variant='text'
 //                           width={100}
 //                           height={32}
-//                         /> 
+//                         />
 //                       </div>
 //                     )
 //                   })
@@ -257,7 +252,7 @@
 //                             : 'bg-primary-50'
 //                         }`}
 //                         onClick={() => setSelectedGroup(item)}
-//                       > 
+//                       >
 //                       <div
 //                         className='bg-base-3 w-12 h-12 rounded-full flex-shrink-0'
 //                       />
@@ -271,7 +266,7 @@
 //                       </div>
 //                     )
 //                   })
-//                 } 
+//                 }
 //               </div>
 //               <Pagination
 //                 currentPage={paginatedProfessionals.currentPage}
@@ -296,7 +291,7 @@
 //                 className='text-primary-700'
 //               />,
 //               onClick: (data: ServiceOrder) => {
-//                 router.replace(`/servicos-operacionais/${data.id}`)
+//                 router.replace(`servicos-operacionais/${data.id}`)
 //               }
 //             },
 //             {
@@ -315,7 +310,7 @@
 //                 placement='top'
 //               >
 //                 <Image
-//                   src='/Warning.svg' 
+//                   src='/Warning.svg'
 //                   width={40}
 //                   height={40}
 //                   alt='warning'
@@ -326,7 +321,7 @@
 //             columns={[{
 //               label: 'Código',
 //               key: 'code',
-//               rowFormatter: (row) => { 
+//               rowFormatter: (row) => {
 //                 return (<>
 //                   <div
 //                   className=" hidden md:flex items-center gap-1 group"
@@ -419,6 +414,6 @@
 //             totalPages={paginatedServiceOrders.totalPage}
 //           />}
 //         </div>
-//       ); 
- 
+//       );
+
 // }

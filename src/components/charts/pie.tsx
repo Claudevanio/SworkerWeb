@@ -1,5 +1,5 @@
-"use client";
-import { Pie, PieConfig } from "@ant-design/plots";
+'use client';
+import { Pie, PieConfig } from '@ant-design/plots';
 
 type PropsPie = {
   data: {
@@ -9,23 +9,23 @@ type PropsPie = {
 };
 
 export const PieChart = ({ data }: PropsPie) => {
-  const config : PieConfig = {
+  const config: PieConfig = {
     data: data,
-    angleField: "value",
-    colorField: "type",
+    angleField: 'value',
+    colorField: 'type',
     legend: {
       color: {
         title: false,
-        position: "bottom-left",
-        rowPadding: 5,
-      },
+        position: 'bottom-left',
+        rowPadding: 5
+      }
     },
     label: {
-      type: "inner",
+      type: 'inner',
       style: {
-        opacity: 0,
+        opacity: 0
       }
     }
   };
-  return <Pie {...config}  />;
+  return <Pie {...config} />;
 };

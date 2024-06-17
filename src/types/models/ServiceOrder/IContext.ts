@@ -5,13 +5,13 @@ export interface IContext {
   application: number;
   type: number;
   characterizationId: number;
-  parameters: string
-  intervalTime: number
-  characterization: ICharacterization
+  parameters: string;
+  intervalTime: number;
+  characterization: ICharacterization;
 }
 
 interface ICharacterization {
-    id: number
-    type: number
-    description: string
+  id: number;
+  type: number;
+  description: string;
 }

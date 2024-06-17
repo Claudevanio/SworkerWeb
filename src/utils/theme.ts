@@ -1,9 +1,9 @@
 'use client';
 import { createTheme } from '@mui/material';
-import { Nunito } from "next/font/google";
+import { Nunito } from 'next/font/google';
 import { ENVIROMENTCOLORS } from './constants';
 
-const nunito = Nunito({ subsets: ["latin"] });
+const nunito = Nunito({ subsets: ['latin'] });
 interface ColorPalette {
   primary: {
     [key: string]: string;
@@ -36,34 +36,33 @@ interface ColorPalette {
 const COLORSENV: ColorPalette = JSON.parse(ENVIROMENTCOLORS);
 
 export const COLORS: ColorPalette = {
-  ...COLORSENV,
-}
+  ...COLORSENV
+};
 
 export const theme = createTheme({
   palette: {
     primary: {
       main: COLORS.primary['600'],
-      contrastText: '#ffffff',
+      contrastText: '#ffffff'
     },
     secondary: {
       main: COLORS.base['8'],
-      contrastText: '#ffffff',
+      contrastText: '#ffffff'
     },
     info: {
-      main: COLORS.info,
+      main: COLORS.info
     },
     success: {
-      main: COLORS.success,
+      main: COLORS.success
     },
     warning: {
-      main: COLORS.warning['3'],
+      main: COLORS.warning['3']
     },
     error: {
-      main: COLORS.danger,
-    },
+      main: COLORS.danger
+    }
   },
   typography: {
-    fontFamily: nunito.style.fontFamily,
-  },
-
+    fontFamily: nunito.style.fontFamily
+  }
 });

@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import { COLORS } from '@/utils';
 import { LineConfig, Line } from '@ant-design/charts';
 
@@ -9,7 +9,7 @@ export const LineChart = ({
   height = 400,
   color = COLORS.primary['700'],
   field
-} :{
+}: {
   data: any[];
   xField: string;
   yField: string;
@@ -17,26 +17,21 @@ export const LineChart = ({
   color?: string | string[];
   field?: string;
 }) => {
-
-  const chartConfig : LineConfig = {
+  const chartConfig: LineConfig = {
     data,
     xField,
     yField,
     seriesField: field,
     isStack: !!field,
-    height, 
+    height,
     autoFit: true,
     color,
     tooltip: {
       showCrosshairs: true,
-      shared: true,
-    },
+      shared: true
+    }
   };
   // return <div></div>
 
-  return (
-    <Line 
-      {...chartConfig}
-    />
-  );
-}
+  return <Line {...chartConfig} />;
+};

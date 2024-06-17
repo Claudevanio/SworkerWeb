@@ -3,7 +3,7 @@ import Pagination from '@/components/ui/pagination';
 import { useServiceOperations } from '@/contexts/ServiceOperationsConfigProvider';
 import { useModal } from '@/hooks';
 import { useDialog } from '@/hooks/use-dialog';
-import { ITask } from '@/types/models/ServiceOrder/ITask'; 
+import { ITask } from '@/types/models/ServiceOrder/ITask';
 import { DeleteOutlined, EditOutlined, RemoveOutlined } from '@mui/icons-material';
 import dayjs from 'dayjs';
 import { ModalFiltroTaskGroup } from '../Overlay/ModalFiltroTaskGroup';
@@ -12,16 +12,14 @@ import { Form } from '@/components/form';
 import { ModalTaskView } from '../Overlay/ModalTask/ModalTaskView';
 
 // function to turn seconds into minutes
-function secondsToMinutes(seconds: number){
-  return Math.floor(seconds / 60)
+function secondsToMinutes(seconds: number) {
+  return Math.floor(seconds / 60);
 }
 
-export function TaskTab(){
+export function TaskTab() {
   const { tasks, modal } = useServiceOperations();
 
-  const {
-    confirmDialog
-  } = useDialog()
+  const { confirmDialog } = useDialog();
 
   const rows = tasks.data?.items ?? [];
 
@@ -29,28 +27,28 @@ export function TaskTab(){
     {
       label: 'Código',
       key: 'code',
-      mobileTitle: true,
+      mobileTitle: true
     },
     {
-      label: "Nome",
-      key: "name",
-    }, 
+      label: 'Nome',
+      key: 'name'
+    },
     {
-      label: "Grupo",
-      key: "taskGroup",
-      Formatter: (taskGroup) => {
-        return taskGroup?.name
+      label: 'Grupo',
+      key: 'taskGroup',
+      Formatter: taskGroup => {
+        return taskGroup?.name;
       }
     },
     {
-      label: "Profissionais",
-      key: "professionalsCount"
+      label: 'Profissionais',
+      key: 'professionalsCount'
     },
     {
-      label: "Tempo estimado",
-      key: "estimatedTime",
-      Formatter: (estimatedTime) => {
-        return `${secondsToMinutes(estimatedTime)} minutos`
+      label: 'Tempo estimado',
+      key: 'estimatedTime',
+      Formatter: estimatedTime => {
+        return `${secondsToMinutes(estimatedTime)} minutos`;
       }
     }
   ];
@@ -69,62 +67,52 @@ export function TaskTab(){
       <BaseTable
         columns={columns}
         isLoading={tasks.isLoading}
-        onClickRow={
-          (data) => {
-            tasks.selectCurrent(data as ITask); 
-            openModal()
-          }
-        }
+        onClickRow={data => {
+          tasks.selectCurrent(data as ITask);
+          openModal();
+        }}
         actions={[
           {
-            label: "Editar",
+            label: 'Editar',
             onClick: (data: ITask) => {
               tasks.selectCurrent(data);
               modal.open();
             },
-            icon: <EditOutlined />,
+            icon: <EditOutlined />
           },
           {
-            label: "Excluir",
-            onClick: (data: ITask) => confirmDialog({
+            label: 'Excluir',
+            onClick: (data: ITask) =>
+              confirmDialog({
                 title: 'Excluir Tarefa',
                 subtitle: 'Deseja mesmo excluir?',
                 message: 'Este item não poderá ser recuperado depois.',
                 onConfirm: () => {
-                  tasks.remove(data)
+                  tasks.remove(data);
                 },
                 onConfirmText: 'Excluir'
               }),
-            icon: <DeleteOutlined />,
-          },
+            icon: <DeleteOutlined />
+          }
         ]}
         rows={rows}
-      />  
+      />
       <Pagination
         currentPage={tasks.filters.page ?? 0}
-        totalPages={Math.ceil(
-          tasks?.data?.count / tasks.filters.pageSize
-        )}
-        onChange={(page) =>
-          tasks?.setFilter((prev) => ({
+        totalPages={Math.ceil(tasks?.data?.count / tasks.filters.pageSize)}
+        onChange={page =>
+          tasks?.setFilter(prev => ({
             ...prev,
-            page,
+            page
           }))
         }
       />
-      {
-        isFiltroModalOpen && (
-          <ModalFiltroTaskGroup
-            isOpen={isFiltroModalOpen}
-            onClose={closeFiltroModal}
-          />
-        )
-      }
-      <ModalTaskView 
+      {isFiltroModalOpen && <ModalFiltroTaskGroup isOpen={isFiltroModalOpen} onClose={closeFiltroModal} />}
+      <ModalTaskView
         isOpen={isModalOpen}
         onClose={() => {
-          modal.close()
-          closeModal()
+          modal.close();
+          closeModal();
         }}
         current={tasks.current}
       />

@@ -1,23 +1,23 @@
-import { basePagination } from "@/types";
-import { api } from "../api";
-import { ITask, ITaskSteps, ITaskType } from "@/types/models/ServiceOrder/ITask";
+import { basePagination } from '@/types';
+import { api } from '../api';
+import { ITask, ITaskSteps, ITaskType } from '@/types/models/ServiceOrder/ITask';
 
 export const configTaskService = {
-  async listTaskAsync (filters?: any): Promise<basePagination<ITask>> {
+  async listTaskAsync(filters?: any): Promise<basePagination<ITask>> {
     const response = await api.get<ITask[]>(`/tasks`, {
       data: {},
       params: {
-        ...filters,
-      },
+        ...filters
+      }
     });
 
     const data: ITask[] = response.data;
 
-    const responseCount = await api.get("/tasks/count", {
+    const responseCount = await api.get('/tasks/count', {
       data: {},
       params: {
-        ...filters,
-      },
+        ...filters
+      }
     });
 
     const count: number = responseCount.data.count;
@@ -25,22 +25,19 @@ export const configTaskService = {
     return Promise.resolve({ items: data, count: count });
   },
 
-
-  async searchTaskAsync (name: string): Promise<ITask[]> {
+  async searchTaskAsync(name: string): Promise<ITask[]> {
     const response = await api.get<ITask[]>(`/tasks`, {
       data: {},
       params: {
         name: name,
         pageSize: 6
-      },
+      }
     });
 
     return response.data;
   },
 
-  async updateTask (
-    Task: ITask
-  ): Promise<void> {
+  async updateTask(Task: ITask): Promise<void> {
     try {
       await api.put(`/tasks/${Task.id}`, Task);
     } catch (e) {
@@ -48,9 +45,7 @@ export const configTaskService = {
     }
   },
 
-  async createTask (
-    Task: ITask
-  ): Promise<{
+  async createTask(Task: ITask): Promise<{
     data: {
       id: number;
     };
@@ -63,9 +58,7 @@ export const configTaskService = {
     }
   },
 
-  async removeTask (
-    Task: ITask
-  ): Promise<void> {
+  async removeTask(Task: ITask): Promise<void> {
     try {
       await api.delete(`/tasks/${Task.id}`, {
         data: {}
@@ -75,50 +68,46 @@ export const configTaskService = {
     }
   },
 
-  async getTaskSteps (task: ITask): Promise<ITaskSteps[]> {
-    const response = await api.get<ITaskSteps[]>(`/tasks/${task.id}/steps`, {
-    });
+  async getTaskSteps(task: ITask): Promise<ITaskSteps[]> {
+    const response = await api.get<ITaskSteps[]>(`/tasks/${task.id}/steps`, {});
 
     return response.data;
   },
 
-  async createTaskStep (task: string | number, step: ITaskSteps): Promise<{
+  async createTaskStep(
+    task: string | number,
+    step: ITaskSteps
+  ): Promise<{
     data: {
       id: number;
-    }
+    };
   }> {
     const response = await api.post(`/tasks/${task}/steps`, step);
     return response.data;
   },
 
-  async updateTaskStep (task: string | number, step: ITaskSteps): Promise<void> {
+  async updateTaskStep(task: string | number, step: ITaskSteps): Promise<void> {
     await api.put(`/tasks/${step.id}/steps/`, step);
   },
 
-  async getTaskResources (task: ITask): Promise<any> {
-    const response = await api.get<any>(`/tasks/${task.id}/resources`, {
-    });
+  async getTaskResources(task: ITask): Promise<any> {
+    const response = await api.get<any>(`/tasks/${task.id}/resources`, {});
 
     return response.data;
   },
 
-  async removeTaskResource (taskId: string | number, resourceId: string | number): Promise<void> {
-    await api.delete(`/tasks/${taskId}/resources/${resourceId}`, {
-    });
+  async removeTaskResource(taskId: string | number, resourceId: string | number): Promise<void> {
+    await api.delete(`/tasks/${taskId}/resources/${resourceId}`, {});
   },
 
-  async getTypes (): Promise<ITaskType[]> {
-    const response = await api.get<ITaskType[]>('/task-types',
-      {
-        data: {},
-      }
-    );
+  async getTypes(): Promise<ITaskType[]> {
+    const response = await api.get<ITaskType[]>('/task-types', {
+      data: {}
+    });
     return response.data;
   },
 
-  async createTasksResources (taskId: string | number, resourceId: string | number): Promise<void> {
+  async createTasksResources(taskId: string | number, resourceId: string | number): Promise<void> {
     await api.post(`/tasks/${taskId}/resources`, { taskId, resourceId });
-  },
-
-
+  }
 };

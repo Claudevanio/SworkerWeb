@@ -1,5 +1,5 @@
-import { COLORS } from "@/utils";
-import { Stack, Typography } from "@mui/material";
+import { COLORS } from '@/utils';
+import { Stack, Typography } from '@mui/material';
 
 export default function CardCategory({
   Icon,
@@ -12,17 +12,17 @@ export default function CardCategory({
   number: number;
   description: string;
   width: string;
-  hide: boolean
+  hide: boolean;
 }) {
   return (
     <Stack
       gap={2}
-      display={hide ? "none" : "flex"}
+      display={hide ? 'none' : 'flex'}
       width={width}
       sx={{
-        borderRadius: "8px",
-        border: `2px solid ${COLORS.primary["50"]}`,
-        padding: "1.5rem",
+        borderRadius: '8px',
+        border: `2px solid ${COLORS.primary['50']}`,
+        padding: '1.5rem'
       }}
     >
       <Stack flexDirection="row" gap={2}>
@@ -30,12 +30,12 @@ export default function CardCategory({
           justifyContent="center"
           padding="1.5rem"
           sx={{
-            backgroundColor: COLORS.base["2"],
-            color: COLORS.primary["500"],
-            borderRadius: "16px",
+            backgroundColor: COLORS.base['2'],
+            color: COLORS.primary['500'],
+            borderRadius: '16px'
           }}
         >
-          <Icon sx={{ width: "28px", height: "28px" }} />
+          <Icon sx={{ width: '28px', height: '28px' }} />
         </Stack>
         <Stack justifyContent="space-around">
           <Typography fontSize="2rem" fontWeight={700}>

@@ -1,23 +1,23 @@
-import { basePagination } from "@/types";
-import { api } from "../api";
-import { ITaskGroup } from "@/types/models/ServiceOrder/ITaskGroup";
+import { basePagination } from '@/types';
+import { api } from '../api';
+import { ITaskGroup } from '@/types/models/ServiceOrder/ITaskGroup';
 
 export const configTaskGroupService = {
-  async listTaskGroupAsync (filters?: any): Promise<basePagination<ITaskGroup>> {
+  async listTaskGroupAsync(filters?: any): Promise<basePagination<ITaskGroup>> {
     const response = await api.get<ITaskGroup[]>(`/task-groups`, {
       data: {},
       params: {
-        ...filters,
-      },
+        ...filters
+      }
     });
 
     const data: ITaskGroup[] = response.data;
 
-    const responseCount = await api.get("/task-groups/count", {
+    const responseCount = await api.get('/task-groups/count', {
       data: {},
       params: {
-        ...filters,
-      },
+        ...filters
+      }
     });
 
     const count: number = responseCount.data.count;
@@ -25,16 +25,14 @@ export const configTaskGroupService = {
     return Promise.resolve({ items: data, count: count });
   },
 
-  async getAllTaskGroups (): Promise<ITaskGroup[]> {
+  async getAllTaskGroups(): Promise<ITaskGroup[]> {
     const response = await api.get<ITaskGroup[]>('/task-groups', {
       data: {}
     });
     return response.data;
   },
 
-  async updateTaskGroup (
-    TaskGroup: ITaskGroup
-  ): Promise<void> {
+  async updateTaskGroup(TaskGroup: ITaskGroup): Promise<void> {
     try {
       await api.put(`/task-groups/${TaskGroup.id}`, TaskGroup);
     } catch (e) {
@@ -42,9 +40,7 @@ export const configTaskGroupService = {
     }
   },
 
-  async createTaskGroup (
-    TaskGroup: ITaskGroup
-  ): Promise<void> {
+  async createTaskGroup(TaskGroup: ITaskGroup): Promise<void> {
     try {
       await api.post(`/task-groups`, TaskGroup);
     } catch (e) {
@@ -52,9 +48,7 @@ export const configTaskGroupService = {
     }
   },
 
-  async removeTaskGroup (
-    TaskGroup: ITaskGroup
-  ): Promise<void> {
+  async removeTaskGroup(TaskGroup: ITaskGroup): Promise<void> {
     try {
       await api.delete(`/task-groups/${TaskGroup.id}`, {
         data: {}
@@ -62,7 +56,5 @@ export const configTaskGroupService = {
     } catch (e) {
       throw e.response.data;
     }
-  },
-
-
+  }
 };

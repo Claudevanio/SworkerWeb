@@ -9,121 +9,79 @@ import { AdministratorProvider, useAdministrator } from '@/contexts/Administrati
 import { ModalPermissions } from './Overlay/modalPermissions';
 import { ModalTabs } from './Tabs/handleModalTabs';
 
-export function HomeComponent(){
-  const [activeTab, setActiveTab] = useState<number | undefined>(0)
-  const [subTab, setSubTab] = useState<number | undefined>(0)
- 
-  const {
-    modal,
-    permissions,
-    companies, 
-  } = useAdministrator()
+export function HomeComponent() {
+  const [activeTab, setActiveTab] = useState<number | undefined>(0);
+  const [subTab, setSubTab] = useState<number | undefined>(0);
+
+  const { modal, permissions, companies } = useAdministrator();
 
   const tabs = [
-    { label: 'Papéis e permissões',
-      icon: <FolderSharedOutlined
-        className='text-primary-500'
-      />,
-      subLabel: ((permissions?.data?.count ?? 0).toString() + ' cadastrados')
-     },
-    { label: 'Minhas empresas',
-      icon: <ApartmentOutlined
-      className='text-primary-500'/>,
-      subLabel: ((companies?.data?.count ?? 0).toString() + ' cadastradas')
+    {
+      label: 'Papéis e permissões',
+      icon: <FolderSharedOutlined className="text-primary-500" />,
+      subLabel: (permissions?.data?.count ?? 0).toString() + ' cadastrados'
     },
-  ] 
+    {
+      label: 'Minhas empresas',
+      icon: <ApartmentOutlined className="text-primary-500" />,
+      subLabel: (companies?.data?.count ?? 0).toString() + ' cadastradas'
+    }
+  ];
 
   const handleLabel = (index: number) => {
-    if(activeTab === 0) {
-      'Adicionar Permissão'
-    } 
-    if(!subTab){
-      return index===0 ? 'Adicionar Permissão' : 'Adicionar Empresa' 
-    } 
+    if (activeTab === 0) {
+      ('Adicionar Permissão');
+    }
+    if (!subTab) {
+      return index === 0 ? 'Adicionar Permissão' : 'Adicionar Empresa';
+    }
 
-    return (subTab === 0 ? 'Adicionar Empresa' :
-    subTab === 2 ? 'Adicionar Unidade' : 
-    subTab === 1 ? 'Adicionar Setor' :
-    subTab === 3 ? 'Adicionar Profissional' :
-    'Adicionar Equipamento' 
-    )
-  }
+    return subTab === 0
+      ? 'Adicionar Empresa'
+      : subTab === 2
+        ? 'Adicionar Unidade'
+        : subTab === 1
+          ? 'Adicionar Setor'
+          : subTab === 3
+            ? 'Adicionar Profissional'
+            : 'Adicionar Equipamento';
+  };
 
   useEffect(() => {
-    if(activeTab !== 0)
-      return; 
-    permissions.reset()
+    if (activeTab !== 0) return;
+    permissions.reset();
     return;
-    
-  }, [activeTab])
+  }, [activeTab]);
 
-
-  return ( 
+  return (
     <>
-      <div
-        className='w-full p-4 lg:p-8'
-      >
-        
+      <div className="w-full p-4 lg:p-8">
         <PageTitle
-          title='Administração'
-          subtitle='Veja aqui o andamento e configuração de serviços administrativos.'
+          title="Administração"
+          subtitle="Veja aqui o andamento e configuração de serviços administrativos."
           button={{
             label: handleLabel(activeTab || 0),
             onClick: modal.open,
-            isAdd: true, 
+            isAdd: true
           }}
         />
-        <SimpleTab
-          tabs={tabs as any}
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-          mobileView
-        />
-        <div
-          className='flex flex-col gap-4'
-          style={
-            activeTab !== undefined && activeTab === 0 ? {  } : {display: 'none'}
-          }
-        >
-          {
-            activeTab === 0 && (
-              <PermissionsTab/>
-            )
-          }
+        <SimpleTab tabs={tabs as any} activeTab={activeTab} setActiveTab={setActiveTab} mobileView />
+        <div className="flex flex-col gap-4" style={activeTab !== undefined && activeTab === 0 ? {} : { display: 'none' }}>
+          {activeTab === 0 && <PermissionsTab />}
         </div>
-        <div
-          className='flex flex-col gap-4'
-          style={
-            activeTab !== undefined && activeTab === 1 ? {  } : {display: 'none'}
-          }
-        >
-          {
-            activeTab === 1 && (
-              <EmpresasTab
-                activeTab={
-                  subTab
-                }
-                setActiveTab={
-                  setSubTab
-                }
-              />
-            )
-          }
+        <div className="flex flex-col gap-4" style={activeTab !== undefined && activeTab === 1 ? {} : { display: 'none' }}>
+          {activeTab === 1 && <EmpresasTab activeTab={subTab} setActiveTab={setSubTab} />}
         </div>
       </div>
-      <ModalTabs
-        subtab={subTab}
-        tab={activeTab}
-      />
+      <ModalTabs subtab={subTab} tab={activeTab} />
     </>
-  )
-
+  );
 }
 
-export function HomeComponentWrapper(){
+export function HomeComponentWrapper() {
   return (
     <AdministratorProvider>
-      <HomeComponent/>
+      <HomeComponent />
     </AdministratorProvider>
-  )
+  );
 }

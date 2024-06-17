@@ -1,17 +1,17 @@
-"use client";
-import { basePagination, ICompany } from "@/types";
-import { IUser } from "@/types/models/IUser";
-import { jwtDecode } from "jwt-decode";
-import React, { createContext, useEffect } from "react";
-import Cookies from "js-cookie";
-import { api, Authservice, companyService } from "@/services";
-import { useDialog } from "@/hooks/use-dialog";
-import { usePathname, useRouter } from "next/navigation";
+'use client';
+import { basePagination, ICompany } from '@/types';
+import { IUser } from '@/types/models/IUser';
+import { jwtDecode } from 'jwt-decode';
+import React, { createContext, useEffect } from 'react';
+import Cookies from 'js-cookie';
+import { api, Authservice, companyService } from '@/services';
+import { useDialog } from '@/hooks/use-dialog';
+import { usePathname, useRouter } from 'next/navigation';
 import { Button, Dropdown, Form, Modal } from '@/components';
 import { useModal } from '@/hooks';
 import { set, useForm } from 'react-hook-form';
 import { useParams } from 'next/navigation';
-import { useQuery } from '@tanstack/react-query'; 
+import { useQuery } from '@tanstack/react-query';
 
 interface UserContextType {
   user: IUser | null;
@@ -28,55 +28,53 @@ export const UserContext = createContext<UserContextType>({
   updateUser: () => {},
   currentCompany: null,
   selectCompany: () => {},
-  companiesList: [],
+  companiesList: []
 });
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = React.useState<IUser | null>(null);
-  const [currentCompany, setCurrentCompany] = React.useState<ICompany | null>(
-    null
-  );
+  const [currentCompany, setCurrentCompany] = React.useState<ICompany | null>(null);
   const { confirmDialog } = useDialog();
   const router = useRouter();
+  const pathname = usePathname();
 
   const params = useParams();
 
   const [isModalOpen, openModal, closeModal] = useModal();
 
   React.useEffect(() => {
-    api.interceptors.request.use((config) => {
-      const token = Cookies.get("token");
+    api.interceptors.request.use(config => {
+      const token = Cookies.get('token');
       if (token) {
-        config.headers
-          .Authorization = `Bearer ${token}`;
+        config.headers.Authorization = `Bearer ${token}`;
       }
       return config;
-    })
+    });
     api.interceptors.response.use(
-      (response) => response,
-      (error) => {
+      response => response,
+      error => {
         if (error.response?.status === 401) {
           setUser(null);
-          Cookies.remove("token");
+          Cookies.remove('token');
           confirmDialog({
-            title: "Sessão expirada",
-            message: "Sua sessão expirou, por favor faça login novamente",
-            onConfirmText: "Fazer login",
-            onCloseText: " ",
+            title: 'Sessão expirada',
+            message: 'Sua sessão expirou, por favor faça login novamente',
+            onConfirmText: 'Fazer login',
+            onCloseText: ' ',
             onConfirm: () => {
-              process.env.NODE_ENV === "development" ?
-              Authservice.login({
-                userName: "ivoxps@gmail.com",
-                password: "#3dP3R@5wk0R",
-              }).then((response) => {
-                if (typeof response.data === "string") {
-                  Cookies.set("token", response.data);
-                  router.refresh();
-                  return;
-                }
-              }) :
-              router.push('/login');
-            },
+              process.env.NODE_ENV === 'development'
+                ? Authservice.login({
+                    userName: 'ivoxps@gmail.com',
+                    password: '#3dP3R@5wk0R'
+                  }).then(response => {
+                    if (typeof response.data === 'string') {
+                      Cookies.set('token', response.data);
+                      router.refresh();
+                      return;
+                    }
+                  })
+                : router.push('/login');
+            }
           });
         }
         return Promise.reject(error);
@@ -84,24 +82,24 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     );
   }, []);
 
-  const token = Cookies.get("token"); 
+  const token = Cookies.get('token');
 
   const updateUser = (user: IUser) => {
     setUser(user);
-    Cookies.set("user", JSON.stringify(user));
-  }
+    Cookies.set('user', JSON.stringify(user));
+  };
 
-  const cachedCompany = Cookies.get("currentCompany");
+  const cachedCompany = Cookies.get('currentCompany');
 
-  const { isLoading: isLoadingCompanies, data: companies,
+  const {
+    isLoading: isLoadingCompanies,
+    data: companies,
     refetch: refetchCompanies
-   } = useQuery<ICompany[]>({
+  } = useQuery<ICompany[]>({
     queryKey: ['searchCompanies'],
     queryFn: () => companyService.getAll() as any,
-    refetchOnWindowFocus: false,
-    enabled: !!user?.id
+    refetchOnWindowFocus: false
   });
- 
 
   const methods = useForm<{ company: string }>({
     defaultValues: {
@@ -110,37 +108,43 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   });
 
   React.useEffect(() => {
-    const cachedCompany = Cookies.get("currentCompany");
+    const cachedCompany = Cookies.get('currentCompany');
     const { companyId } = params;
 
-    
     if ((cachedCompany && !companyId) || (cachedCompany && companyId == JSON.parse(cachedCompany).id)) {
       const company = JSON.parse(cachedCompany) as ICompany;
       setCurrentCompany(company);
       return;
     }
-    
-    if (companyId && companies) { 
-      const company = companies?.find((c) => c.id == companyId);
+
+    if (companyId && companies) {
+      const company = companies?.find(c => c.id == companyId);
       if (company) {
         setCurrentCompany(company);
-        Cookies.set("currentCompany", JSON.stringify(company));
+        Cookies.set('currentCompany', JSON.stringify(company));
         return;
       }
     }
-    if(companies)
-      openModal();
-  } , [params, companies]); 
+    if (companies) openModal();
+  }, [params, companies]);
+
+  const changeEmpresaId = newEmpresaId => {
+    const currentPath = pathname;
+    const newPath = currentPath.replace(/\/empresa\/\d+/, `/empresa/${newEmpresaId}`);
+    router.replace(newPath);
+  };
 
   const selectCompany = (company: ICompany | null) => {
-    Cookies.set("currentCompany", JSON.stringify(company));
+    Cookies.set('currentCompany', JSON.stringify(company));
+    if (pathname.includes('/empresa/')) {
+      changeEmpresaId(company.id);
+    }
     setCurrentCompany(company);
-  }
- 
+  };
 
   React.useEffect(() => {
     if (!!user) return;
-    const localUser = Cookies.get("user");
+    const localUser = Cookies.get('user');
 
     if (localUser) {
       const user = JSON.parse(localUser) as IUser;
@@ -152,43 +156,27 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       const user = jwtDecode(token) as IUser;
       setUser(user);
     }
-  }, [user, token]); 
-
-
+  }, [user, token]);
 
   return (
-    <UserContext.Provider value={{ user, setUser, updateUser,
-      currentCompany, selectCompany: openModal,
-      companiesList: companies
-     }}>
+    <UserContext.Provider value={{ user, setUser, updateUser, currentCompany, selectCompany: openModal, companiesList: companies }}>
       {children}
-      <Modal
-        isOpen={isModalOpen}
-        onClose={closeModal}
-        title='Selecione uma empresa'
-      > 
-        <Form 
+      <Modal isOpen={isModalOpen} onClose={closeModal} title="Selecione uma empresa">
+        <Form
           {...methods}
-        onSubmit={methods.handleSubmit((data) => {
-          const company = companies?.find((c) => c.id === data.company);
-          if (!company) return;
-          selectCompany(company);
-          closeModal();
-        })}> 
-          <Dropdown
-            name='company'
-            label='Empresa'
-            options={companies?.map((c) => ({ label: c.name, value: c.id })) ?? []}
-          /> 
-            <Button 
-              className='w-full mt-4'
-              type='submit'  
-              >
-              Selecionar
-            </Button>
+          onSubmit={methods.handleSubmit(data => {
+            const company = companies?.find(c => c.id === data.company);
+            if (!company) return;
+            selectCompany(company);
+            closeModal();
+          })}
+        >
+          <Dropdown name="company" label="Empresa" options={companies?.map(c => ({ label: c.name, value: c.id })) ?? []} />
+          <Button className="w-full mt-4" type="submit">
+            Selecionar
+          </Button>
         </Form>
       </Modal>
     </UserContext.Provider>
   );
 };
-

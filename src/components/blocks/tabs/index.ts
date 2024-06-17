@@ -1,2 +1,2 @@
-export * from './rounded-tabs'
-export * from './simple-tab'
+export * from './rounded-tabs';
+export * from './simple-tab';

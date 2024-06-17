@@ -1,8 +1,8 @@
-import { COLORS } from "@/utils";
-import { QrCode } from "@mui/icons-material";
+import { COLORS } from '@/utils';
+import { QrCode } from '@mui/icons-material';
 
-import { CSVLink } from "react-csv";
-import { Button } from "./button";
+import { CSVLink } from 'react-csv';
+import { Button } from './button';
 
 interface ExportButtonProps {
   csvData?: string[][];
@@ -13,14 +13,7 @@ interface ExportButtonProps {
   className?: string;
 }
 
-export const ExportButton: React.FC<ExportButtonProps> = ({
-  csvData = [],
-  onClick,
-  hidden,
-  fileName,
-  disabled,
-  className
-}) => {
+export const ExportButton: React.FC<ExportButtonProps> = ({ csvData = [], onClick, hidden, fileName, disabled, className }) => {
   return disabled || onClick ? (
     <Button
       variant="primary"
@@ -29,30 +22,26 @@ export const ExportButton: React.FC<ExportButtonProps> = ({
       className={className}
       sx={{
         gap: 2,
-        borderRadius: "8px",
-        backgroundColor: COLORS.primary["600"],
-        color: "white",
-        display: hidden ? "none" : "block",
+        borderRadius: '8px',
+        backgroundColor: COLORS.primary['600'],
+        color: 'white',
+        display: hidden ? 'none' : 'block'
       }}
     >
       <QrCode />
       Exportar
     </Button>
   ) : (
-    <CSVLink
-      filename={fileName}
-      data={csvData}
-      style={{ display: hidden ? "none" : "block" }}
-    >
+    <CSVLink filename={fileName} data={csvData} style={{ display: hidden ? 'none' : 'block' }}>
       <Button
         variant="primary"
         onClick={onClick}
         disabled={disabled}
         sx={{
           gap: 2,
-          borderRadius: "8px",
-          backgroundColor: COLORS.primary["600"],
-          color: "white",
+          borderRadius: '8px',
+          backgroundColor: COLORS.primary['600'],
+          color: 'white'
         }}
       >
         <QrCode />

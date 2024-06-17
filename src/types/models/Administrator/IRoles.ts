@@ -5,7 +5,6 @@ export interface IRole {
   permissions: IPermissions[];
 }
 
-
 export enum EtipoPermissao {
   Nada = 0,
   Visualizacao = 1,
@@ -13,7 +12,6 @@ export enum EtipoPermissao {
   Supervisao = 3,
   Administracao = 4
 }
-
 
 export interface IPermissions {
   type: string;

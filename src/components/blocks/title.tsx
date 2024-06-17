@@ -11,12 +11,10 @@ interface PageTitleProps {
     onClick: () => void;
     isAdd?: boolean;
     hideOnMobile?: boolean;
-  }
+  };
 }
 
-export function PageTitle(
-  { title, subtitle, onBack, button }: PageTitleProps
-) {
+export function PageTitle({ title, subtitle, onBack, button }: PageTitleProps) {
   return (
     <>
       <div className="hidden flex-col gap-2 md:flex">
@@ -29,9 +27,7 @@ export function PageTitle(
             </Button>
           )}
         </div>
-        {subtitle && (
-          <p className="text-base-5 text-base font-medium">{subtitle}</p>
-        )}
+        {subtitle && <p className="text-base-5 text-base font-medium">{subtitle}</p>}
       </div>
       {button && !button?.hideOnMobile && (
         <IconButton

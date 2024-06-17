@@ -1,7 +1,7 @@
 import { Modal } from '@/components/ui/modal';
 import { EtipoPermissao, ICompany, IPermissions, IRole } from '@/types';
-import * as Yup from "yup";
-import { Form } from '@/components/form/Form'; 
+import * as Yup from 'yup';
+import { Form } from '@/components/form/Form';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Input } from '@/components/ui';
@@ -11,13 +11,13 @@ import { useAdministrator } from '@/contexts/AdministrationProvider';
 import { masks, regex } from '@/utils';
 import { companyService } from '@/services';
 
-const schema = Yup.object({ 
+const schema = Yup.object({
   name: Yup.string().required('O nome é obrigatório'),
   cnpj: Yup.string().required('O CNPJ é obrigatório').matches(regex.CNPJ, 'CNPJ inválido'),
   responsible: Yup.string().required('O responsável é obrigatório'),
   phone: Yup.string().required('O telefone é obrigatório').matches(regex.TELEFONE, 'Telefone inválido'),
   email: Yup.string().required('O email é obrigatório').email('Email inválido'),
-  active: Yup.boolean().required('O status é obrigatório'),
+  active: Yup.boolean().required('O status é obrigatório')
 });
 
 type FormFields = Yup.InferType<typeof schema>;
@@ -28,28 +28,26 @@ export function ModalCompany({
   current,
   readonly,
   onConfirm
-} : {
+}: {
   isOpen: boolean;
   onClose: () => void;
   current?: ICompany;
   readonly?: boolean;
   onConfirm?: () => void;
-}
-){
- 
+}) {
   const methods = useForm<FormFields>({
-    resolver: yupResolver(schema), 
+    resolver: yupResolver(schema),
     defaultValues: {
       active: true
     }
   });
   const addCompany = async (company: ICompany) => {
-    const response = await companyService.createCompanyAsync(company); 
-  }
+    const response = await companyService.createCompanyAsync(company);
+  };
 
   const updateCompany = async (company: ICompany) => {
     await companyService.updateCompanyAsync(company);
-  }
+  };
 
   const companies: {
     create: (company: ICompany) => Promise<void>;
@@ -57,124 +55,90 @@ export function ModalCompany({
   } = {
     create: addCompany,
     update: updateCompany
-  }
+  };
 
-  async function onSubmit(data: FormFields){ 
-
-    const newData : ICompany = {
+  async function onSubmit(data: FormFields) {
+    const newData: ICompany = {
       ...data,
       cnpj: masks.CLEARMasks(data.cnpj),
       phone: masks.CLEARMasks(data.phone),
-      logoPath: '',
-    } as any
-    if(current){
+      logoPath: ''
+    } as any;
+    if (current) {
       await companies.update({
         ...newData,
         id: current.id
       });
-      if(onConfirm) onConfirm();
+      if (onConfirm) onConfirm();
       onClose();
       return;
     }
 
-    
-    await companies.create(newData);    
-    
-    if(onConfirm) onConfirm();
-    onClose(); 
+    await companies.create(newData);
+
+    if (onConfirm) onConfirm();
+    onClose();
   }
 
   React.useEffect(() => {
-    
-    if(!current){
-      methods.reset()
-      return
+    if (!current) {
+      methods.reset();
+      return;
     }
-    if(current){
+    if (current) {
       methods.reset({
         ...current,
-        cnpj: masks.CNPJMask(current.cnpj),
+        cnpj: masks.CNPJMask(current.cnpj)
       });
       return;
     }
-  }, [current, isOpen, methods])
-
+  }, [current, isOpen, methods]);
 
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
       methods={methods}
-      title={
-        current ? readonly ? current.name : 'Editar Empresa' : 'Nova Empresa'
-      }
-      width='550px'
+      title={current ? (readonly ? current.name : 'Editar Empresa') : 'Nova Empresa'}
+      width="550px"
       onSubmit={() => methods.handleSubmit(onSubmit)()}
-    > 
-       <Form onSubmit={(data) => onSubmit(data as FormFields)}
-            className='flex flex-col gap-4 pb-4'
-            {...methods}
-      >
-        <Input
-          name='name'
-          label='Nome'
-          required
-          placeholder='Nome'
-          error={methods.formState.errors.name}
-          disabled={readonly}
-        />
-        <div
-            className='flex gap-4 md:gap-6 flex-col md:flex-row justify-between'
-        >
-        <Input
-          name='responsible'
-          label='Responsável'
-          required
-          placeholder='Responsável'
-          error={methods.formState.errors.responsible}
-          disabled={readonly}
-        />
-        <Input
-          name='cnpj'
-          label='CNPJ'
-          required
-          placeholder='CNPJ'
-          mask={masks.CNPJMask}
-          error={methods.formState.errors.cnpj}
-          disabled={readonly}
-        />
+    >
+      <Form onSubmit={data => onSubmit(data as FormFields)} className="flex flex-col gap-4 pb-4" {...methods}>
+        <Input name="name" label="Nome" required placeholder="Nome" error={methods.formState.errors.name} disabled={readonly} />
+        <div className="flex gap-4 md:gap-6 flex-col md:flex-row justify-between">
+          <Input
+            name="responsible"
+            label="Responsável"
+            required
+            placeholder="Responsável"
+            error={methods.formState.errors.responsible}
+            disabled={readonly}
+          />
+          <Input
+            name="cnpj"
+            label="CNPJ"
+            required
+            placeholder="CNPJ"
+            mask={masks.CNPJMask}
+            error={methods.formState.errors.cnpj}
+            disabled={readonly}
+          />
         </div>
-        <div
-            className='flex gap-4 md:gap-6 flex-col md:flex-row justify-between'>
-          <div
-              className='md:w-1/2'
-          >
+        <div className="flex gap-4 md:gap-6 flex-col md:flex-row justify-between">
+          <div className="md:w-1/2">
             <Input
-              name='phone'
-              label='Telefone'
+              name="phone"
+              label="Telefone"
               required
-              placeholder='Telefone'
+              placeholder="Telefone"
               mask={masks.TELEFONEMask}
               error={methods.formState.errors.phone}
               disabled={readonly}
             />
-            
           </div>
-        <Input
-          name='email'
-          label='E-mail'
-          required
-          placeholder='Email'
-          error={methods.formState.errors.email}
-          disabled={readonly}
-        />
+          <Input name="email" label="E-mail" required placeholder="Email" error={methods.formState.errors.email} disabled={readonly} />
         </div>
-
-
       </Form>
-
-
-
     </Modal>
-  )
+  );
 }

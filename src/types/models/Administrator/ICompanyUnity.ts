@@ -18,5 +18,5 @@ export interface ICompanyUnity {
     complement?: string;
   };
   company?: ICompany;
-  sectors?: ISector[]
+  sectors?: ISector[];
 }

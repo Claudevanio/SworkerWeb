@@ -7,12 +7,11 @@ interface ILogin {
 }
 
 export const Userservice = {
-  async createUser (data: IUser) {
+  async createUser(data: IUser) {
     const response = await authApi.post('/users', data);
     return response.data as IUser;
   },
-  async updateUserName (userInfo: IUser) {
-
+  async updateUserName(userInfo: IUser) {
     const roleResponse = await authApi.get(`/users/${userInfo.userId}/roles`);
 
     const roleId = roleResponse.data[0].roleId;
@@ -23,15 +22,15 @@ export const Userservice = {
 
     return response.data;
   },
-  async updateUser (data: IUser) {
+  async updateUser(data: IUser) {
     const response = await authApi.put('/users', data);
     return response.data;
   },
-  async updateUserPasswordAsync (data: { password: string; item: any }) {
+  async updateUserPasswordAsync(data: { password: string; item: any }) {
     const response = await authApi.put('/users/reset-password', data);
     return response.data;
   },
-  async updateLoggedUserPassword (
+  async updateLoggedUserPassword(
     id: string,
     data: {
       userName: string;
@@ -51,12 +50,12 @@ export const Userservice = {
       throw e.response.data;
     }
   },
-  async getUserById (id: string) {
+  async getUserById(id: string) {
     const response = await authApi.get(`/users/${id}`);
     return response.data;
   },
-  async updateUserLockoutAsync (data: IUser) {
+  async updateUserLockoutAsync(data: IUser) {
     const response = await authApi.put(`/users/${data.id}/lockout`, data);
     return response.data;
   }
-}
+};

@@ -1,16 +1,11 @@
-import { useEffect, useState } from "react";
-import { SimpleTab } from "../tabs/simple-tab";
-import { PageTitle } from "../title";
-import {
-  AddTaskOutlined,
-  ChecklistRtlOutlined,
-  CreateOutlined,
-  SplitscreenOutlined,
-} from "@mui/icons-material";
+import { useEffect, useState } from 'react';
+import { SimpleTab } from '../tabs/simple-tab';
+import { PageTitle } from '../title';
+import { AddTaskOutlined, ChecklistRtlOutlined, CreateOutlined, SplitscreenOutlined } from '@mui/icons-material';
 
-import { ServiceOperationsConfigProvider, useServiceOperations } from "@/contexts/ServiceOperationsConfigProvider";
-import ContextoTab from "./Tabs/ContextoTab";
-import { ModalTabs } from "./Tabs/handleModalTabs";
+import { ServiceOperationsConfigProvider, useServiceOperations } from '@/contexts/ServiceOperationsConfigProvider';
+import ContextoTab from './Tabs/ContextoTab';
+import { ModalTabs } from './Tabs/handleModalTabs';
 import { TaskGroupTab } from './Tabs/TaskGroupTab';
 import { TaskTab } from './Tabs/TaskTab';
 import { TagsTab } from './Tabs/TagsTab';
@@ -20,44 +15,41 @@ export function ServicoOperacionalConfigComponent() {
 
   const tabs = [
     {
-      label: "Contexto",
-      icon: <CreateOutlined className="text-primary-500" />,
+      label: 'Contexto',
+      icon: <CreateOutlined className="text-primary-500" />
     },
     {
-      label: "Grupo de tarefas",
-      icon: <SplitscreenOutlined className="text-primary-500" />,
+      label: 'Grupo de tarefas',
+      icon: <SplitscreenOutlined className="text-primary-500" />
     },
     {
-      label: "Tarefas",
-      icon: <AddTaskOutlined className="text-primary-500" />,
+      label: 'Tarefas',
+      icon: <AddTaskOutlined className="text-primary-500" />
     },
     {
-      label: "Procedimentos",
-      icon: <ChecklistRtlOutlined className="text-primary-500" />,
-    },
+      label: 'Procedimentos',
+      icon: <ChecklistRtlOutlined className="text-primary-500" />
+    }
   ];
 
   const handleLabel = (index: number) => {
     switch (index) {
       case 0:
-        return "Adicionar contexto";
+        return 'Adicionar contexto';
       case 1:
-        return "Adicionar grupo";
+        return 'Adicionar grupo';
       case 2:
-        return "Adicionar tarefa";
+        return 'Adicionar tarefa';
       case 3:
-        return "Adicionar procedimento";
+        return 'Adicionar procedimento';
       default:
-        return "Adicionar";
+        return 'Adicionar';
     }
   };
 
-  const {
-    modal,
-    ...data
-  } = useServiceOperations()
+  const { modal, ...data } = useServiceOperations();
 
-  useEffect(() => { 
+  useEffect(() => {
     if (activeTab !== undefined) {
       switch (activeTab) {
         case 0:
@@ -85,58 +77,27 @@ export function ServicoOperacionalConfigComponent() {
           title="Configurações"
           subtitle="Veja aqui o andamento e configuração de todos os serviços da empresa"
           button={
-            activeTab === 0 ? undefined : {
-            label: handleLabel(activeTab || 0),
-            onClick: modal.open,
-            isAdd: true,
-          }}
-        />
-        <SimpleTab
-          tabs={tabs as any}
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-          mobileView
-        />
-        <div
-          className="flex flex-col gap-4"
-          style={
-            activeTab !== undefined && activeTab === 0
-              ? {}
-              : { display: "none" }
+            activeTab === 0
+              ? undefined
+              : {
+                  label: handleLabel(activeTab || 0),
+                  onClick: modal.open,
+                  isAdd: true
+                }
           }
-        >
+        />
+        <SimpleTab tabs={tabs as any} activeTab={activeTab} setActiveTab={setActiveTab} mobileView />
+        <div className="flex flex-col gap-4" style={activeTab !== undefined && activeTab === 0 ? {} : { display: 'none' }}>
           <ContextoTab />
         </div>
-        <div
-          className="flex flex-col gap-4"
-          style={
-            activeTab !== undefined && activeTab === 1
-              ? {}
-              : { display: "none" }
-          }
-        >
+        <div className="flex flex-col gap-4" style={activeTab !== undefined && activeTab === 1 ? {} : { display: 'none' }}>
           <TaskGroupTab />
         </div>
-        <div
-          className="flex flex-col gap-4"
-          style={
-            activeTab !== undefined && activeTab === 2
-              ? {}
-              : { display: "none" }
-          }
-        >
+        <div className="flex flex-col gap-4" style={activeTab !== undefined && activeTab === 2 ? {} : { display: 'none' }}>
           <TaskTab />
         </div>
-        <div
-          className="flex flex-col gap-4"
-          style={
-            activeTab !== undefined && activeTab === 3
-              ? {}
-              : { display: "none" }
-          }
-        >
-          <TagsTab
-          />
+        <div className="flex flex-col gap-4" style={activeTab !== undefined && activeTab === 3 ? {} : { display: 'none' }}>
+          <TagsTab />
         </div>
       </div>
       <ModalTabs tab={activeTab} />

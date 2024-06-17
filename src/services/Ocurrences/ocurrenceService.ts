@@ -1,181 +1,164 @@
-import { basePagination } from "@/types";
-import { IOcurrence } from "@/types/models/Ocurrences/IOcurrence";
-import { api } from "../api";
-import { IOcurrenceRecognize } from "@/types/models/Ocurrences/IOcurrenceRecognize";
-import { IFilterOcurrences } from "@/types/models/Ocurrences/IFilterOcurrences";
+import { basePagination } from '@/types';
+import { IOcurrence } from '@/types/models/Ocurrences/IOcurrence';
+import { api } from '../api';
+import { IOcurrenceRecognize } from '@/types/models/Ocurrences/IOcurrenceRecognize';
+import { IFilterOcurrences } from '@/types/models/Ocurrences/IFilterOcurrences';
+import { getFilterParam } from '@/utils';
 
 export const ocurrenceService = {
-  async getCountOcurrence (dateStart: string, dateEnd: string) {
-    const responseCount = await api.get("/occurrences/count", {
+  async getCountOcurrence(companyId, dateStart: string, dateEnd: string) {
+    const filter = getFilterParam({
+      registerDateInicial: dateStart,
+      registerDateFinal: dateEnd
+    });
+    const responseCount = await api.get(`/companies/${companyId}/occurrences`, {
       params: {
-        start: dateStart,
-        end: dateEnd,
-      },
+        filter
+      }
     });
 
-    const count: number = responseCount.data.count;
+    const count: number = responseCount.data.totalItems;
 
     return count;
   },
 
-  async getCountOcurrenceRecognize (dateStart: string, dateEnd: string) {
-    const responseCount = await api.get("/recognized-occurrences/count", {
+  async getCountOcurrenceRecognize(companyId, dateStart: string, dateEnd: string) {
+    const filter = getFilterParam({
+      registerDateInicial: dateStart,
+      registerDateFinal: dateEnd,
+      closed: false
+    });
+    const responseCount = await api.get(`/companies/${companyId}/recognized-occurrences`, {
       params: {
         acknowledgedStart: dateStart,
         acknowledgedEnd: dateEnd,
-        closed: false
-      },
+        closed: false,
+        filter
+      }
     });
 
-    const count: number = responseCount.data.count;
+    const count: number = responseCount.data.totalItems;
 
     return count;
   },
 
-  async getCountOcurrenceClose (dateStart: string, dateEnd: string) {
-    const responseCount = await api.get("/recognized-occurrences/count", {
+  async getCountOcurrenceClose(companyId, dateStart: string, dateEnd: string) {
+    const filter = getFilterParam({
+      closedStart: dateStart,
+      closedEnd: dateEnd,
+      registerDateInicial: dateStart,
+      registerDateFinal: dateEnd,
+      closed: 1
+    });
+
+    const responseCount = await api.get(`/companies/${companyId}/occurrences`, {
       params: {
         closedStart: dateStart,
         closedEnd: dateEnd,
-        closed: true,
-      },
+        closed: 1,
+        filter
+      }
     });
 
-    const count: number = responseCount.data.count;
+    const count: number = responseCount.data.totalItems;
 
     return count;
   },
 
-  async listOcurrenceAsync (
+  async listOcurrenceAsync(
+    companyId: string | number,
     term: string | null,
     currentPage: number | null,
     pageSize: number | null,
     filter: IFilterOcurrences
   ): Promise<basePagination<IOcurrence>> {
-    const response = await api.get<IOcurrence[]>(`/occurrences`, {
-      params: {
-        term: filter.queryCod,
-        currentPage,
-        pageSize,
-        number: filter.numberOcurrence,
-        professionalname: filter.professional,
-        start: filter.registerDateStart,
-        end: filter.registerDateEnd,
-        statusofavaliation: filter.status,
-        type: filter.type,
-        origin: filter.origin,
-        evaluationStart: filter.availableDateStart,
-        evaluationEnd: filter.availableDateEnd,
-      },
+    const filters = getFilterParam({
+      number: filter.numberOcurrence,
+      professionalname: filter.professional,
+      registerDateInicial: filter.registerDateStart,
+      registerDateFinal: filter.registerDateEnd,
+      statusofavaliation: filter.status,
+      type: filter.type,
+      origin: filter.origin,
+      evaluationStart: filter.availableDateStart,
+      evaluationEnd: filter.availableDateEnd
     });
 
-    const data: IOcurrence[] = response.data;
-
-    const responseCount = await api.get("/occurrences/count", {
+    const response = await api.get<{ items: IOcurrence[]; totalItems: number }>(`/companies/${companyId}/occurrences`, {
       params: {
         term: filter.queryCod,
-        currentPage,
-        pageSize,
-        number: filter.numberOcurrence,
-        professionalname: filter.professional,
-        start: filter.registerDateStart,
-        end: filter.registerDateEnd,
-        statusofavaliation: filter.status,
-        type: filter.type,
-        origin: filter.origin,
-        evaluationStart: filter.availableDateStart,
-        evaluationEnd: filter.availableDateEnd,
-      },
+        offSet: currentPage,
+        itensPerPage: pageSize,
+        filter: filters
+      }
     });
 
-    const count: number = responseCount.data.count;
+    const data: IOcurrence[] = response.data.items;
+    const count: number = response.data.totalItems;
 
     return Promise.resolve({ items: data, count: count });
   },
 
-  async getOcurrenceByCategoryAsync (categoryId: string): Promise<IOcurrence[]> {
+  async getOcurrenceByCategoryAsync(categoryId: string): Promise<IOcurrence[]> {
     const response = await api.get<IOcurrence[]>(`/occurrences`, {
       params: {
-        cdescription: categoryId,
-      },
+        cdescription: categoryId
+      }
     });
     return response.data;
   },
 
-  async getAllRecognizeOcurrenceAsync (): Promise<IOcurrenceRecognize[]> {
-    const response = await api.get<IOcurrenceRecognize[]>(`/recognized-occurrences`);
+  async getAllRecognizeOcurrenceAsync(companyId: string | number): Promise<IOcurrenceRecognize[]> {
+    const response = await api.get<IOcurrenceRecognize[]>(`/companies/${companyId}/recognized-occurrences`);
     return response.data;
   },
 
-  async listOcurrenceRecognitionAsync (
+  async listOcurrenceRecognitionAsync(
+    companyId: string | number,
     term: string,
     currentPage: number,
     pageSize: number,
     filter: IFilterOcurrences,
     closed?: boolean
   ): Promise<basePagination<IOcurrenceRecognize>> {
-    const response = await api.get<IOcurrenceRecognize[]>(
-      `/recognized-occurrences`,
-      {
-        params: {
-          term: filter.queryCod,
-          currentPage,
-          pageSize,
-          number: filter.numberOcurrence,
-          professionalname: filter.professional,
-          supervisorname: filter.supervisor,
-          caracterizationId: filter.characterization,
-          type: filter.type,
-          classificationId: filter.classification,
-          origin: filter.origin,
-          start: filter.registerDateStart,
-          end: filter.registerDateEnd,
-          acknowledgedStart: filter.recognitionDateStart,
-          acknowledgedEnd: filter.recognitionDateEnd,
-          closedStart: filter.endingDateStart,
-          closedEnd: filter.endingDateEnd,
-          closed: closed,
-        },
-      }
-    );
-
-    const data: IOcurrenceRecognize[] = response.data;
-
-    const responseCount = await api.get("/recognized-occurrences/count", {
-      params: {
-        term: filter.queryCod,
-        currentPage,
-        pageSize,
-        number: filter.numberOcurrence,
-        acknowledgedStart: filter.recognitionDateStart,
-        acknowledgedEnd: filter.recognitionDateEnd,
-        professionalname: filter.professional,
-        supervisorname: filter.supervisor,
-        start: filter.registerDateStart,
-        end: filter.registerDateEnd,
-        caracterizationId: filter.characterization,
-        classificationId: filter.classification,
-        type: filter.type,
-        origin: filter.origin,
-        closed: closed,
-      },
+    const jsonFilter = getFilterParam({
+      number: filter.numberOcurrence,
+      professionalname: filter.professional,
+      start: filter.registerDateStart,
+      end: filter.registerDateEnd,
+      statusofavaliation: filter.status,
+      type: filter.type,
+      origin: filter.origin,
+      evaluationStart: filter.availableDateStart,
+      evaluationEnd: filter.availableDateEnd,
+      closed: closed ? 1 : 0
     });
 
-    const count: number = responseCount.data.count;
+    const response = await api.get<{ items: IOcurrenceRecognize[]; totalItems: number }>(`/companies/${companyId}/recognized-occurrences`, {
+      params: {
+        term: filter.queryCod,
+        itensPerPage: pageSize,
+        offSet: currentPage + 1,
+        filter: jsonFilter
+      }
+    });
+
+    const data: IOcurrenceRecognize[] = response.data.items;
+    const count: number = response.data.totalItems;
 
     return Promise.resolve({ items: data, count: count });
   },
 
-  async closeOcurrenceAsync (item: IOcurrenceRecognize): Promise<void> {
+  async closeOcurrenceAsync(item: IOcurrenceRecognize): Promise<void> {
     await api.post<void>(`/occurrences/${item.occurrenceId}/recognize`, item, {
       headers: {
-        Accept: "*/*",
-        "Content-Type": "application/json-patch+json",
-      },
+        Accept: '*/*',
+        'Content-Type': 'application/json-patch+json'
+      }
     });
   },
 
-  async updateOcurrenceAsync (item: IOcurrence): Promise<void> {
+  async updateOcurrenceAsync(item: IOcurrence): Promise<void> {
     try {
       await api.put<void>(
         `/occurrences/${item.id}`,
@@ -183,13 +166,13 @@ export const ocurrenceService = {
           characterizationId: item.characterization.id,
           registerDate: item.registerDate,
           local: item.local,
-          description: item.description,
+          description: item.description
         },
         {
           headers: {
-            Accept: "*/*",
-            "Content-Type": "application/json-patch+json",
-          },
+            Accept: '*/*',
+            'Content-Type': 'application/json-patch+json'
+          }
         }
       );
     } catch (e) {
@@ -202,20 +185,16 @@ export const ocurrenceService = {
     return response.data;
   },
 
-  async recognizeOcurrenceAsync (item: IOcurrenceRecognize): Promise<void> {
+  async recognizeOcurrenceAsync(item: IOcurrenceRecognize): Promise<void> {
     try {
-      await api.post<void>(
-        `/occurrences/${item.occurrenceId}/recognize`,
-        item,
-        {
-          headers: {
-            Accept: "*/*",
-            "Content-Type": "application/json-patch+json",
-          },
+      await api.post<void>(`/occurrences/${item.occurrenceId}/recognize`, item, {
+        headers: {
+          Accept: '*/*',
+          'Content-Type': 'application/json-patch+json'
         }
-      );
+      });
     } catch (e) {
       throw e.response.data;
     }
-  },
+  }
 };

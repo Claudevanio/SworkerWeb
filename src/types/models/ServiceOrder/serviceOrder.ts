@@ -13,6 +13,7 @@ export interface ServiceOrder {
   zipCode: string | null;
   serviceOrderStatusId: number;
   supervisorId: number;
+  supervisorName: string;
   requestDate: string;
   executionDate: string;
   checkInMode: number;
@@ -25,10 +26,16 @@ export interface ServiceOrder {
     id: number;
     name: string;
   };
+  responsible?: {
+    id: number;
+    name: string;
+  };
+  hasOccurrence?: boolean;
   status?: {
     id: number;
     description: string;
   };
+  unityDescription: string;
   dispatchMode?: number;
   isActive: boolean;
   tagId: number;
@@ -62,7 +69,6 @@ export interface ServiceOrder {
   equipments?: IEquipment[]; // You can define the structure for this if available
 }
 
-
 export interface singleTask {
   id: number;
   code: string;
@@ -94,4 +100,38 @@ export interface ApiResponse {
   success: boolean;
   message: string;
   data: ServiceOrderTask[];
+}
+
+export interface IServiceOrderDay {
+  id: number;
+  code: string;
+  description: string;
+  requestDate: string;
+  executionDate: string;
+  supervisor: {
+    name: string;
+    id: number;
+  };
+  status: {
+    description: string;
+    id: number;
+  };
+  responsible: {
+    name: string;
+    id: number;
+  };
+  sectorEquipId: number;
+  sectorEquipDescription: string;
+  unityId: number;
+  unityDescription: string;
+  sectorId: number;
+  sectorDescription: string;
+  isEdited: boolean;
+  serviceOrderProfessionals: {
+    name: string;
+    professionalId: number;
+    isResponsible: boolean;
+  }[];
+  responsibleName: string;
+  hasOccurrence: boolean;
 }

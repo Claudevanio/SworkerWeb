@@ -1,12 +1,12 @@
 'use client';
 import { useModal } from '@/hooks';
 import useTriggerEffect from '@/hooks/triggeredUseState';
-import { companyUnityService, professionalService, RoleService , companyService} from '@/services'; 
+import { companyUnityService, professionalService, RoleService, companyService } from '@/services';
 import { equipmentService } from '@/services/Administrator/equipmentService';
 import { SectorService } from '@/services/Administrator/sectorService';
-import { basePagination, ICompany, ICompanyUnity, IRole, ISector, IProfessional, IEquipment, IPermissions } from '@/types'; 
+import { basePagination, ICompany, ICompanyUnity, IRole, ISector, IProfessional, IEquipment, IPermissions } from '@/types';
 import { useQuery } from '@tanstack/react-query';
-import React, { createContext, useEffect, useState } from 'react'; 
+import React, { createContext, useEffect, useState } from 'react';
 
 interface baseCRUD<T, Y = basicSearchQuery> {
   data: basePagination<T> | undefined;
@@ -31,34 +31,32 @@ type SearchEquipment = basicSearchQuery & {
   manufacturer?: string;
   classification?: string;
   active?: boolean;
-}
+};
 interface AdministratorContextType {
-  permissions: baseCRUD<IRole> & {permissions?: IPermissions[]};
-  companies: baseCRUD<ICompany>; 
+  permissions: baseCRUD<IRole> & { permissions?: IPermissions[] };
+  companies: baseCRUD<ICompany>;
   modal: {
     isOpen: boolean;
     open: () => void;
     close: () => void;
-  } 
+  };
 }
 
-interface basicSearchQuery { 
-  term: string | undefined; 
+interface basicSearchQuery {
+  term: string | undefined;
   page: number;
-  pageSize: number; 
+  pageSize: number;
 }
 
 export const AdministratorContext = createContext<AdministratorContextType>({
-  permissions: crudInitialState ,
-  companies: crudInitialState,  
-  modal: { 
-  } as any
- });
+  permissions: crudInitialState,
+  companies: crudInitialState,
+  modal: {} as any
+});
 
-export const AdministratorProvider = ({ children }: { children: React.ReactNode }) => { 
-
+export const AdministratorProvider = ({ children }: { children: React.ReactNode }) => {
   // #region Commons
-  const [isModalOpen, openModal, closeModal] = useModal()
+  const [isModalOpen, openModal, closeModal] = useModal();
 
   // #endregion
 
@@ -66,10 +64,10 @@ export const AdministratorProvider = ({ children }: { children: React.ReactNode 
 
   const [companyReadOnly, setCompanyReadOnly] = useState<boolean>(false);
 
-  const [companyQueryObject, setCompanyQueryObject] = useTriggerEffect<basicSearchQuery>({ 
+  const [companyQueryObject, setCompanyQueryObject] = useTriggerEffect<basicSearchQuery>({
     page: 0,
-    pageSize: 5, 
-    term: undefined,
+    pageSize: 5,
+    term: undefined
   });
 
   const [currentCompany, setCurrentCompany] = useState<ICompany | undefined>(undefined);
@@ -77,14 +75,16 @@ export const AdministratorProvider = ({ children }: { children: React.ReactNode 
   const selectCompany = (company: ICompany, readonly = false) => {
     setCurrentCompany(company);
     setCompanyReadOnly(readonly);
-  }
+  };
 
-  const { isLoading: isLoadingCompanies, data: companies,
+  const {
+    isLoading: isLoadingCompanies,
+    data: companies,
     refetch: refetchCompanies
-   } = useQuery<basePagination<ICompany> | undefined>({
+  } = useQuery<basePagination<ICompany> | undefined>({
     queryKey: ['searchCompanies', companyQueryObject],
     queryFn: () => companyService.listCompanyAsync(companyQueryObject.term, companyQueryObject.page, companyQueryObject.pageSize) as any,
-    refetchOnWindowFocus: false,
+    refetchOnWindowFocus: false
   });
 
   const addCompany = async (company: ICompany) => {
@@ -93,127 +93,129 @@ export const AdministratorProvider = ({ children }: { children: React.ReactNode 
       setCompanyQueryObject({ ...companyQueryObject, page: 0, term: undefined });
       refetchCompanies();
     }
-  }
+  };
 
   const updateCompany = async (company: ICompany) => {
     await companyService.updateCompanyAsync(company);
     setCompanyQueryObject({ ...companyQueryObject, page: 0, term: undefined });
     refetchCompanies();
-  }
+  };
 
   const removeCompany = async (company: ICompany) => {
     await companyService.removeCompanyAsync(company.id!);
     setCompanyQueryObject({ ...companyQueryObject, page: 0, term: undefined });
     refetchCompanies();
-  }
+  };
 
   const resetCompanies = () => {
     setCompanyQueryObject({ ...companyQueryObject, page: 0, term: undefined });
     refetchCompanies();
-  }
+  };
 
   //#endregion
 
   //#region Permissions
-    const [currentPermission, setCurrentPermission] = useState<IRole | undefined>(undefined);
+  const [currentPermission, setCurrentPermission] = useState<IRole | undefined>(undefined);
 
-    const {isLoading, data: permissionsList} = useQuery<IPermissions[]>({
-      queryKey: ['permissions'],
-      queryFn: () => RoleService.getPermissions() as any,
-      refetchOnWindowFocus: false,
-    });
+  const { isLoading, data: permissionsList } = useQuery<IPermissions[]>({
+    queryKey: ['permissions'],
+    queryFn: () => RoleService.getPermissions() as any,
+    refetchOnWindowFocus: false
+  });
 
-    const [permissionsQueryObject, setPermissionsQueryObject] = useTriggerEffect<basicSearchQuery>({
-      page: 0,
-      pageSize: 5,
-      term: undefined,
-    });
- 
-    
-    const { isLoading: isLoadingPermissions, data: permissions, refetch: refetchPermissions } = useQuery<basePagination<IRole> | undefined>({
-      queryKey: ['searchPermissions', {...permissionsQueryObject}],
-      queryFn: () => RoleService.listRolesAsync(permissionsQueryObject.term, permissionsQueryObject.page, permissionsQueryObject.pageSize) as any,
-      refetchOnWindowFocus: false,
-    });
-    
+  const [permissionsQueryObject, setPermissionsQueryObject] = useTriggerEffect<basicSearchQuery>({
+    page: 0,
+    pageSize: 5,
+    term: undefined
+  });
 
-    const addPermission = async (permission: IRole) => {
-      const response = await RoleService.addRoleAsync(permission); 
-      if (response) {
-        setPermissionsQueryObject({ ...permissionsQueryObject, page: 0, term: undefined });
-        refetchPermissions();
-      }
-    }
+  const {
+    isLoading: isLoadingPermissions,
+    data: permissions,
+    refetch: refetchPermissions
+  } = useQuery<basePagination<IRole> | undefined>({
+    queryKey: ['searchPermissions', { ...permissionsQueryObject }],
+    queryFn: () => RoleService.listRolesAsync(permissionsQueryObject.term, permissionsQueryObject.page, permissionsQueryObject.pageSize) as any,
+    refetchOnWindowFocus: false
+  });
 
-
-    const updatePermission = async (permission: IRole) => {
-      const response = await RoleService.updateRoleAsync(permission as any);
-      if (response) {
-        setPermissionsQueryObject({ ...permissionsQueryObject, page: 0, term: undefined });
-        refetchPermissions();
-      }
-    }
-
-    const removePermission = async (permission: IRole) => {
-      await RoleService.removeRoleAsync(permission as any);
+  const addPermission = async (permission: IRole) => {
+    const response = await RoleService.addRoleAsync(permission);
+    if (response) {
       setPermissionsQueryObject({ ...permissionsQueryObject, page: 0, term: undefined });
       refetchPermissions();
     }
+  };
 
-    const selectCurrentPermission = (permission: IRole) => { 
-      setCurrentPermission(permission);
-    }
-
-    const resetPermissions = () => {
+  const updatePermission = async (permission: IRole) => {
+    const response = await RoleService.updateRoleAsync(permission as any);
+    if (response) {
       setPermissionsQueryObject({ ...permissionsQueryObject, page: 0, term: undefined });
       refetchPermissions();
     }
-    
+  };
+
+  const removePermission = async (permission: IRole) => {
+    await RoleService.removeRoleAsync(permission as any);
+    setPermissionsQueryObject({ ...permissionsQueryObject, page: 0, term: undefined });
+    refetchPermissions();
+  };
+
+  const selectCurrentPermission = (permission: IRole) => {
+    setCurrentPermission(permission);
+  };
+
+  const resetPermissions = () => {
+    setPermissionsQueryObject({ ...permissionsQueryObject, page: 0, term: undefined });
+    refetchPermissions();
+  };
+
   //#endregion
- 
+
   function handleCloseModal() {
-    setCurrentCompany(undefined); 
+    setCurrentCompany(undefined);
     setCurrentPermission(undefined);
-    setCompanyReadOnly(false); 
-    closeModal();    
+    setCompanyReadOnly(false);
+    closeModal();
   }
-  
+
   return (
-    <AdministratorContext.Provider value= {{
-      modal: {
-        isOpen: isModalOpen,
-        open: () => openModal(),
-        close: () => handleCloseModal(),
-      },
-      permissions: {
-        data: permissions,
-        isLoading: isLoadingPermissions,
-        create: addPermission,
-        update: updatePermission,
-        remove: removePermission,
-        setFilter: setPermissionsQueryObject,
-        filters: permissionsQueryObject,
-        current: currentPermission,
-        selectCurrent: selectCurrentPermission,
-        permissions: permissionsList,
-        reset: resetPermissions,
-      },
-      companies: {
-        data: companies,
-        isLoading: isLoadingCompanies,
-        create: addCompany,
-        update: updateCompany,
-        remove: removeCompany,
-        setFilter: setCompanyQueryObject,
-        filters: companyQueryObject,
-        current: currentCompany,
-        selectCurrent: selectCompany,
-        readonly: companyReadOnly,
-        reset: resetCompanies,
-      },    
-      
-    }}>
-  { children }
+    <AdministratorContext.Provider
+      value={{
+        modal: {
+          isOpen: isModalOpen,
+          open: () => openModal(),
+          close: () => handleCloseModal()
+        },
+        permissions: {
+          data: permissions,
+          isLoading: isLoadingPermissions,
+          create: addPermission,
+          update: updatePermission,
+          remove: removePermission,
+          setFilter: setPermissionsQueryObject,
+          filters: permissionsQueryObject,
+          current: currentPermission,
+          selectCurrent: selectCurrentPermission,
+          permissions: permissionsList,
+          reset: resetPermissions
+        },
+        companies: {
+          data: companies,
+          isLoading: isLoadingCompanies,
+          create: addCompany,
+          update: updateCompany,
+          remove: removeCompany,
+          setFilter: setCompanyQueryObject,
+          filters: companyQueryObject,
+          current: currentCompany,
+          selectCurrent: selectCompany,
+          readonly: companyReadOnly,
+          reset: resetCompanies
+        }
+      }}
+    >
+      {children}
     </AdministratorContext.Provider>
   );
 };

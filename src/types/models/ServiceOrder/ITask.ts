@@ -41,8 +41,8 @@ export interface ITaskStepsCreate {
   notes: string;
   taskId: number;
   subTaskId: number;
-  questionType?: '',
-  questionAlternatives: [],
+  questionType?: '';
+  questionAlternatives: [];
 }
 
 export interface ITaskType {

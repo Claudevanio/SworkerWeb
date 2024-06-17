@@ -1,12 +1,11 @@
-"use client"; 
-import { Suspense } from "react"; 
+'use client';
+import { Suspense } from 'react';
 import { OcorrenciasPageComponent } from './components/OcurrencePageComponent';
 
-export default function Ocorrencias() { 
-
+export default function Ocorrencias() {
   return (
     <Suspense>
-      <OcorrenciasPageComponent /> 
+      <OcorrenciasPageComponent />
     </Suspense>
   );
 }

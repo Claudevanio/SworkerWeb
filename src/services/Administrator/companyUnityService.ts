@@ -2,13 +2,12 @@ import { basePagination, ICompanyUnity } from '@/types';
 import { api } from '../api';
 
 export const companyUnityService = {
-  async countCompanyUnityAsync () {
+  async countCompanyUnityAsync() {
     const response = await api.get<number>('/unities/count');
     return response.data;
   },
 
-  async listCompanyUnityAsync (term: string, currentPage: number, pageSize: number): Promise<basePagination<ICompanyUnity>> {
-
+  async listCompanyUnityAsync(term: string, currentPage: number, pageSize: number): Promise<basePagination<ICompanyUnity>> {
     const response = await api.get<ICompanyUnity[]>('/unities', {
       params: { term, currentPage, pageSize }
     });
@@ -16,16 +15,16 @@ export const companyUnityService = {
     const data = {
       items: response.data,
       count: 0
-    }
+    };
 
-    const { count } = await companyUnityService.countCompanyUnityAsync() as any;
+    const { count } = (await companyUnityService.countCompanyUnityAsync()) as any;
 
     data.count = count;
 
     return data as basePagination<ICompanyUnity>;
   },
 
-  async listUnitiesByCompanyAsync ({
+  async listUnitiesByCompanyAsync({
     companyId,
     term,
     currentPage,
@@ -43,42 +42,41 @@ export const companyUnityService = {
     const data = {
       items: response.data.items,
       count: response.data.totalItems
-    }
+    };
 
     return data as basePagination<ICompanyUnity>;
-
   },
 
-  async getAll (): Promise<ICompanyUnity[]> {
+  async getAll(): Promise<ICompanyUnity[]> {
     const response = await api.get<ICompanyUnity[]>('/unities');
     return response.data;
   },
 
-  async updateCompanyUnityAsync (item: ICompanyUnity): Promise<void> {
+  async updateCompanyUnityAsync(item: ICompanyUnity): Promise<void> {
     await api.put<void>(`/unities/`, item);
   },
 
-  async createCompanyUnityAsync (item: ICompanyUnity): Promise<ICompanyUnity> {
+  async createCompanyUnityAsync(item: ICompanyUnity): Promise<ICompanyUnity> {
     const response = await api.post<ICompanyUnity>('/unities', item);
     return response.data;
   },
 
-  async removeCompanyUnityAsync (id: string): Promise<void> {
+  async removeCompanyUnityAsync(id: string): Promise<void> {
     await api.delete<void>(`/unities/${id}`);
   },
 
-  async getCompanyUnityByIdAsync (id: string): Promise<ICompanyUnity> {
+  async getCompanyUnityByIdAsync(id: string): Promise<ICompanyUnity> {
     const response = await api.get<ICompanyUnity>(`/unities/${id}`, {
       params: { id }
     });
     return response.data;
   },
 
-  async activateCompanyUnityAsync (id: string): Promise<void> {
+  async activateCompanyUnityAsync(id: string): Promise<void> {
     await api.put<void>(`/unities/${id}/activate`);
   },
 
-  async inactivateCompanyUnityAsync (id: string): Promise<void> {
+  async inactivateCompanyUnityAsync(id: string): Promise<void> {
     await api.put<void>(`/unities/${id}/inactivate`);
   }
 };

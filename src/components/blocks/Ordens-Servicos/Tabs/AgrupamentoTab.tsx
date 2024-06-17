@@ -7,45 +7,45 @@ import { ICompany } from '@/types';
 import { masks } from '@/utils';
 import { DeleteOutline, EditOutlined } from '@mui/icons-material';
 import { useEffect, useState } from 'react';
-import { RoundedTab } from '../../tabs';  
-import { useServiceOrder } from '@/contexts'; 
-// import { EquipesTab } from './EquipesTab';
+import { RoundedTab } from '../../tabs';
+import { useServiceOrder } from '@/contexts';
+import { EquipesTab } from './EquipesTab';
 // import { UnidadesTab } from './UnidadesTab';
 // import { EmpresasTab } from './EmpresasTab';
 import { useUser } from '@/hooks/useUser';
-// import { SectorTab } from './SectorTab';
-export function AgrupamentoTab({ 
-  openFilterModal,
-} : {  
-  openFilterModal: () => void;
-}) {  
-  const [activeTab, setActiveTab] = useState<number | undefined>(0)
-  const tabs = [{
-    label: 'Equipes',
-    tabIndex: 0,
-  },
-  {
-    label: 'Setores',
-    tabIndex: 1,
-  },
-  {
-    label: 'Unidades',
-    tabIndex: 2,
-  },  
-  {
-    label: 'Empresas',
-    tabIndex: 3,
-  }
-]
+import { useQuery } from '@tanstack/react-query';
+import { IServiceOrderDay } from '@/types/models/ServiceOrder/serviceOrder';
+import { serviceOrderService } from '@/services/OperationalService/serviceOrderService';
+import { SectorTab } from './SectorTab';
+import { UnidadesTab } from './UnidadesTab';
 
-  const {
-    serviceOrders, 
-  } = useServiceOrder()
+export function AgrupamentoTab({ openFilterModal }: { openFilterModal: () => void }) {
+  const [activeTab, setActiveTab] = useState<number | undefined>(0);
+  const tabs = [
+    {
+      label: 'Equipes',
+      tabIndex: 0
+    },
+    {
+      label: 'Setores',
+      tabIndex: 1
+    },
+    {
+      label: 'Unidades',
+      tabIndex: 2
+    }
+  ];
 
+  const { serviceOrders } = useServiceOrder();
 
-  const {
-    user
-  } = useUser()
+  const { user, currentCompany } = useUser();
+
+  const { data, isLoading } = useQuery<IServiceOrderDay[]>({
+    queryKey: ['getServiceOrderByDay', currentCompany?.id],
+    queryFn: () => serviceOrderService.listServicesDay(currentCompany?.id),
+    enabled: !!currentCompany?.id,
+    refetchOnWindowFocus: false
+  });
 
   // useEffect(() => {
   //   if(activeTab !==3){
@@ -55,62 +55,35 @@ export function AgrupamentoTab({
   //     })
   //   }
   // }, [activeTab])
- 
-  return (
-    <div
-      className='flex flex-col gap-4 w-full'
-    > 
-    <div
-      className='flex gap-4 w-full md:hidden'
-    >
-    <div
-      className='w-full'
-    />
-      <FiltroButton onClick={openFilterModal}
-        className=' !h-12 w-full'
-      />
 
-    </div>
-    <RoundedTab
-      tabs={tabs} 
-      activeTab={activeTab}
-      setActiveTab={setActiveTab} 
-    />
-    {/* {
-      activeTab === 0 ? (
+  return (
+    <div className="flex flex-col gap-4 w-full">
+      <div className="flex gap-4 w-full md:hidden">
+        <div className="w-full" />
+        <FiltroButton onClick={openFilterModal} className=" !h-12 w-full" />
+      </div>
+      <RoundedTab tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} />
+      {activeTab === 0 ? (
         <div>
-          <EquipesTab
-            openFilterModal={
-              openFilterModal
-            }
-          />
+          <EquipesTab openFilterModal={openFilterModal as any} serviceOrders={data} />
         </div>
       ) : activeTab === 1 ? (
         <div>
-          <SectorTab
-            openFilterModal={
-              openFilterModal
-            }
-          />
+          <SectorTab openFilterModal={openFilterModal} serviceOrders={data} />
         </div>
       ) : activeTab === 2 ? (
         <div>
-          <UnidadesTab
-            openFilterModal={
-              openFilterModal
-            }
-          />
+          <UnidadesTab openFilterModal={openFilterModal} serviceOrders={data} />
         </div>
       ) : activeTab === 3 ? (
         <div>
-          <EmpresasTab
+          {/* <EmpresasTab
             openFilterModal={
               openFilterModal
             }
-          />
+          /> */}
         </div>
-      ) : null
-    } */}
+      ) : null}
     </div>
   );
 }

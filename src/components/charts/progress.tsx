@@ -19,7 +19,7 @@
 //     data,
 //     xField,
 //     yField,
-//     height, 
+//     height,
 //     autoFit: true,
 //     label: {
 //       style: {
@@ -31,7 +31,7 @@
 //   // return <div></div>
 
 //   return (
-//     <Progress 
+//     <Progress
 //       {...chartConfig}
 //     />
 //   );

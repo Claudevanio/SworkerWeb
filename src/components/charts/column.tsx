@@ -6,28 +6,25 @@ export const ColumnChart = ({
   xField,
   yField,
   height = 400,
-  color = COLORS.primary['600'],
-} :{
+  color = COLORS.primary['600']
+}: {
   data: any[];
   xField: string;
   yField: string;
   height?: number;
   color?: string;
 }) => {
-
-  const chartConfig : ColumnConfig = {
+  const chartConfig: ColumnConfig = {
     data,
     xField,
     yField,
-    height, 
-    autoFit: true,  
-    color, 
+    height,
+    autoFit: true,
+    color,
     columnStyle: {
-      radius: [20, 20, 0, 0], 
-    },
-  }; 
+      radius: [20, 20, 0, 0]
+    }
+  };
 
-  return (
-    <Column {...chartConfig} />
-  );
-}
+  return <Column {...chartConfig} />;
+};
