@@ -106,6 +106,7 @@ export const SectorTab = ({ openFilterModal, serviceOrders }: { openFilterModal:
     end?: string;
     team?: string;
     status?: number;
+    responsavel?: string;
     sector?: string;
   }
 
@@ -145,6 +146,9 @@ export const SectorTab = ({ openFilterModal, serviceOrders }: { openFilterModal:
         return false;
       }
       if (criteria.end && !dayjs(order.requestDate).isBefore(dayjs(formatDate(criteria.end)).toISOString())) {
+        return false;
+      }
+      if (criteria.responsavel && !order.responsible?.name.includes(criteria.responsavel)) {
         return false;
       }
       if (criteria.team && !order.supervisor?.name.includes(criteria.team)) {
@@ -322,7 +326,7 @@ export const SectorTab = ({ openFilterModal, serviceOrders }: { openFilterModal:
               },
               {
                 label: 'Responsável',
-                key: 'supervisor',
+                key: 'responsible',
                 Formatter: supervisor => {
                   return supervisor.name;
                 }

@@ -22,6 +22,7 @@ interface ServiceOrderContextType {
     setFilter: React.Dispatch<React.SetStateAction<basicSearchQuery>>;
     filter: basicSearchQuery;
     changeStatus: (id: string, statusId: number, sourceId?: number) => void;
+    resetFilter: () => void;
   };
   status: {
     data: Array<{
@@ -48,7 +49,8 @@ export const ServiceOrderContext = createContext<ServiceOrderContextType>({
     isLoading: false,
     filter: {} as basicSearchQuery,
     setFilter: () => {},
-    changeStatus: () => {}
+    changeStatus: () => {},
+    resetFilter: () => {}
   },
   status: {
     data: [],
@@ -145,7 +147,14 @@ export const ServiceOrderProvider = ({ children }: { children: React.ReactNode }
           isLoading: serviceOrdersLoading,
           setFilter: setServiceOrderFilters,
           filter: serviceOrderFilters,
-          changeStatus
+          changeStatus,
+          resetFilter: () => setServiceOrderFilters({
+            term: '',
+            page: 0,
+            pageSize: 999,
+            start: dayjs().subtract(30, 'day').toDate().toISOString(),
+            end: dayjs().toDate().toISOString()
+          })
         },
         status: {
           data: serviceOrderStatuses,

@@ -15,6 +15,8 @@ import { useQuery } from '@tanstack/react-query';
 import { equipmentClassificationService, equipmentTypeService } from '@/services/Administrator/equipmentService';
 import { Add } from '@mui/icons-material';
 import { useGestao } from '@/contexts/GestaoProvider';
+import { useUser } from '@/hooks/useUser';
+import dayjs from 'dayjs';
 
 export function ModalEquipments({
   isOpen,
@@ -46,6 +48,10 @@ export function ModalEquipments({
 
   const { equipments } = useGestao();
 
+  const {
+    currentCompany
+  } = useUser()
+
   async function onSubmit(data: any) {
     if (currentStep < 3) {
       setCurrentStep(currentStep + 1);
@@ -69,11 +75,19 @@ export function ModalEquipments({
       })) as any;
       data.classificationId = newClassification?.data?.id;
     }
+    data.manufactureDate = dayjs(data.manufactureDate, 'DD/MM/YYYY').format('YYYY-MM-DD');
+    (data as any).companyId = currentCompany?.id
+
+    if(current) {
+      await equipments.update(  data);
+      onClose();
+      return;
+    }
 
     const newData: IEquipment = {
       ...data,
       status: true,
-      classificationId: +(data as any).classificationId
+      classificationId: +(data as any).classificationId,
     } as any;
     await equipments.create(newData);
 

@@ -106,6 +106,7 @@ export const UnidadesTab = ({ openFilterModal, serviceOrders }: { openFilterModa
     team?: string;
     status?: number;
     unit?: string; 
+    responsavel?: string;
   }
   useEffect(() => {
     if (paginatedUnits && paginatedUnits.currentTableData.length > 0 && !selectedGroup) {
@@ -147,6 +148,9 @@ export const UnidadesTab = ({ openFilterModal, serviceOrders }: { openFilterModa
         return false;
       }
       if (criteria.end && !dayjs(order.requestDate).isBefore(dayjs(formatDate(criteria.end)).toISOString())) {
+        return false;
+      }
+      if (criteria.responsavel && !order.responsible?.name.includes(criteria.responsavel)) {
         return false;
       }
       if (criteria.team && !order.supervisor?.name.includes(criteria.team)) {
@@ -315,7 +319,7 @@ export const UnidadesTab = ({ openFilterModal, serviceOrders }: { openFilterModa
               },
               {
                 label: 'Responsável',
-                key: 'supervisor',
+                key: 'responsible',
                 Formatter: supervisor => {
                   return supervisor.name;
                 }

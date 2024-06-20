@@ -68,15 +68,13 @@ export function ModalCompanyUnity({
 
     const newData: ICompanyUnity = {
       ...data,
-      phone: +masks.CLEARMasks(data.phone),
-      address: {
-        zipCode: 4547006,
-        state: 'SP',
-        city: 'São Jose dos Campos',
-        neighborHood: 'Centro',
-        street: 'Rua Gomes de Carvalho',
-        number: '1996',
-        complement: ''
+      phone: masks.CLEARMasks(data.phone),
+      Address: {
+        NeighborHood: 'Bairro',
+        Number: '99',
+        State: 'SP',
+        Street: 'Rua',
+        ZipCode: '05364-100'
       }
     } as any;
 

@@ -192,7 +192,11 @@ const Sidebar: React.FC<{}> = () => {
                 className="text-primary-50 text-sm mt-[-1rem] font-bold text-center cursor-pointer hover:text-primary-700 hover:underline"
                 onClick={selectCompany}
               >
-                Selecionar empresa
+                {
+                  currentCompany
+                    ? currentCompany.name
+                    : 'Selecione uma empresa'
+                }
               </h2>
             </div>
           <div className="flex flex-col gap-2">

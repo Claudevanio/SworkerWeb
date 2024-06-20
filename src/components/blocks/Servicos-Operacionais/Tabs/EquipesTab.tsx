@@ -206,16 +206,29 @@ export function EquipesTab({ tasks, tasksIsLoading }: { tasks: ApiResponse; task
         <div>
           <h2 className="text-base-7 text-lg md:text-2xl font-bold mt-8 mb-4">Linha do tempo</h2>
           <h4 className="text-base-6 mb-2">Quantidade de serviços</h4>
-          <LineChart data={dataArray} xField="date" yField="value" height={300} color={COLORS.primary['700']} />
+
+          {!dataArray || dataArray.length === 0 ? (
+            <div className="flex justify-center items-center h-56">
+              <p className="text-base-7 text-lg md:text-2xl font-bold">Não há dados da linha do tempo para exibir</p>
+            </div>
+          ) : (
+            <LineChart data={dataArray ?? []} xField="date" yField="value" height={300} color={COLORS.primary['700']} />
+          )}
           <h4 className="text-base-6 mt-4 b-2">Tempo de realização</h4>
-          <LineChart
-            data={[...realizingTime, ...avgRealizingTime]}
-            xField="date"
-            field="type"
-            yField="value"
-            height={300}
-            color={[COLORS.primary['700'], COLORS.primary['400']]}
-          />
+          {[...realizingTime, ...avgRealizingTime].length === 0 ? (
+            <div className="flex justify-center items-center h-56">
+              <p className="text-base-7 text-lg md:text-2xl font-bold">Não há dados de tempo de realização para exibir</p>
+            </div>
+          ) : (
+            <LineChart
+              data={[...realizingTime, ...avgRealizingTime]}
+              xField="date"
+              field="type"
+              yField="value"
+              height={300}
+              color={[COLORS.primary['700'], COLORS.primary['400']]}
+            />
+          )}
         </div>
 
         <div className="w-full ">

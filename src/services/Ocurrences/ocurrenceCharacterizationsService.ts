@@ -48,7 +48,7 @@ export const ocurrenceCharacterizationService = {
   async insertCharacterization(characterization: IOcurrenceCharacterization): Promise<void> {
     try {
       await api.post(`/occurrence-characterizations`, {
-        ocurrenceTypeId: characterization.type.id,
+        occurrenceTypeId: characterization.type.id,
         description: characterization.description
       });
     } catch (e) {

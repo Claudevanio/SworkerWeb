@@ -83,7 +83,7 @@ export const HistoricoTab = ({ openFilterModal }: { openFilterModal: () => void 
             label: 'Evolucao',
             icon: <TrendingUp className="text-primary-700" />,
             onClick: (data: ServiceOrder) => {
-              router.push(`servicos-operacionais/${data.id}`);
+              router.push(`${data.id}`);
             }
           },
           {
@@ -161,7 +161,7 @@ export const HistoricoTab = ({ openFilterModal }: { openFilterModal: () => void 
           },
           {
             label: 'Responsável',
-            key: 'supervisor',
+            key: 'responsible',
             Formatter: supervisor => {
               return supervisor.name;
             }

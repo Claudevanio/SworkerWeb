@@ -24,13 +24,15 @@ export function ModalEquipmentsHistory({ isOpen, onClose }: { isOpen: boolean; o
   const { isLoading: isLoadingAssignments, data: assignmentsData } = useQuery<any[] | undefined>({
     queryKey: ['equipmentsAssignments', equipments?.current?.uid],
     queryFn: () => equipmentService.getAssignmentsAsync(equipments?.current?.uid) as any,
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: false,
+    enabled: !!equipments?.current?.uid
   });
 
   const { isLoading: isLoadingInspections, data: inspectionsData } = useQuery<any[] | undefined>({
     queryKey: ['equipmentsInspections', equipments?.current?.uid],
     queryFn: () => equipmentService.getEquipmentInspectionAsync(equipments?.current?.uid) as any,
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: false,
+    enabled: !!equipments?.current?.uid
   });
 
   return (

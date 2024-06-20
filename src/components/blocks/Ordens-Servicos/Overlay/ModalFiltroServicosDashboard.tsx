@@ -22,7 +22,7 @@ export function ModalFiltroServicosDashboard({ isOpen, onClose }: { isOpen: bool
     period: Yup.string(),
     date: Yup.string(),
     code: Yup.string(),
-    procedure: Yup.string(),
+    responsavel: Yup.string(),
     executionDateStart: Yup.string(),
     executionDateEnd: Yup.string(),
     start: Yup.string(),
@@ -77,7 +77,7 @@ export function ModalFiltroServicosDashboard({ isOpen, onClose }: { isOpen: bool
       <Form className="flex flex-col gap-4 md:gap-8" onSubmit={methods.handleSubmit(onSubmit)} {...methods}>
         <div className="flex gap-4 md:gap-8 flex-col md:flex-row items-center">
           <Input label="Código" name="code" />
-          <div className="hidden md:block w-full" />
+          <Input label="Responsavel" name="responsavel" />
         </div>
         <div className="flex gap-4 md:gap-8 flex-col md:flex-row items-center">
           <Input label="Data de execução" name="executionDateStart" mask={masks.DATE} />

@@ -100,7 +100,7 @@ export const EquipesTab = ({ openFilterModal, serviceOrders }: { openFilterModal
     date?: string;
     osCode?: string;
     code?: string;
-    procedure?: string;
+    responsavel?: string;
     executionDateStart?: string;
     executionDateEnd?: string;
     start?: string;
@@ -144,6 +144,9 @@ export const EquipesTab = ({ openFilterModal, serviceOrders }: { openFilterModal
         return false;
       }
       if (criteria.end && !dayjs(order.requestDate).isBefore(dayjs(formatDate(criteria.end)).toISOString())) {
+        return false;
+      }
+      if(criteria.responsavel && !order.responsible.name.includes(criteria.responsavel)) {
         return false;
       }
       if (criteria.team && !order.sectorEquipDescription.includes(criteria.team)) {
@@ -220,7 +223,7 @@ export const EquipesTab = ({ openFilterModal, serviceOrders }: { openFilterModal
       </CustomizedGroupAccordion>
       <p className="text-base-4 font-medium md:mb-[-2rem]">{selectedGroup?.name}</p>
       {selectedGroup ? (
-        <>
+        <> 
           <BaseTable
             rows={paginatedServiceOrders.currentTableData ?? []}
             // isLoading={false}
@@ -311,7 +314,7 @@ export const EquipesTab = ({ openFilterModal, serviceOrders }: { openFilterModal
               },
               {
                 label: 'Responsável',
-                key: 'supervisor',
+                key: 'responsible',
                 Formatter: supervisor => {
                   return supervisor.name;
                 }

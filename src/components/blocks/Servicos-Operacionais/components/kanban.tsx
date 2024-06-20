@@ -68,6 +68,7 @@ export const Kanban = ({ openFilterModal }: { openFilterModal: () => void }) => 
 
   useEffect(() => {
     fetchPainelData();
+    serviceOrders.resetFilter();
   }, []);
 
   const initialStages = useMemo(() => {
