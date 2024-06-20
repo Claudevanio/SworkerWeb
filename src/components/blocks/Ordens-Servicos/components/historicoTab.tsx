@@ -26,7 +26,7 @@ export const HistoricoTab = ({ openFilterModal }: { openFilterModal: () => void 
       ...prev,
       start: undefined,
       pageSize: 10,
-      page: 0
+      page: 1
     }));
   }, []);
 
@@ -35,7 +35,7 @@ export const HistoricoTab = ({ openFilterModal }: { openFilterModal: () => void 
   function mapCSVData(data: ServiceOrder[] | ServiceOrder): string[][] {
     const obj = Array.isArray(data)
       ? data.map(item => ({
-          Código: item?.code,
+          Código: item?.serviceCode,
           Procedimento: item?.description,
           'Data de Solicitação': dayjs(item?.requestDate).format('DD/MM/YYYY : HH:mm'),
           Responsável: item?.supervisor?.name,
@@ -44,7 +44,7 @@ export const HistoricoTab = ({ openFilterModal }: { openFilterModal: () => void 
         }))
       : [
           {
-            Código: data.code,
+            Código: data.serviceCode,
             Procedimento: data.description,
             'Data de Solicitação': dayjs(data?.requestDate).format('DD/MM/YYYY : HH:mm'),
             Responsável: data?.supervisor?.name,
@@ -107,7 +107,7 @@ export const HistoricoTab = ({ openFilterModal }: { openFilterModal: () => void 
         columns={[
           {
             label: 'Código',
-            key: 'code',
+            key: 'serviceCode',
             rowFormatter: row => {
               return (
                 <>
@@ -135,12 +135,12 @@ export const HistoricoTab = ({ openFilterModal }: { openFilterModal: () => void 
                         }}
                       />
                     </div>
-                    <div>{row.code}</div>
+                    <div>{row.serviceCode}</div>
                   </div>
                   <div className="md:hidden">
                     <div className="flex items-center gap-3">
                       {row.id && <Image className="md:hidden  shrink-0" src="/Warning.svg" width={20} height={20} alt="warning" />}
-                      {row.code}
+                      {row.serviceCode}
                     </div>
                   </div>
                 </>
@@ -183,8 +183,8 @@ export const HistoricoTab = ({ openFilterModal }: { openFilterModal: () => void 
         ]}
       />{' '}
       <Pagination
-        currentPage={serviceOrders.filter.page}
-        onChange={page => serviceOrders.setFilter(prev => ({ ...prev, page }))}
+        currentPage={serviceOrders.filter.page -1}
+        onChange={page => serviceOrders.setFilter(prev => ({ ...prev, page: page + 1 }))}
         totalPages={Math.ceil((serviceOrders?.data?.count ?? 0) / serviceOrders.filter.pageSize)}
       />
     </div>

@@ -108,8 +108,13 @@ export const ocurrenceService = {
     return response.data;
   },
 
-  async getAllRecognizeOcurrenceAsync(companyId: string | number): Promise<IOcurrenceRecognize[]> {
-    const response = await api.get<IOcurrenceRecognize[]>(`/companies/${companyId}/recognized-occurrences`);
+  async getAllRecognizeOcurrenceAsync(companyId: string | number, pageSize?: number): Promise<{items: IOcurrenceRecognize[]}> {
+    debugger
+    const response = await api.get<{items: IOcurrenceRecognize[]}>(`/companies/${companyId}/recognized-occurrences`, {
+      params: {
+        itensPerPage: pageSize
+      }
+    });
     return response.data;
   },
 

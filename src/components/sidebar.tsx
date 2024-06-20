@@ -177,7 +177,7 @@ const Sidebar: React.FC<{}> = () => {
           }
         }}
       >
-        <div className="flex flex-col gap-10 ">
+        <div className="flex flex-col gap-8 ">
           <div>
             <div className="gap-2 flex pb-4 cursor-pointer items-center ">
               <Avatar />
@@ -187,6 +187,14 @@ const Sidebar: React.FC<{}> = () => {
               </div>
             </div>
           </div>
+            <div>
+              <h2
+                className="text-primary-50 text-sm mt-[-1rem] font-bold text-center cursor-pointer hover:text-primary-700 hover:underline"
+                onClick={selectCompany}
+              >
+                Selecionar empresa
+              </h2>
+            </div>
           <div className="flex flex-col gap-2">
             <h2 className="text-primary-50 text-xs font-bold">MENU</h2>
 
@@ -198,14 +206,6 @@ const Sidebar: React.FC<{}> = () => {
                 </MenuButton>
               </Link>
             }
-            <div>
-              <h2
-                className="text-primary-50 text-sm mt-4 font-bold text-center cursor-pointer hover:text-primary-700 hover:underline"
-                onClick={selectCompany}
-              >
-                Selecionar empresa
-              </h2>
-            </div>
           </div>
           <div className="flex flex-col gap-2">
             <h2 className="text-primary-50 text-xs font-bold truncate">

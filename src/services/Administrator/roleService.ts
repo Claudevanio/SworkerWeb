@@ -8,7 +8,7 @@ export const RoleService = {
   },
 
   async getAll(): Promise<IRole[]> {
-    const response = await authApi.get<IRole[]>('/roles/all');
+    const response = await authApi.get<IRole[]>('/roles/');
     return response.data;
   },
 

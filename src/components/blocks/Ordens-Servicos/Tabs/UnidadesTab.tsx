@@ -97,7 +97,7 @@ export const UnidadesTab = ({ openFilterModal, serviceOrders }: { openFilterModa
 
   interface FilterCriteria {
     date?: string;
-    osCode?: string;
+    code?: string;
     procedure?: string;
     executionDateStart?: string;
     executionDateEnd?: string;
@@ -105,8 +105,20 @@ export const UnidadesTab = ({ openFilterModal, serviceOrders }: { openFilterModa
     end?: string;
     team?: string;
     status?: number;
-    unit?: string;
+    unit?: string; 
   }
+  useEffect(() => {
+    if (paginatedUnits && paginatedUnits.currentTableData.length > 0 && !selectedGroup) {
+      setSelectedGroup(paginatedUnits.currentTableData[0]);
+    }
+  }, [paginatedUnits]);
+
+  const {
+    serviceOrders: {
+      filter: { page, pageSize, term, ...filter }
+    }
+  } = useServiceOrder();
+
 
   const filterServiceOrders = useCallback((serviceOrders: IServiceOrderDay[], criteria: FilterCriteria): IServiceOrderDay[] => {
     if (!serviceOrders) return [];
@@ -119,7 +131,7 @@ export const UnidadesTab = ({ openFilterModal, serviceOrders }: { openFilterModa
       if (criteria.date && !dayjs(order.requestDate).isAfter(dayjs(formatDate(criteria.date)).toISOString())) {
         return false;
       }
-      if (criteria.osCode && !order.code.includes(criteria.osCode)) {
+      if (criteria?.code && !order.code.includes(criteria.code)) {
         return false;
       }
       if (criteria.procedure && !order.description.includes(criteria.procedure)) {
@@ -145,31 +157,12 @@ export const UnidadesTab = ({ openFilterModal, serviceOrders }: { openFilterModa
       }
       return true;
     });
-  }, []);
-
-  const [filteredData, setFilteredData] = useState<IServiceOrderDay[] | null>(null);
-
-  useEffect(() => {
-    if (paginatedUnits && paginatedUnits.currentTableData.length > 0 && !selectedGroup) {
-      setSelectedGroup(paginatedUnits.currentTableData[0]);
-    }
-  }, [paginatedUnits]);
-
-  const {
-    serviceOrders: {
-      filter: { page, pageSize, term, ...filter }
-    }
-  } = useServiceOrder();
-
-  useEffect(() => {
-    if (serviceOrders) {
-      const filteredData = filterServiceOrders(serviceOrders, {
-        unit: selectedGroup?.id?.toString(),
-        ...filter
-      });
-      setFilteredData([...filteredData]);
-    }
-  }, [selectedGroup, serviceOrders, filter]);
+  }, [filter, serviceOrders]);
+  
+  const filteredData = filterServiceOrders(serviceOrders, {
+    ...filter,
+    unit: selectedGroup?.id?.toString()
+  });
 
   const paginatedServiceOrders = usePagination(filteredData ?? [], 3);
 
@@ -240,7 +233,7 @@ export const UnidadesTab = ({ openFilterModal, serviceOrders }: { openFilterModa
                 label: 'Evolucao',
                 icon: <TrendingUp className="text-primary-700" />,
                 onClick: (data: ServiceOrder) => {
-                  router.push(`servicos-operacionais/${data.id}`);
+                  router.push(`${data.id}`);
                 }
               },
               {
@@ -308,6 +301,10 @@ export const UnidadesTab = ({ openFilterModal, serviceOrders }: { openFilterModa
               {
                 label: 'Procedimento',
                 key: 'description'
+              },
+              {
+                label: 'Equipe',
+                key: 'sectorEquipDescription'
               },
               {
                 label: 'Data de Solicitação',

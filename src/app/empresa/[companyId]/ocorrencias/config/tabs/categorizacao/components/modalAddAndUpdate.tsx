@@ -40,7 +40,9 @@ export default function ModalAddAndUpdate({
   const { confirmDialog } = useDialog();
 
   async function onSubmit(data: FormFields) {
-    characterizationSelected.type.id = data.occurrenceType;
+    characterizationSelected.type = {
+      id: data.occurrenceType
+    };
     characterizationSelected.description = data.category;
 
     if (isAdd) {

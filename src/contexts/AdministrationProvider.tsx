@@ -87,16 +87,16 @@ export const AdministratorProvider = ({ children }: { children: React.ReactNode 
     refetchOnWindowFocus: false
   });
 
-  const addCompany = async (company: ICompany) => {
-    const response = await companyService.createCompanyAsync(company);
-    if (response) {
-      setCompanyQueryObject({ ...companyQueryObject, page: 0, term: undefined });
-      refetchCompanies();
-    }
+  const addCompany = async (company: ICompany) => { 
+    await companyService.createCompanyAsync(company); 
+    setCompanyQueryObject({ ...companyQueryObject, page: 0, term: undefined });
+    refetchCompanies(); 
   };
 
   const updateCompany = async (company: ICompany) => {
+    debugger;
     await companyService.updateCompanyAsync(company);
+    console.log('addCompany')
     setCompanyQueryObject({ ...companyQueryObject, page: 0, term: undefined });
     refetchCompanies();
   };

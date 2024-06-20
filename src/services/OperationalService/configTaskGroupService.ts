@@ -7,7 +7,8 @@ export const configTaskGroupService = {
     const response = await api.get<ITaskGroup[]>(`/task-groups`, {
       data: {},
       params: {
-        ...filters
+        ...filters,
+        currentPage: filters.page
       }
     });
 

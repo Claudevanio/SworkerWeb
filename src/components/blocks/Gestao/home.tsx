@@ -18,7 +18,7 @@ export function GestaoComponent() {
     <>
       <div className="w-full p-4 lg:p-8">
         <PageTitle
-          title="Administração"
+          title="Gestão"
           subtitle="Veja aqui o andamento e configuração de todos os serviços da empresa"
           button={{
             label: handleLabel(activeTab || 0),

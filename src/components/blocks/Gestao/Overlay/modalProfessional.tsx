@@ -88,6 +88,44 @@ export function ModalProfessional({
   const { sectors, professionals, companyUnities } = useGestao();
 
   async function onSubmit(data: FormFields) {
+    data.unitsIds = data.unitsIds.filter(Boolean);
+    if (current){
+      const userData: IUser = {
+        userId: current.userId,
+        email: data.email,
+        roleId: data.roleId,
+        name: data.name,
+        userName: data.email
+      };
+      await Userservice.updateUser(userData);
+      const professionalData: IProfessional = {
+        ...data,
+        id: current.id,
+        cpf: +masks.CLEARMasks(data.cpf) as any,
+        phone: +masks.CLEARMasks(data.phone) as any,
+        unityId: data.unitsIds[0],
+        email: data.email
+      } as any;
+      await professionals.update(professionalData);
+      
+      const unitsToAdd = data.unitsIds?.filter(unitId => unitId && !professionalUnities.data?.map((unity: any) => unity.id).includes(unitId));
+
+      const unitsToRemove = professionalUnities.data?.map((unity: any) => unity.id).filter(unitId => unitId && !data.unitsIds?.includes(unitId));
+
+      unitsToAdd?.forEach(async unityId => {
+        await professionalService.signUnit(current.id, unityId);
+      });
+
+      unitsToRemove?.forEach(async unityId => {
+        await professionalService.signUnit(current.id, unityId);
+      });
+
+      onClose();
+
+      return;
+
+      
+    }
     const userData: IUser = {
       email: data.email,
       password: generatePassword(),
@@ -246,10 +284,12 @@ export function ModalProfessional({
                     className="flex justify-between items-center gap-4 border-base-2 md:border-primary-300 border-2 border-y-[.5px] w-full pl-10 pr-4"
                   >
                     {sector.name}
-                    <CheckBox
-                      label=""
+                    <CheckBox 
                       value={unitsIds && unitsIds.includes(sector.id)}
+ 
+                      disabled={readonly}
                       onChange={() => {
+                        if(companyUnities.readonly) return;
                         if (!unitsIds) return;
                         if (unitsIds?.includes(sector.id)) {
                           methods.setValue(

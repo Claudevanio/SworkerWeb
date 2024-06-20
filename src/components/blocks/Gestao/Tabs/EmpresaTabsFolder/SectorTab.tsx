@@ -28,35 +28,9 @@ export function SectorTab() {
       Formatter: (companyId: any) => {
         return companiesList?.find(c => c.id === companyId)?.name ?? 'Não encontrado';
       }
-    }
-    // {
-    //   label: 'Unidade',
-    //   key: 'unity',
-    //   Formatter: (unity: ICompanyUnity) => {
-    //     return (
-    //       unity.name
-    //     )
-    //   }
-    // }
+    } 
   ];
-
-  const [sectorsData, setSectorsData] = useState<ISector[]>(sectors.data?.items ?? []);
-
-  useEffect(() => {
-    if (!sectors.filters.term) {
-      setSectorsData(sectors.data?.items ?? []);
-      return;
-    }
-    const filteredSectors = sectorsData.filter(sector => {
-      return sector.description.toLowerCase().includes(sectors.filters.term?.toLowerCase() ?? '');
-    });
-    setSectorsData(filteredSectors);
-  }, [sectors.filters.term, sectors.data]);
-
-  const paginatedSectors = usePagination(sectorsData, 3);
-
-  const rows = paginatedSectors.currentTableData;
-
+  
   return (
     <>
       <SearchInput
@@ -75,6 +49,7 @@ export function SectorTab() {
           sectors.selectCurrent(data, true);
           modal.open();
         }}
+        isLoading={sectors.isLoading}
         showAllActions
         actions={[
           {
@@ -97,14 +72,14 @@ export function SectorTab() {
           //   icon: <DeleteOutline/>
           // }
         ]}
-        rows={rows}
+        rows={sectors?.data?.items ?? []}
       />
       <Pagination
-        currentPage={paginatedSectors.currentPage}
-        totalPages={paginatedSectors.totalPage}
-        onChange={page => {
-          paginatedSectors.setCurrentPage(page);
-        }}
+        currentPage={sectors?.filters?.page}
+        totalPages={
+          sectors?.data?.count ? Math.ceil(sectors?.data?.count / sectors?.filters?.pageSize) : 1
+        }
+        onChange={page => sectors.setFilter(prev => ({ ...prev, page }))}
       />
     </>
   );

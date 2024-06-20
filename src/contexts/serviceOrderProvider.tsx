@@ -117,9 +117,11 @@ export const ServiceOrderProvider = ({ children }: { children: React.ReactNode }
 
   //#region serviceOrderStatus
   const { data: serviceOrderStatuses, isLoading: isLoadingServiceOrderStatuses } = useQuery({
-    queryKey: ['serviceOrderStatuses', serviceOrderFilters],
+    queryKey: ['serviceOrderStatuses'],
     queryFn: () => serviceOrderService.getServiceOrderStatusAsync(),
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,    
   });
 
   // #endregion

@@ -75,6 +75,18 @@ export function Tipo({ isMobile, openModalAdd, handleCloseModalAdd }: { isMobile
           </div>
         );
       }
+    },
+    {
+      label: 'Descrição',
+      key: 'description',
+      mobileTitle: true
+    },
+    {
+      label: 'Data de registro',
+      key: 'registerDate',
+      Formatter: (registerDate: string) => {
+        return dayjs(registerDate).format('DD/MM/YYYY');
+      }
     }
   ];
 

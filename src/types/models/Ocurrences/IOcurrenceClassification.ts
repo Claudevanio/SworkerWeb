@@ -8,7 +8,7 @@ export interface IOcurrenceClassification {
 
 interface Type {
   id: number;
-  typeName: string;
-  description: string;
-  registerDate: string;
+  typeName?: string;
+  description?: string;
+  registerDate?: string;
 }

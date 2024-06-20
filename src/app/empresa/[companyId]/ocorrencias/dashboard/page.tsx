@@ -39,11 +39,14 @@ export default function OcorrenciasDashboard() {
 
   const { currentCompany } = useUser();
 
-  const getOcurrences = async () => {
-    if (!currentCompany) return;
-    const ocurrencesResponse = await ocurrenceService.getAllRecognizeOcurrenceAsync(currentCompany?.id);
+  const getOcurrences = async (
+    count: number
+  ) => { 
+    if (!currentCompany || !count || !(count > 0)) return;
+    const ocurrencesResponse = await ocurrenceService.getAllRecognizeOcurrenceAsync(currentCompany?.id, count);
+    const items = ocurrencesResponse.items;
 
-    setOcurrences(ocurrencesResponse);
+    setOcurrences(items);
   };
 
   const getClassifications = async () => {
@@ -107,6 +110,8 @@ export default function OcorrenciasDashboard() {
     const gainOrFallRecognize = gainOrFall(recognizeResponse, recognizeBeforeResponse);
     const gainOrFallClose = gainOrFall(closeResponse, closeBeforeResponse);
 
+    getOcurrences(recognizeResponse);
+
     setCountGenerate(generateResponse);
     setCountRecognize(recognizeResponse);
     setCountClose(closeResponse);
@@ -117,8 +122,7 @@ export default function OcorrenciasDashboard() {
 
   useEffect(() => {
     if (!currentCompany) return;
-    getCounts();
-    getOcurrences();
+    getCounts(); 
     getTypes();
   }, [currentCompany?.id]);
 
@@ -171,7 +175,7 @@ export default function OcorrenciasDashboard() {
               console.log(classification, 'Classification');
               return {
                 icon: AccessTimeOutlined,
-                number: ocurrences.filter(ocurrence => ocurrence.classificationId === classification.id).length,
+                number: ocurrences?.filter(ocurrence => ocurrence.classificationId === classification.id)?.length,
                 description: classification.description
               };
             });

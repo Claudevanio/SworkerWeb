@@ -98,7 +98,7 @@ export const SectorTab = ({ openFilterModal, serviceOrders }: { openFilterModal:
 
   interface FilterCriteria {
     date?: string;
-    osCode?: string;
+    code?: string;
     procedure?: string;
     executionDateStart?: string;
     executionDateEnd?: string;
@@ -109,6 +109,15 @@ export const SectorTab = ({ openFilterModal, serviceOrders }: { openFilterModal:
     sector?: string;
   }
 
+ 
+
+  const {
+    serviceOrders: {
+      filter: { page, pageSize, term, ...filter }
+    }
+  } = useServiceOrder();
+
+  
   const filterServiceOrders = useCallback((serviceOrders: IServiceOrderDay[], criteria: FilterCriteria): IServiceOrderDay[] => {
     if (!serviceOrders) return [];
     if (Object.keys(criteria).length === 0) return serviceOrders;
@@ -120,7 +129,7 @@ export const SectorTab = ({ openFilterModal, serviceOrders }: { openFilterModal:
       if (criteria.date && !dayjs(order.requestDate).isAfter(dayjs(formatDate(criteria.date)).toISOString())) {
         return false;
       }
-      if (criteria.osCode && !order.code.includes(criteria.osCode)) {
+      if (criteria.code && !order.code.includes(criteria.code)) {
         return false;
       }
       if (criteria.procedure && !order.description.includes(criteria.procedure)) {
@@ -146,25 +155,13 @@ export const SectorTab = ({ openFilterModal, serviceOrders }: { openFilterModal:
       }
       return true;
     });
-  }, []);
+  }, [filter, serviceOrders]);
 
-  const [filteredData, setFilteredData] = useState<IServiceOrderDay[] | null>(null);
-
-  const {
-    serviceOrders: {
-      filter: { page, pageSize, term, ...filter }
-    }
-  } = useServiceOrder();
-
-  useEffect(() => {
-    if (serviceOrders) {
-      const filteredData = filterServiceOrders(serviceOrders, {
-        sector: selectedGroup?.id?.toString(),
-        ...filter
-      });
-      setFilteredData([...filteredData]);
-    }
-  }, [selectedGroup, serviceOrders, filter]);
+  const filteredData = filterServiceOrders(serviceOrders, {
+    ...filter,
+    sector: selectedGroup?.id.toString()
+  });
+ 
 
   const paginatedServiceOrders = usePagination(filteredData ?? [], 3);
 
@@ -215,7 +212,9 @@ export const SectorTab = ({ openFilterModal, serviceOrders }: { openFilterModal:
                   className={`flex gap-2 items-center p-6 cursor-pointer rounded-lg transition-all ${
                     selectedGroup?.id === item.id ? 'bg-primary-700' : 'bg-primary-50'
                   }`}
-                  onClick={() => setSelectedGroup(item)}
+                  onClick={() =>{
+                     setSelectedGroup(item)
+                    }}
                 >
                   <div className="bg-base-3 w-12 h-12 rounded-full flex-shrink-0" />
                   <div className={`font-medium ${selectedGroup?.id === item.id ? 'text-base-1' : 'text-base-7'}`}>{item.name}</div>
@@ -241,7 +240,7 @@ export const SectorTab = ({ openFilterModal, serviceOrders }: { openFilterModal:
                 label: 'Evolucao',
                 icon: <TrendingUp className="text-primary-700" />,
                 onClick: (data: ServiceOrder) => {
-                  router.push(`/servicos-operacionais/${data.id}`);
+                  router.push(`${data.id}`);;
                 }
               },
               {
@@ -309,6 +308,10 @@ export const SectorTab = ({ openFilterModal, serviceOrders }: { openFilterModal:
               {
                 label: 'Procedimento',
                 key: 'description'
+              },
+              {
+                label: 'Equipe',
+                key: 'sectorEquipDescription'
               },
               {
                 label: 'Data de Solicitação',

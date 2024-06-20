@@ -84,7 +84,7 @@ export function TaskGroupTab() {
             icon: <DeleteOutlined />
           }
         ]}
-        rows={rows}
+        rows={[...rows]}
       />
       <Pagination
         currentPage={taskGroups.filters.page ?? 0}
@@ -92,7 +92,7 @@ export function TaskGroupTab() {
         onChange={page =>
           taskGroups?.setFilter(prev => ({
             ...prev,
-            page
+            page: page > 0 ? page   : 0
           }))
         }
       />

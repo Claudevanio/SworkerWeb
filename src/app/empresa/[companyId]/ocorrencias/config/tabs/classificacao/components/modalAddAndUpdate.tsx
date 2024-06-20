@@ -42,7 +42,7 @@ export default function ModalAddAndUpdate({
   const { confirmDialog } = useDialog();
 
   async function onSubmit(data: FormFields) {
-    classificationSelected.type.id = data.occurrenceType;
+    classificationSelected.type = { id: data.occurrenceType };
     classificationSelected.severity = data.severity;
     classificationSelected.description = data.description;
 

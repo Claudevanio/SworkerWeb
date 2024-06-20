@@ -40,11 +40,11 @@ export const EquipesTab = ({ openFilterModal, serviceOrders }: { openFilterModal
   const professionals =
     serviceOrders
       ?.reduce((uniqueProfessionals, item) => {
-        const supervisorName = item?.supervisor?.name;
-        const supervisorId = item?.supervisor?.id;
+        const equipeName = item?.sectorEquipDescription;
+        const equipeId = item?.sectorEquipId;
 
-        if (!uniqueProfessionals.some(professional => professional.id === supervisorId)) {
-          uniqueProfessionals.push({ name: supervisorName, id: supervisorId });
+        if (!uniqueProfessionals.some(professional => professional.id === equipeId)) {
+          uniqueProfessionals.push({ name: equipeName, id: equipeId });
         }
 
         return uniqueProfessionals;
@@ -99,6 +99,7 @@ export const EquipesTab = ({ openFilterModal, serviceOrders }: { openFilterModal
   interface FilterCriteria {
     date?: string;
     osCode?: string;
+    code?: string;
     procedure?: string;
     executionDateStart?: string;
     executionDateEnd?: string;
@@ -107,8 +108,22 @@ export const EquipesTab = ({ openFilterModal, serviceOrders }: { openFilterModal
     team?: string;
     status?: number;
   }
+ 
+  useEffect(() => {
+    if (paginatedProfessionals && paginatedProfessionals.currentTableData.length > 0 && !selectedGroup) {
+      setSelectedGroup(paginatedProfessionals.currentTableData[0]);
+    }
+  }, [paginatedProfessionals]);
+
+  const {
+    serviceOrders: {
+      filter: { page, pageSize, term, ...filter }
+    }
+  } = useServiceOrder(); 
+
 
   const filterServiceOrders = useCallback((serviceOrders: IServiceOrderDay[], criteria: FilterCriteria): IServiceOrderDay[] => {
+    debugger
     if (!serviceOrders) return [];
     if (Object.keys(criteria).length === 0) return serviceOrders;
     if (Object.values(criteria).every(value => !value || value === '')) return serviceOrders;
@@ -116,12 +131,9 @@ export const EquipesTab = ({ openFilterModal, serviceOrders }: { openFilterModal
       if (criteria.date && !dayjs(order.requestDate).isAfter(dayjs(formatDate(criteria.date)).toISOString())) {
         return false;
       }
-      if (criteria.osCode && !order.code.includes(criteria.osCode)) {
+      if (criteria.code && !order.code.includes(criteria.code)) {
         return false;
-      }
-      if (criteria.procedure && !order.description.includes(criteria.procedure)) {
-        return false;
-      }
+      } 
       if (criteria.executionDateStart && !dayjs(order.executionDate).isAfter(dayjs(formatDate(criteria.executionDateStart)).toISOString())) {
         return false;
       }
@@ -134,7 +146,7 @@ export const EquipesTab = ({ openFilterModal, serviceOrders }: { openFilterModal
       if (criteria.end && !dayjs(order.requestDate).isBefore(dayjs(formatDate(criteria.end)).toISOString())) {
         return false;
       }
-      if (criteria.team && !order.supervisor?.name.includes(criteria.team)) {
+      if (criteria.team && !order.sectorEquipDescription.includes(criteria.team)) {
         return false;
       }
       if (criteria.status !== undefined && order.status?.id !== criteria.status) {
@@ -142,31 +154,11 @@ export const EquipesTab = ({ openFilterModal, serviceOrders }: { openFilterModal
       }
       return true;
     });
-  }, []);
-
-  const [filteredData, setFilteredData] = useState<IServiceOrderDay[] | null>(null);
-
-  useEffect(() => {
-    if (paginatedProfessionals && paginatedProfessionals.currentTableData.length > 0 && !selectedGroup) {
-      setSelectedGroup(paginatedProfessionals.currentTableData[0]);
-    }
-  }, [paginatedProfessionals]);
-
-  const {
-    serviceOrders: {
-      filter: { page, pageSize, term, ...filter }
-    }
-  } = useServiceOrder();
-
-  useEffect(() => {
-    if (serviceOrders) {
-      const filteredData = filterServiceOrders(serviceOrders, {
-        team: selectedGroup?.name,
-        ...filter
-      });
-      setFilteredData([...filteredData]);
-    }
-  }, [selectedGroup, serviceOrders, filter]);
+  }, [filter, serviceOrders]);
+  const filteredData = filterServiceOrders(serviceOrders, {
+    team: selectedGroup?.name,
+    ...filter
+  });
 
   const paginatedServiceOrders = usePagination(filteredData ?? [], 3);
 
@@ -237,7 +229,7 @@ export const EquipesTab = ({ openFilterModal, serviceOrders }: { openFilterModal
                 label: 'Evolucao',
                 icon: <TrendingUp className="text-primary-700" />,
                 onClick: (data: ServiceOrder) => {
-                  router.push(`servicos-operacionais/${data.id}`);
+                  router.push(`${data.id}`);
                 }
               },
               {
@@ -305,6 +297,10 @@ export const EquipesTab = ({ openFilterModal, serviceOrders }: { openFilterModal
               {
                 label: 'Procedimento',
                 key: 'description'
+              },
+              {
+                label: 'Equipe',
+                key: 'sectorEquipDescription'
               },
               {
                 label: 'Data de Solicitação',

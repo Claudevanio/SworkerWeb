@@ -18,6 +18,7 @@ import { IServiceOrderDay } from '@/types/models/ServiceOrder/serviceOrder';
 import { serviceOrderService } from '@/services/OperationalService/serviceOrderService';
 import { SectorTab } from './SectorTab';
 import { UnidadesTab } from './UnidadesTab';
+// import { mockServiceOrders } from './mock';
 
 export function AgrupamentoTab({ openFilterModal }: { openFilterModal: () => void }) {
   const [activeTab, setActiveTab] = useState<number | undefined>(0);
@@ -73,7 +74,13 @@ export function AgrupamentoTab({ openFilterModal }: { openFilterModal: () => voi
         </div>
       ) : activeTab === 2 ? (
         <div>
-          <UnidadesTab openFilterModal={openFilterModal} serviceOrders={data} />
+          <UnidadesTab
+            openFilterModal={openFilterModal}
+            serviceOrders={
+              data
+              // mockServiceOrders
+            }
+          />
         </div>
       ) : activeTab === 3 ? (
         <div>

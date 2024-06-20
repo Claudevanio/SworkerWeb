@@ -41,23 +41,14 @@ export function ModalCompany({
       active: true
     }
   });
-  const addCompany = async (company: ICompany) => {
-    const response = await companyService.createCompanyAsync(company);
-  };
 
-  const updateCompany = async (company: ICompany) => {
-    await companyService.updateCompanyAsync(company);
-  };
-
-  const companies: {
-    create: (company: ICompany) => Promise<void>;
-    update: (company: ICompany) => Promise<void>;
-  } = {
-    create: addCompany,
-    update: updateCompany
-  };
-
+  const {
+    companies
+  } = useAdministrator();
+ 
+ 
   async function onSubmit(data: FormFields) {
+    debugger
     const newData: ICompany = {
       ...data,
       cnpj: masks.CLEARMasks(data.cnpj),

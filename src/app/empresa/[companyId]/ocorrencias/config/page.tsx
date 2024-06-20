@@ -71,6 +71,7 @@ export default function OcorrenciasConfig() {
       icon: <ReceiptLongOutlined sx={{ color: COLORS.primary['500'] }} />
     }
   ];
+  console.info(types)
 
   return (
     <div className="p-4 lg:p-8">
@@ -94,6 +95,7 @@ export default function OcorrenciasConfig() {
           hideOnMobile: true
         }}
       />
+      
       <SimpleTab tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} mobileView />
       {activeTab == 0 && <Tipo isMobile={isMobile} openModalAdd={openModalAddType} handleCloseModalAdd={() => setOpenModalAddType(false)} />}
       {activeTab == 1 && (

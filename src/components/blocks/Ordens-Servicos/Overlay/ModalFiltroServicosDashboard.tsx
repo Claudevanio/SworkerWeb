@@ -9,38 +9,40 @@ import * as Yup from 'yup';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { useQuery } from '@tanstack/react-query';
 import { serviceOrderService } from '@/services/OperationalService/serviceOrderService';
+import { useUser } from '@/hooks/useUser';
+import { professionalService } from '@/services';
 dayjs.extend(customParseFormat);
 
 export function ModalFiltroServicosDashboard({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
-  const { serviceOrders } = useServiceOrder();
+  const { serviceOrders, status } = useServiceOrder();
+
+  const { currentCompany } = useUser();
 
   const schema = Yup.object({
     period: Yup.string(),
     date: Yup.string(),
-    osCode: Yup.string(),
+    code: Yup.string(),
     procedure: Yup.string(),
     executionDateStart: Yup.string(),
     executionDateEnd: Yup.string(),
     start: Yup.string(),
     end: Yup.string(),
-    team: Yup.string(),
-    status: Yup.number()
+    equip: Yup.string(),
+    statusld: Yup.number()
   });
   type FormFields = Yup.InferType<typeof schema>;
 
   const methods = useForm<FormFields>({
-    resolver: yupResolver(schema),
-    defaultValues: {
-      period: '7days'
-    }
+    resolver: yupResolver(schema)
   });
 
   const onSubmit = (data: any) => {
+    debugger;
     data.start = data.start && dayjs(data.start, 'DD/MM/YYYY').toDate().toISOString();
     data.end = data.end && dayjs(data.end, 'DD/MM/YYYY').toDate().toISOString();
     data.executionDateStart = data.executionDateStart && dayjs(data.executionDateStart, 'DD/MM/YYYY').toDate().toISOString();
     data.executionDateEnd = data.executionDateEnd && dayjs(data.executionDateEnd, 'DD/MM/YYYY').toDate().toISOString();
-    data.term = data.osCode;
+    data.term = data.code;
 
     const filter = {
       ...serviceOrders.filter,
@@ -51,11 +53,17 @@ export function ModalFiltroServicosDashboard({ isOpen, onClose }: { isOpen: bool
     onClose();
   };
 
-  const { data: status } = useQuery({
-    queryKey: ['serviceOrderStatuses'],
-    queryFn: () => serviceOrderService.getServiceOrderStatusesAsync(),
-    refetchOnWindowFocus: false
+  const { data: equipsList } = useQuery({
+    queryKey: ['serviceOrderEquipes', currentCompany?.id],
+    queryFn: () => professionalService.getEquipesListAsync(currentCompany?.id),
+    enabled: !!currentCompany?.id
   });
+
+  const statusOptions = status?.data?.map(s => ({ label: s.description, value: s.id })) ?? [];
+  statusOptions.unshift({ label: 'Todos', value: undefined });
+
+  const equipsOptions = equipsList?.map(e => ({ label: e.description, value: e.id })) ?? [];
+  equipsOptions.unshift({ label: 'Todas', value: undefined });
 
   return (
     <Modal
@@ -68,11 +76,7 @@ export function ModalFiltroServicosDashboard({ isOpen, onClose }: { isOpen: bool
     >
       <Form className="flex flex-col gap-4 md:gap-8" onSubmit={methods.handleSubmit(onSubmit)} {...methods}>
         <div className="flex gap-4 md:gap-8 flex-col md:flex-row items-center">
-          <Input label="Código OS" name="osCode" />
-          <div className="hidden md:block w-full" />
-        </div>
-        <div className="flex gap-4 md:gap-8 flex-col md:flex-row items-center">
-          <Input label="Procedimento" name="procedure" />
+          <Input label="Código" name="code" />
           <div className="hidden md:block w-full" />
         </div>
         <div className="flex gap-4 md:gap-8 flex-col md:flex-row items-center">
@@ -84,9 +88,9 @@ export function ModalFiltroServicosDashboard({ isOpen, onClose }: { isOpen: bool
           <Input label="Até" name="end" mask={masks.DATE} />
         </div>
         <div className="flex gap-4 md:gap-8 flex-col md:flex-row items-center">
-          <Input label="Equipe" name="team" />
+          <Dropdown label="Equipe" name="equip" options={equipsOptions} />
 
-          <Dropdown label="Status" name="status" options={(status ?? []).map(s => ({ label: s.description, value: s.id }))} />
+          <Dropdown label="Status" name="statusld" options={statusOptions} />
         </div>
       </Form>
     </Modal>

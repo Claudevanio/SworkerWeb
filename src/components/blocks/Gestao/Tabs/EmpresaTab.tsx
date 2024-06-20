@@ -62,7 +62,7 @@ export function EmpresasTab({ activeTab, setActiveTab }: { activeTab: number; se
   };
 
   return (
-    <div className="flex flex-col gap-4 w-full">
+    <div className="flex flex-col gap-4 w-full md:pt-4">
       <RoundedTab tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} />
       {currentTab()}
     </div>

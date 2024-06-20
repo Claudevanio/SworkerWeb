@@ -22,6 +22,7 @@ export interface ServiceOrder {
   checkOutDate: string;
   checkInEndereco: string;
   checkOutEndereco: string;
+  serviceCode?: string;
   supervisor?: {
     id: number;
     name: string;
@@ -85,7 +86,7 @@ export interface singleTask {
   professionalName: string;
 }
 
-export interface ServiceOrderTask {
+export interface  ServiceOrderTask {
   id: number;
   code: string;
   name: string;
