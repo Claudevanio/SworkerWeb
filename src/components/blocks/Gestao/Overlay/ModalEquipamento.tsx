@@ -17,6 +17,7 @@ import { Add } from '@mui/icons-material';
 import { useGestao } from '@/contexts/GestaoProvider';
 import { useUser } from '@/hooks/useUser';
 import dayjs from 'dayjs';
+import { useDialog } from '@/hooks/use-dialog';
 
 export function ModalEquipments({
   isOpen,
@@ -50,48 +51,62 @@ export function ModalEquipments({
 
   const {
     currentCompany
-  } = useUser()
+  } = useUser();
+
+  const {
+    confirmDialog
+  } = useDialog();
 
   async function onSubmit(data: any) {
-    if (currentStep < 3) {
-      setCurrentStep(currentStep + 1);
-      return;
-    }
-
-    if (isAddingType) {
-      const newType = (await equipmentTypeService.addEquipmentTypeAsync({
-        description: data.addType,
-        code: ''
-      })) as any;
-      data.typeId = newType?.data?.id;
-    }
-
-    if (isAddingClassification) {
-      const newClassification = (await equipmentClassificationService.addEquipmentClassificationAsync({
-        description: data.addClassification,
-        code: '',
-        name: data.addClassification,
-        typeId: data.typeId
-      })) as any;
-      data.classificationId = newClassification?.data?.id;
-    }
-    data.manufactureDate = dayjs(data.manufactureDate, 'DD/MM/YYYY').format('YYYY-MM-DD');
-    (data as any).companyId = currentCompany?.id
-
-    if(current) {
-      await equipments.update(  data);
+    try{
+      if (currentStep < 3) {
+        setCurrentStep(currentStep + 1);
+        return;
+      }
+  
+      if (isAddingType) {
+        const newType = (await equipmentTypeService.addEquipmentTypeAsync({
+          description: data.addType,
+          code: ''
+        })) as any;
+        data.typeId = newType?.data?.id;
+      }
+  
+      if (isAddingClassification) {
+        const newClassification = (await equipmentClassificationService.addEquipmentClassificationAsync({
+          description: data.addClassification,
+          code: '',
+          name: data.addClassification,
+          typeId: data.typeId
+        })) as any;
+        data.classificationId = newClassification?.data?.id;
+      }
+      data.manufactureDate = dayjs(data.manufactureDate, 'DD/MM/YYYY').format('YYYY-MM-DD');
+      (data as any).companyId = currentCompany?.id
+  
+      if(current) {
+        await equipments.update(  data);
+        onClose();
+        return;
+      }
+  
+      const newData: IEquipment = {
+        ...data,
+        status: true,
+        classificationId: +(data as any).classificationId,
+      } as any;
+      await equipments.create(newData);
+  
       onClose();
-      return;
     }
-
-    const newData: IEquipment = {
-      ...data,
-      status: true,
-      classificationId: +(data as any).classificationId,
-    } as any;
-    await equipments.create(newData);
-
-    onClose();
+      catch (e) {
+        const message = e.response?.data?.message || e.message;
+        confirmDialog({
+          title: 'Houve um erro ao editar a categoria',
+          message
+        });
+      }
+  
   }
   const [currentStep, setCurrentStep] = React.useState(readonly ? 3 : 1);
 

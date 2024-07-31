@@ -16,13 +16,14 @@ import CustomizedAccordions from '../components/customizedAccordion';
 import { useQuery } from '@tanstack/react-query';
 import { SectorService } from '@/services/Administrator/sectorService';
 import { useGestao } from '@/contexts/GestaoProvider';
+import { useDialog } from '@/hooks/use-dialog';
 
 const schema = Yup.object({
   name: Yup.string().required('O nome é obrigatório'),
   registerNumber: Yup.string().required('O registro é obrigatório'),
   email: Yup.string().required('O e-mail é obrigatório').email('E-mail inválido'),
-  cpf: Yup.string().required('O CPF é obrigatório').matches(regex.CPF, 'CPF inválido'),
-  phone: Yup.string().required('O telefone é obrigatório').matches(regex.TELEFONE, 'Telefone inválido'),
+  cpf: Yup.string().required('O CPF é obrigatório').matches(regex.CPF, 'CPF inválido'), 
+  phone: Yup.string().optional().matches(/^(|regex.TELEFONE)$/, 'Telefone inválido'),
   roleId: Yup.string().required('O cargo é obrigatório'),
   active: Yup.boolean(),
   standardSupervisor: Yup.boolean(),
@@ -87,85 +88,9 @@ export function ModalProfessional({
   });
   const { sectors, professionals, companyUnities } = useGestao();
 
-  async function onSubmit(data: FormFields) {
-    data.unitsIds = data.unitsIds.filter(Boolean);
-    if (current){
-      const userData: IUser = {
-        userId: current.userId,
-        email: data.email,
-        roleId: data.roleId,
-        name: data.name,
-        userName: data.email
-      };
-      await Userservice.updateUser(userData);
-      const professionalData: IProfessional = {
-        ...data,
-        id: current.id,
-        cpf: +masks.CLEARMasks(data.cpf) as any,
-        phone: +masks.CLEARMasks(data.phone) as any,
-        unityId: data.unitsIds[0],
-        email: data.email
-      } as any;
-      await professionals.update(professionalData);
-      
-      const unitsToAdd = data.unitsIds?.filter(unitId => unitId && !professionalUnities.data?.map((unity: any) => unity.id).includes(unitId));
-
-      const unitsToRemove = professionalUnities.data?.map((unity: any) => unity.id).filter(unitId => unitId && !data.unitsIds?.includes(unitId));
-
-      unitsToAdd?.forEach(async unityId => {
-        await professionalService.signUnit(current.id, unityId);
-      });
-
-      unitsToRemove?.forEach(async unityId => {
-        await professionalService.signUnit(current.id, unityId);
-      });
-
-      onClose();
-
-      return;
-
-      
-    }
-    const userData: IUser = {
-      email: data.email,
-      password: generatePassword(),
-      roleId: data.roleId,
-      name: data.name,
-      userName: data.email
-    };
-
-    const newUser = await Userservice.createUser(userData);
-
-    const userId = (newUser as any)?.data?.id;
-
-    const professionalData: IProfessional = {
-      ...data,
-      id: professionals.current?.id ?? '',
-      userId: userId,
-      cpf: +masks.CLEARMasks(data.cpf) as any,
-      phone: +masks.CLEARMasks(data.phone) as any,
-      unityId: data.unitsIds[0],
-      email: data.email
-    } as any;
-
-    const response = await professionals.create(professionalData);
-
-    const professionalId = response.data.id;
-
-    const unitsToAdd = data.unitsIds?.filter(unitId => !professionalUnities.data?.map((unity: any) => unity.id).includes(unitId));
-
-    const unitsToRemove = professionalUnities.data?.map((unity: any) => unity.id).filter(unitId => !data.unitsIds?.includes(unitId));
-
-    unitsToAdd?.forEach(async unityId => {
-      await professionalService.signUnit(professionalId, unityId);
-    });
-
-    unitsToRemove?.forEach(async unityId => {
-      await professionalService.signUnit(professionalId, unityId);
-    });
-
-    onClose();
-  }
+  const {
+    confirmDialog
+  } = useDialog();
 
   const professionalUnities = useQuery({
     queryKey: ['professionalUnities', current?.id],
@@ -173,6 +98,96 @@ export function ModalProfessional({
     refetchOnWindowFocus: false,
     enabled: !!current?.id
   });
+
+  async function onSubmit(data: FormFields) {
+    try{
+      debugger;
+      data.unitsIds = data.unitsIds.filter(Boolean);
+      if (current){
+        const userData: IUser = {
+          userId: current.userId,
+          email: data.email,
+          roleId: data.roleId,
+          name: data.name,
+          userName: data.email
+        };
+        await Userservice.updateUser(userData);
+        const professionalData: IProfessional = {
+          ...data,
+          id: current.id,
+          cpf: +masks.CLEARMasks(data.cpf) as any,
+          phone: +masks.CLEARMasks(data.phone) as any,
+          unityId: data.unitsIds[0],
+          email: data.email
+        } as any;
+        await professionals.update(professionalData);
+        
+        const unitsToAdd = data.unitsIds?.filter(unitId => unitId && !professionalUnities.data?.map((unity: any) => unity.id).includes(unitId));
+  
+        const unitsToRemove = professionalUnities.data?.map((unity: any) => unity.id).filter(unitId => unitId && !data.unitsIds?.includes(unitId));
+  
+        unitsToAdd?.forEach(async unityId => {
+          await professionalService.signUnit(current.id, unityId);
+        });
+  
+        unitsToRemove?.forEach(async unityId => {
+          await professionalService.signUnit(current.id, unityId);
+        });
+  
+        onClose();
+  
+        return;
+  
+        
+      }
+      const userData: IUser = {
+        email: data.email,
+        password: generatePassword(),
+        roleId: data.roleId,
+        name: data.name,
+        userName: data.email
+      };
+  
+      const newUser = await Userservice.createUser(userData);
+  
+      const userId = (newUser as any)?.data?.id;
+  
+      const professionalData: IProfessional = {
+        ...data,
+        id: professionals.current?.id ?? '',
+        userId: userId,
+        cpf: +masks.CLEARMasks(data.cpf) as any,
+        phone: +masks.CLEARMasks(data.phone) as any,
+        unityId: data.unitsIds[0],
+        email: data.email
+      } as any;
+  
+      const response = await professionals.create(professionalData);
+  
+      const professionalId = response.data.id;
+  
+      const unitsToAdd = data.unitsIds?.filter(unitId => !professionalUnities.data?.map((unity: any) => unity.id).includes(unitId));
+  
+      const unitsToRemove = professionalUnities.data?.map((unity: any) => unity.id).filter(unitId => !data.unitsIds?.includes(unitId));
+  
+      unitsToAdd?.forEach(async unityId => {
+        await professionalService.signUnit(professionalId, unityId);
+      });
+  
+      unitsToRemove?.forEach(async unityId => {
+        await professionalService.signUnit(professionalId, unityId);
+      });
+  
+      onClose();
+    } catch (e) {
+      const message = e.response?.data?.message || e.message;
+      confirmDialog({
+        title: 'Houve um erro ao alterar o profissional',
+        message
+      });
+  }
+  }
+
 
   React.useEffect(() => {
     if (!isOpen) return;
@@ -229,8 +244,7 @@ export function ModalProfessional({
           <Input name="email" label="E-mail" required placeholder="E-mail" error={methods.formState.errors.email} disabled={readonly} />
           <Input
             name="phone"
-            label="Telefone"
-            required
+            label="Telefone" 
             placeholder="Telefone"
             mask={masks.TELEFONEMask}
             error={methods.formState.errors.phone}

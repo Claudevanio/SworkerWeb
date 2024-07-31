@@ -12,6 +12,7 @@ import { masks, regex } from '@/utils';
 import { CustomSwitch } from '@/components/ui/switch';
 import { useUser } from '@/hooks/useUser';
 import { useGestao } from '@/contexts/GestaoProvider';
+import { useDialog } from '@/hooks/use-dialog';
 
 const schema = Yup.object({
   name: Yup.string().required('O nome é obrigatório'),
@@ -25,6 +26,10 @@ export function ModalSector({ isOpen, onClose, current, readonly }: { isOpen: bo
 
   const { sectors } = useGestao();
 
+  const {
+    confirmDialog
+  } = useDialog();
+
   const methods = useForm<FormFields>({
     resolver: yupResolver(schema),
     defaultValues: {
@@ -32,21 +37,28 @@ export function ModalSector({ isOpen, onClose, current, readonly }: { isOpen: bo
     }
   });
 
-  async function onSubmit(data: FormFields) {
-    console.log(data);
-
-    const newData: ISector = {
-      description: data.name,
-      companyId: data.companyId
-    };
-    if (current) {
-      await sectors.update({ ...current, ...newData });
+  async function onSubmit(data: FormFields) { 
+    try 
+    {
+      const newData: ISector = {
+        description: data.name,
+        companyId: data.companyId
+      };
+      if (current) {
+        await sectors.update({ ...current, ...newData });
+        onClose();
+        return;
+      }
+      await sectors.create(newData);
       onClose();
-      return;
+  }
+    catch (e) {
+      const message = e.response?.data?.message || e.message;
+      confirmDialog({
+        title: 'Houve um erro ao editar a categoria',
+        message
+      });
     }
-    await sectors.create(newData);
-
-    onClose();
   }
 
   React.useEffect(() => {
