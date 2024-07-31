@@ -21,6 +21,7 @@ import { Box, IconButton } from '@mui/material';
 import { useModal } from '@/hooks';
 import { ModalOcurrenceDetail } from './components/ModalOcurrenceDetail';
 import { useRouter } from 'next/navigation';
+import { useUser } from '@/hooks/useUser';
 interface Step {
   taskStepId: number;
   number: string;
@@ -223,6 +224,10 @@ export default function ServicoDetailPage() {
 
   // }, [serviceDetail, fetchProfessionalDataPerProfessional])
 
+  const {
+    currentCompany
+  } = useUser();
+
   const router = useRouter();
 
   return (
@@ -237,7 +242,7 @@ export default function ServicoDetailPage() {
       <DetailCard.Card>
         <DetailCard.Title wrap>
           <h1 className="text-base-8 text-lg font-bold">Identificação do Serviço</h1>
-          <Link href="/ocorrencias?tab=1" className=" text-primary-500 underline">
+          <Link href={`/empresa/${currentCompany?.id}/ocorrencias?tab=1`} className=" text-primary-500 underline">
             Ir para tratamento de ocorrencia
           </Link>
         </DetailCard.Title>
