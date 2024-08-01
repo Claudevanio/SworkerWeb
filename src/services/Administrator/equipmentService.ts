@@ -2,6 +2,7 @@
 import { basePagination } from './../../types/basePagination';
 import { IEquipment, IEquipmentClassification, IEquipmentType } from '@/types';
 import { api } from '../api';
+import { getFilterParam } from '@/utils';
 
 export const equipmentTypeService = {
   async countEquipmentTypeAsync(code: string, description: string, term: string): Promise<number> {
@@ -149,8 +150,12 @@ export const equipmentService = {
     pageSize?: number;
     companyId: string;
   }): Promise<basePagination<IEquipment>> {
+
+
+    const filter = getFilterParam({ uid, hwid, brand, manufacturer, classification, active, inspectionExpired, term });
+    
     const response = await api.get(`/companies/${companyId}/equipaments`, {
-      params: { uid, hwid, brand, manufacturer, classification, active, inspectionExpired, term, offSet: currentPage + 1, itensPerPage: pageSize }
+      params: { filter, offSet: currentPage + 1, itensPerPage: pageSize }
     });
 
     const data = {

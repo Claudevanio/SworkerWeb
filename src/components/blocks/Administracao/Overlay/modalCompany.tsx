@@ -10,10 +10,11 @@ import React from 'react';
 import { useAdministrator } from '@/contexts/AdministrationProvider';
 import { masks, regex } from '@/utils';
 import { companyService } from '@/services';
+import { validCNPJ } from '@/utils/cnpj';
 
 const schema = Yup.object({
   name: Yup.string().required('O nome é obrigatório'),
-  cnpj: Yup.string().required('O CNPJ é obrigatório').matches(regex.CNPJ, 'CNPJ inválido'),
+  cnpj: Yup.string().required('O CNPJ é obrigatório').matches(regex.CNPJ, { message: 'CNPJ inválido' }).test('valid-cnpj', 'CNPJ inválido', value => validCNPJ(value)),
   responsible: Yup.string().required('O responsável é obrigatório'),
   phone: Yup.string().required('O telefone é obrigatório').matches(regex.TELEFONE, 'Telefone inválido'),
   email: Yup.string().required('O email é obrigatório').email('Email inválido'),

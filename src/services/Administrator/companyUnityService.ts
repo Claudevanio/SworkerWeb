@@ -1,5 +1,6 @@
 import { basePagination, ICompanyUnity } from '@/types';
 import { api } from '../api';
+import { getFilterParam } from '@/utils';
 
 export const companyUnityService = {
   async countCompanyUnityAsync() {
@@ -8,8 +9,10 @@ export const companyUnityService = {
   },
 
   async listCompanyUnityAsync(term: string, currentPage: number, pageSize: number): Promise<basePagination<ICompanyUnity>> {
+    
+    const filter = getFilterParam({ name : term });
     const response = await api.get<ICompanyUnity[]>('/unities', {
-      params: { term, currentPage, pageSize }
+      params: { filter, currentPage, pageSize }
     });
 
     const data = {
@@ -35,8 +38,10 @@ export const companyUnityService = {
     currentPage: number;
     pageSize: number;
   }): Promise<basePagination<ICompanyUnity>> {
+    const filter = getFilterParam({ name : term });
+
     const response = await api.get(`/companies/${companyId}/unities`, {
-      params: { filter: term, itensPerPage: pageSize, offSet: currentPage + 1 }
+      params: { filter, itensPerPage: pageSize, offSet: currentPage + 1 }
     });
 
     const data = {

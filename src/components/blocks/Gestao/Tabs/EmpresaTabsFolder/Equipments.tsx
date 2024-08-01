@@ -118,10 +118,8 @@ export function EquipmentsTab() {
             value={equipments.filters.term}
             onChange={v =>
               equipments.setFilter(prev => ({
-                ...prev,
-                term: v === '' ? undefined : v,
-                page: 0,
-                pageSize: v !== '' ? 40 : prev.pageSize
+                ...prev, 
+                uid: v,
               }))
             }
           />

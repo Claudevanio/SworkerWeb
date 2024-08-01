@@ -1,6 +1,7 @@
 import { basePagination, ICompany } from '@/types';
 import { api } from '../api';
 import { AxiosError } from 'axios';
+import { getFilterParam } from '@/utils';
 
 interface IAccessLogsParams {
   companyId: string;
@@ -25,8 +26,9 @@ export const companyService = {
   },
 
   async listCompanyAsync(term: string, currentPage: number, pageSize: number): Promise<basePagination<ICompany>> {
+    const filter = getFilterParam({ name: term });
     const response = await api.get<ICompany[]>('/companies', {
-      params: { term, currentPage, pageSize }
+      params: { filter, currentPage, pageSize }
     });
 
     const data = {

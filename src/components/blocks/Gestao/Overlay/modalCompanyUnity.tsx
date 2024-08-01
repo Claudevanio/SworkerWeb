@@ -14,6 +14,7 @@ import { useGestao } from '@/contexts/GestaoProvider';
 import { useQuery } from '@tanstack/react-query';
 import { useUser } from '@/hooks/useUser';
 import { SectorService } from '@/services/Administrator/sectorService';
+import { useDialog } from '@/hooks/use-dialog';
 
 const schema = Yup.object({
   name: Yup.string().required('O nome é obrigatório'),
@@ -63,34 +64,46 @@ export function ModalCompanyUnity({
 
   const { companyUnities } = useGestao();
 
+  const {
+    confirmDialog
+  } = useDialog();
+
   async function onSubmit(data: FormFields) {
-    console.log(data);
-
-    const newData: ICompanyUnity = {
-      ...data,
-      phone: masks.CLEARMasks(data.phone),
-      Address: {
-        NeighborHood: 'Bairro',
-        Number: '99',
-        State: 'SP',
-        Street: 'Rua',
-        ZipCode: '05364-100'
+    try{
+      console.log(data);
+  
+      const newData: ICompanyUnity = {
+        ...data,
+        phone: masks.CLEARMasks(data.phone),
+        Address: {
+          NeighborHood: 'Bairro',
+          Number: '99',
+          State: 'SP',
+          Street: 'Rua',
+          ZipCode: '05364-100'
+        }
+      } as any;
+  
+      if (current) { 
+        await companyUnities.update({
+          ...newData,
+          id: current.id
+        });
+        onClose();
+        return;
       }
-    } as any;
-
-    if (current) {
-      newData.address.companyUnityId = current.id as any;
-      await companyUnities.update({
-        ...newData,
-        id: current.id
-      });
+  
+      await companyUnities.create(newData);
+  
       onClose();
-      return;
     }
-
-    await companyUnities.create(newData);
-
-    onClose();
+    catch (e) {
+      const message = e.response?.data?.message || e.message;
+      confirmDialog({
+        title: 'Houve um erro ao editar a unidade',
+        message
+      });
+    }
   }
 
   React.useEffect(() => {

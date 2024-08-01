@@ -140,7 +140,7 @@ export function ProfilePageComponent() {
 
             <div className="w-full flex flex-col md:flex-row gap-4 md:gap-8  justify-between">
               <Input label="E-mail" name="userName" required disabled />
-              <Input label="RegisterNumber" name="registerNumber" required disabled />
+              <Input label="Matrícula" name="registerNumber" required disabled />
             </div>
           </div>
           <div className="flex flex-col md:flex-row gap-4 md:gap-8  justify-between">
