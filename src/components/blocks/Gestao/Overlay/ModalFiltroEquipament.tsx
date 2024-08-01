@@ -29,9 +29,7 @@ export function ModalFiltroEquipament({ isOpen, onClose }: { isOpen: boolean; on
       hwid: data.hwid,
       manufacturer: data.manufacturer,
       brand: data.brand,
-      classification: data.classification,
-      page: 0,
-      pageSize: data.uid || data.hwid || data.manufacturer || data.brand || data.classification ? 99 : 5
+      classification: data.classification,  
     }));
     onClose();
   };

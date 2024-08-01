@@ -18,6 +18,7 @@ import { useGestao } from '@/contexts/GestaoProvider';
 import { useUser } from '@/hooks/useUser';
 import dayjs from 'dayjs';
 import { useDialog } from '@/hooks/use-dialog';
+import { DateBrToISO } from '@/utils/date';
 
 export function ModalEquipments({
   isOpen,
@@ -81,7 +82,8 @@ export function ModalEquipments({
         })) as any;
         data.classificationId = newClassification?.data?.id;
       }
-      data.manufactureDate = dayjs(data.manufactureDate, 'DD/MM/YYYY').format('YYYY-MM-DD');
+      debugger;
+      data.manufactureDate = DateBrToISO(data.manufactureDate); 
       (data as any).companyId = currentCompany?.id
   
       if(current) {
@@ -134,20 +136,23 @@ export function ModalEquipments({
         : {
             model: Yup.string().required('O modelo é obrigatório'),
             typeId: Yup.string(),
-            classificationId: Yup.string(),
+            classificationId: Yup.string().optional(),
             uid: Yup.string().required('O UID é obrigatório'),
             hwid: Yup.string().required('O HWID é obrigatório'),
             manufacturer: Yup.string().required('O fabricante é obrigatório'),
             brand: Yup.string().required('A marca é obrigatória'),
             manufactureDate: Yup.string().required('A data de fabricação é obrigatória').matches(regex.DATE, 'Data inválida'),
-            manualFile: Yup.string(),
-            addType: Yup.string(),
-            addClassification: Yup.string()
+            manualFile: Yup.string().nullable(),
+            addType: Yup.string().optional(),
+            addClassification: Yup.string().optional()
           }
   );
   type FormFields = Yup.InferType<typeof schema>;
   const methods = useForm<FormFields>({
-    resolver: yupResolver(schema)
+    resolver: yupResolver(schema),
+    defaultValues: {
+      manualFile: ''
+    }
   });
 
   React.useEffect(() => {
@@ -155,6 +160,7 @@ export function ModalEquipments({
     if (current) {
       const resetObj = current as any;
       methods.reset({
+        manualFile: '',
         ...current,
         typeId: resetObj?.classification?.type?.id,
         classificationId: resetObj?.classification.id,
@@ -191,6 +197,9 @@ export function ModalEquipments({
       SubmitText={currentStep === 3 ? 'Salvar' : 'Próximo'}
     >
       {!readonly && <Stepper steps={steps} currentStep={currentStep} />}
+      {
+        JSON.stringify(methods.formState.errors)
+      }
       <Form onSubmit={data => onSubmit(data as FormFields)} className="flex flex-col gap-4 pb-4" {...methods}>
         {currentStep === 1 && (
           <div className="flex flex-col gap-4">
@@ -238,19 +247,32 @@ export function ModalEquipments({
           <div className="flex flex-col gap-4">
             <div className="flex flex-col md:flex-row gap-4 md:gap-6 items-center">
               <div className="w-full md:w-4/5 flex flex-col md:flex-row gap-4 md:gap-6 items-center">
-                <Input disabled={readonly} label="Código UID" name="uid" required />
-                <Input disabled={readonly} label="Código HWID" name="hwid" required />
+                <Input disabled={readonly} label="Código UID" name="uid" required 
+                  error={(methods.formState.errors as any)?.uid}
+                />
+                <Input disabled={readonly} label="Código HWID" name="hwid" required 
+                  error={(methods.formState.errors as any)?.hwid}
+                />
               </div>
-              <Input disabled={readonly} label="Fabricante" name="manufacturer" required />
+              <Input disabled={readonly} label="Fabricante" name="manufacturer" required 
+                error={(methods.formState.errors as any)?.manufacturer}
+              />
               <div className="w-full md:w-4/5">
-                <Input disabled={readonly} label="Marca" name="brand" required />
+                <Input disabled={readonly} label="Marca" name="brand" required 
+                  error={(methods.formState.errors as any)?.brand}
+                />
               </div>
             </div>
             <div className="flex flex-col md:flex-row gap-4 md:gap-6">
-              <Input disabled={readonly} label="Modelo" name="model" required />
-              <Input disabled={readonly} label="Data de fabricação" name="manufactureDate" required mask={masks.DATE} />
+              <Input disabled={readonly} label="Modelo" name="model" required 
+                error={(methods.formState.errors as any)?.model}
+              />
+              <Input disabled={readonly} label="Data de fabricação" name="manufactureDate" required mask={masks.DATE} 
+                error={(methods.formState.errors as any)?.manufactureDate}
+              />
             </div>
-            <Input disabled={readonly} label="Contexto/Funções" name="manualFile" multiline minRows={3} />
+            <Input disabled={readonly} label="Contexto/Funções" name="manualFile" multiline minRows={3}  
+            />
             {readonly && (
               <div>
                 <Input disabled={readonly} label="Tipo" defaultValue={current?.classification?.type?.description} />

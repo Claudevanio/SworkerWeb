@@ -84,8 +84,7 @@ export function ModalCompanyUnity({
         }
       } as any;
   
-      if (current) {
-        newData.address.companyUnityId = current.id as any;
+      if (current) { 
         await companyUnities.update({
           ...newData,
           id: current.id
