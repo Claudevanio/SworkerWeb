@@ -78,12 +78,14 @@ export function CompanyTab() {
           },
           {
             label: 'Excluir',
-            onClick: () =>
+            onClick: (data) =>
               openDialog({
                 title: 'Excluir empresa',
                 subtitle: 'Deseja mesmo excluir?',
                 message: 'Este item não poderá ser recuperado depois.',
-                onConfirm: () => {},
+                onConfirm: () => {
+                  companies.remove(data)
+                },
                 onConfirmText: 'Excluir'
               }),
             icon: <DeleteOutline />

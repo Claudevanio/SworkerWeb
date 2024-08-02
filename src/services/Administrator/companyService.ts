@@ -28,7 +28,7 @@ export const companyService = {
   async listCompanyAsync(term: string, currentPage: number, pageSize: number): Promise<basePagination<ICompany>> {
     const filter = getFilterParam({ name: term });
     const response = await api.get<ICompany[]>('/companies', {
-      params: { filter, currentPage, pageSize }
+      params: { filter, currentPage, pageSize, active: 1 }
     });
 
     const data = {

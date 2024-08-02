@@ -1,6 +1,7 @@
 'use client';
 import { useModal } from '@/hooks';
 import useTriggerEffect from '@/hooks/triggeredUseState';
+import { useUser } from '@/hooks/useUser';
 import { companyUnityService, professionalService, RoleService, companyService } from '@/services';
 import { equipmentService } from '@/services/Administrator/equipmentService';
 import { SectorService } from '@/services/Administrator/sectorService';
@@ -58,6 +59,10 @@ export const AdministratorProvider = ({ children }: { children: React.ReactNode 
   // #region Commons
   const [isModalOpen, openModal, closeModal] = useModal();
 
+  const {
+    refetchCompany,
+  } = useUser();
+
   // #endregion
 
   //#region Company
@@ -91,6 +96,7 @@ export const AdministratorProvider = ({ children }: { children: React.ReactNode 
     await companyService.createCompanyAsync(company); 
     setCompanyQueryObject({ ...companyQueryObject, page: 0, term: undefined });
     refetchCompanies(); 
+    refetchCompany();
   };
 
   const updateCompany = async (company: ICompany) => {
@@ -99,12 +105,15 @@ export const AdministratorProvider = ({ children }: { children: React.ReactNode 
     console.log('addCompany')
     setCompanyQueryObject({ ...companyQueryObject, page: 0, term: undefined });
     refetchCompanies();
+    refetchCompany();
   };
 
   const removeCompany = async (company: ICompany) => {
+    debugger
     await companyService.removeCompanyAsync(company.id!);
     setCompanyQueryObject({ ...companyQueryObject, page: 0, term: undefined });
     refetchCompanies();
+    refetchCompany();
   };
 
   const resetCompanies = () => {
