@@ -323,7 +323,9 @@ export function ModalProfessional({
  
                       disabled={readonly}
                       onChange={() => {
-                        if(companyUnities.readonly) return;
+                        if(
+                          readonly
+                        ) return;
                         if (!unitsIds) return;
                         if (unitsIds?.includes(sector.id)) {
                           methods.setValue(
