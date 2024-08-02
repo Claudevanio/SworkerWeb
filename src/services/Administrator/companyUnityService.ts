@@ -57,6 +57,11 @@ export const companyUnityService = {
     return response.data;
   },
 
+  async getAllByCompanyAsync(companyId: string): Promise<ICompanyUnity[]> {
+    const response = await api.get<ICompanyUnity[]>(`/companies/${companyId}/unities`);
+    return response.data;
+  },
+
   async updateCompanyUnityAsync(item: ICompanyUnity): Promise<void> {
     await api.put<void>(`/unities/`, item);
   },

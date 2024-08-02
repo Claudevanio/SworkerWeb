@@ -1,5 +1,5 @@
 import { Modal } from '@/components/ui/modal';
-import { EtipoPermissao, ICompany, IProfessional, IPermissions, IRole, IUser } from '@/types';
+import { EtipoPermissao, ICompany, IProfessional, IPermissions, IRole, IUser, basePagination, ICompanyUnity } from '@/types';
 import * as Yup from 'yup';
 import { Form } from '@/components/form/Form';
 import { useForm } from 'react-hook-form';
@@ -10,23 +10,28 @@ import React, { useEffect } from 'react';
 import { useAdministrator } from '@/contexts/AdministrationProvider';
 import { masks, regex } from '@/utils';
 import { CustomSwitch } from '@/components/ui/switch';
-import { professionalService, RoleService, Userservice } from '@/services';
+import { companyUnityService, professionalService, RoleService, Userservice } from '@/services';
 import { Accordion, AccordionDetails, AccordionSummary, CircularProgress } from '@mui/material';
 import CustomizedAccordions from '../components/customizedAccordion';
 import { useQuery } from '@tanstack/react-query';
 import { SectorService } from '@/services/Administrator/sectorService';
 import { useGestao } from '@/contexts/GestaoProvider';
 import { useDialog } from '@/hooks/use-dialog';
+import { useUser } from '@/hooks/useUser';
 
 const schema = Yup.object({
   name: Yup.string().required('O nome é obrigatório'),
   registerNumber: Yup.string().required('O registro é obrigatório'),
   email: Yup.string().required('O e-mail é obrigatório').email('E-mail inválido'),
   cpf: Yup.string().required('O CPF é obrigatório').matches(regex.CPF, 'CPF inválido'), 
-  phone: Yup.string().optional().matches(/^(|regex.TELEFONE)$/, 'Telefone inválido'),
+  phone: Yup.string()
+    .notRequired() 
+    .transform((value, originalValue) => {
+      return value === '' ? null : value;
+    }).nullable().matches(regex.TELEFONE, 'Telefone inválido'),
   roleId: Yup.string().required('O cargo é obrigatório'),
   active: Yup.boolean(),
-  standardSupervisor: Yup.boolean(),
+  standardSupervisor: Yup.boolean().nullable(),
   unitsIds: Yup.array().of(Yup.string()).min(1, 'Selecione ao menos uma unidade')
 });
 
@@ -86,12 +91,26 @@ export function ModalProfessional({
     refetchOnWindowFocus: false,
     enabled: !!current?.userId
   });
-  const { sectors, professionals, companyUnities } = useGestao();
+  const { sectors, professionals } = useGestao();
 
   const {
     confirmDialog
   } = useDialog();
 
+  const {
+    currentCompany
+  } = useUser();
+
+
+  const companyUnities = useQuery<basePagination<ICompanyUnity>>({
+    queryKey: ['companyUnities-getAll'],
+    queryFn: () => companyUnityService.getAllByCompanyAsync(
+      currentCompany?.id
+    ) as any,
+    refetchOnWindowFocus: false
+  });
+
+  
   const professionalUnities = useQuery({
     queryKey: ['professionalUnities', current?.id],
     queryFn: () => professionalService.getUnits(current?.id),
@@ -194,7 +213,8 @@ export function ModalProfessional({
     if (current) {
       methods.reset({
         ...current,
-        unitsIds: professionalUnities.data?.map((unity: any) => unity.id)
+        cpf: masks.CPFMask(current.cpf),
+        unitsIds: professionalUnities.data?.map((unity: any) => unity.unityId)
       });
       return;
     }
@@ -226,7 +246,7 @@ export function ModalProfessional({
       title={current ? (readonly ? current.name : 'Editar Profissional') : 'Novo Profissional'}
       width="840px"
       onSubmit={readonly ? undefined : () => methods.handleSubmit(onSubmit)()}
-    >
+    > 
       <Form onSubmit={data => onSubmit(data as FormFields)} className="flex flex-col gap-4 pb-4 relative" {...methods}>
         <div
           className="absolute top-0 left-0 w-full h-full bg-white bg-opacity-60 flex items-center justify-center z-10"
@@ -252,7 +272,7 @@ export function ModalProfessional({
           />
           <Input
             name="registerNumber"
-            label="Registro"
+            label="Matrícula"
             required
             placeholder="Registro"
             error={methods.formState.errors.registerNumber}
@@ -280,7 +300,7 @@ export function ModalProfessional({
 
         <div style={{}}>
           <CustomizedAccordions
-            expanded={true}
+            defaultExpanded={true}
             // special={
             //   index === 0 ? 'first' : index === array.length - 1 ? 'last' : undefined
             // }
@@ -303,7 +323,9 @@ export function ModalProfessional({
  
                       disabled={readonly}
                       onChange={() => {
-                        if(companyUnities.readonly) return;
+                        if(
+                          readonly
+                        ) return;
                         if (!unitsIds) return;
                         if (unitsIds?.includes(sector.id)) {
                           methods.setValue(

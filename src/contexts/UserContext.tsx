@@ -20,6 +20,7 @@ interface UserContextType {
   currentCompany: ICompany | null;
   companiesList: ICompany[];
   selectCompany: () => void;
+  refetchCompany: () => void;
 }
 
 export const UserContext = createContext<UserContextType>({
@@ -28,7 +29,8 @@ export const UserContext = createContext<UserContextType>({
   updateUser: () => {},
   currentCompany: null,
   selectCompany: () => {},
-  companiesList: []
+  companiesList: [],
+  refetchCompany: () => {}
 });
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
@@ -96,7 +98,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     data: companies,
     refetch: refetchCompanies
   } = useQuery<ICompany[]>({
-    queryKey: ['searchCompanies'],
+    queryKey: ['searchCompanies-UserProvider'],
     queryFn: () => companyService.getAll() as any,
     refetchOnWindowFocus: false
   });
@@ -159,7 +161,9 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   }, [user, token]);
 
   return (
-    <UserContext.Provider value={{ user, setUser, updateUser, currentCompany, selectCompany: openModal, companiesList: companies }}>
+    <UserContext.Provider value={{ user, setUser, updateUser, currentCompany, selectCompany: openModal, companiesList: companies,
+      refetchCompany: refetchCompanies
+     }}>
       {children}
       <Modal isOpen={isModalOpen} onClose={closeModal} title="Selecione uma empresa">
         <Form
