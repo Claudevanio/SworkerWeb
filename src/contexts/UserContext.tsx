@@ -44,6 +44,8 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
   const [isModalOpen, openModal, closeModal] = useModal();
 
+  const [hasAlreadyOpenedModal, setHasAlreadyOpenedModal] = React.useState(false);
+
   React.useEffect(() => {
     if (pathname === '/login' || pathname === '/esqueci-senha') return;
 
@@ -58,6 +60,8 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       response => response,
       error => {
         if (error.response?.status === 401) {
+          if (hasAlreadyOpenedModal) return;
+          setHasAlreadyOpenedModal(true);
           setUser(null);
           Cookies.remove('token');
           if (pathname === '/login' || pathname === '/esqueci-senha') return;
