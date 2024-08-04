@@ -150,10 +150,8 @@ export const equipmentService = {
     pageSize?: number;
     companyId: string;
   }): Promise<basePagination<IEquipment>> {
-
-
     const filter = getFilterParam({ uid, hwid, brand, manufacturer, classification, active, inspectionExpired, term });
-    
+
     const response = await api.get(`/companies/${companyId}/equipaments`, {
       params: { filter, offSet: currentPage + 1, itensPerPage: pageSize }
     });

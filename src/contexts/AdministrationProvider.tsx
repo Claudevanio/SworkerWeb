@@ -59,9 +59,7 @@ export const AdministratorProvider = ({ children }: { children: React.ReactNode 
   // #region Commons
   const [isModalOpen, openModal, closeModal] = useModal();
 
-  const {
-    refetchCompany,
-  } = useUser();
+  const { refetchCompany } = useUser();
 
   // #endregion
 
@@ -92,24 +90,24 @@ export const AdministratorProvider = ({ children }: { children: React.ReactNode 
     refetchOnWindowFocus: false
   });
 
-  const addCompany = async (company: ICompany) => { 
-    await companyService.createCompanyAsync(company); 
+  const addCompany = async (company: ICompany) => {
+    await companyService.createCompanyAsync(company);
     setCompanyQueryObject({ ...companyQueryObject, page: 0, term: undefined });
-    refetchCompanies(); 
+    refetchCompanies();
     refetchCompany();
   };
 
   const updateCompany = async (company: ICompany) => {
     debugger;
     await companyService.updateCompanyAsync(company);
-    console.log('addCompany')
+    console.log('addCompany');
     setCompanyQueryObject({ ...companyQueryObject, page: 0, term: undefined });
     refetchCompanies();
     refetchCompany();
   };
 
   const removeCompany = async (company: ICompany) => {
-    debugger
+    debugger;
     await companyService.removeCompanyAsync(company.id!);
     setCompanyQueryObject({ ...companyQueryObject, page: 0, term: undefined });
     refetchCompanies();

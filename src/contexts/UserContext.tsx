@@ -167,9 +167,9 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   }, [user, token]);
 
   return (
-    <UserContext.Provider value={{ user, setUser, updateUser, currentCompany, selectCompany: openModal, companiesList: companies,
-      refetchCompany: refetchCompanies
-     }}>
+    <UserContext.Provider
+      value={{ user, setUser, updateUser, currentCompany, selectCompany: openModal, companiesList: companies, refetchCompany: refetchCompanies }}
+    >
       {children}
       <Modal isOpen={isModalOpen} onClose={closeModal} title="Selecione uma empresa">
         <Form

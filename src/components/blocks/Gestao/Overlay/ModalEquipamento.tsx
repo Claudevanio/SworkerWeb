@@ -50,21 +50,17 @@ export function ModalEquipments({
 
   const { equipments } = useGestao();
 
-  const {
-    currentCompany
-  } = useUser();
+  const { currentCompany } = useUser();
 
-  const {
-    confirmDialog
-  } = useDialog();
+  const { confirmDialog } = useDialog();
 
   async function onSubmit(data: any) {
-    try{
+    try {
       if (currentStep < 3) {
         setCurrentStep(currentStep + 1);
         return;
       }
-  
+
       if (isAddingType) {
         const newType = (await equipmentTypeService.addEquipmentTypeAsync({
           description: data.addType,
@@ -72,7 +68,7 @@ export function ModalEquipments({
         })) as any;
         data.typeId = newType?.data?.id;
       }
-  
+
       if (isAddingClassification) {
         const newClassification = (await equipmentClassificationService.addEquipmentClassificationAsync({
           description: data.addClassification,
@@ -83,32 +79,30 @@ export function ModalEquipments({
         data.classificationId = newClassification?.data?.id;
       }
       debugger;
-      data.manufactureDate = DateBrToISO(data.manufactureDate); 
-      (data as any).companyId = currentCompany?.id
-  
-      if(current) {
-        await equipments.update(  data);
+      data.manufactureDate = DateBrToISO(data.manufactureDate);
+      (data as any).companyId = currentCompany?.id;
+
+      if (current) {
+        await equipments.update(data);
         onClose();
         return;
       }
-  
+
       const newData: IEquipment = {
         ...data,
         status: true,
-        classificationId: +(data as any).classificationId,
+        classificationId: +(data as any).classificationId
       } as any;
       await equipments.create(newData);
-  
+
       onClose();
+    } catch (e) {
+      const message = e.response?.data?.message || e.message;
+      confirmDialog({
+        title: 'Houve um erro ao editar a categoria',
+        message
+      });
     }
-      catch (e) {
-        const message = e.response?.data?.message || e.message;
-        confirmDialog({
-          title: 'Houve um erro ao editar a categoria',
-          message
-        });
-      }
-  
   }
   const [currentStep, setCurrentStep] = React.useState(readonly ? 3 : 1);
 
@@ -196,7 +190,7 @@ export function ModalEquipments({
       onSubmit={readonly ? undefined : () => methods.handleSubmit(onSubmit)()}
       SubmitText={currentStep === 3 ? 'Salvar' : 'Próximo'}
     >
-      {!readonly && <Stepper steps={steps} currentStep={currentStep} />} 
+      {!readonly && <Stepper steps={steps} currentStep={currentStep} />}
       <Form onSubmit={data => onSubmit(data as FormFields)} className="flex flex-col gap-4 pb-4" {...methods}>
         {currentStep === 1 && (
           <div className="flex flex-col gap-4">
@@ -244,32 +238,26 @@ export function ModalEquipments({
           <div className="flex flex-col gap-4">
             <div className="flex flex-col md:flex-row gap-4 md:gap-6 items-center">
               <div className="w-full md:w-4/5 flex flex-col md:flex-row gap-4 md:gap-6 items-center">
-                <Input disabled={readonly} label="Código UID" name="uid" required 
-                  error={(methods.formState.errors as any)?.uid}
-                />
-                <Input disabled={readonly} label="Código HWID" name="hwid" required 
-                  error={(methods.formState.errors as any)?.hwid}
-                />
+                <Input disabled={readonly} label="Código UID" name="uid" required error={(methods.formState.errors as any)?.uid} />
+                <Input disabled={readonly} label="Código HWID" name="hwid" required error={(methods.formState.errors as any)?.hwid} />
               </div>
-              <Input disabled={readonly} label="Fabricante" name="manufacturer" required 
-                error={(methods.formState.errors as any)?.manufacturer}
-              />
+              <Input disabled={readonly} label="Fabricante" name="manufacturer" required error={(methods.formState.errors as any)?.manufacturer} />
               <div className="w-full md:w-4/5">
-                <Input disabled={readonly} label="Marca" name="brand" required 
-                  error={(methods.formState.errors as any)?.brand}
-                />
+                <Input disabled={readonly} label="Marca" name="brand" required error={(methods.formState.errors as any)?.brand} />
               </div>
             </div>
             <div className="flex flex-col md:flex-row gap-4 md:gap-6">
-              <Input disabled={readonly} label="Modelo" name="model" required 
-                error={(methods.formState.errors as any)?.model}
-              />
-              <Input disabled={readonly} label="Data de fabricação" name="manufactureDate" required mask={masks.DATE} 
+              <Input disabled={readonly} label="Modelo" name="model" required error={(methods.formState.errors as any)?.model} />
+              <Input
+                disabled={readonly}
+                label="Data de fabricação"
+                name="manufactureDate"
+                required
+                mask={masks.DATE}
                 error={(methods.formState.errors as any)?.manufactureDate}
               />
             </div>
-            <Input disabled={readonly} label="Contexto/Funções" name="manualFile" multiline minRows={3}  
-            />
+            <Input disabled={readonly} label="Contexto/Funções" name="manualFile" multiline minRows={3} />
             {readonly && (
               <div>
                 <Input disabled={readonly} label="Tipo" defaultValue={current?.classification?.type?.description} />

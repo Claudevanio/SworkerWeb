@@ -64,14 +64,12 @@ export function ModalCompanyUnity({
 
   const { companyUnities } = useGestao();
 
-  const {
-    confirmDialog
-  } = useDialog();
+  const { confirmDialog } = useDialog();
 
   async function onSubmit(data: FormFields) {
-    try{
+    try {
       console.log(data);
-  
+
       const newData: ICompanyUnity = {
         ...data,
         phone: masks.CLEARMasks(data.phone),
@@ -83,8 +81,8 @@ export function ModalCompanyUnity({
           ZipCode: '05364-100'
         }
       } as any;
-  
-      if (current) { 
+
+      if (current) {
         await companyUnities.update({
           ...newData,
           id: current.id
@@ -92,12 +90,11 @@ export function ModalCompanyUnity({
         onClose();
         return;
       }
-  
+
       await companyUnities.create(newData);
-  
+
       onClose();
-    }
-    catch (e) {
+    } catch (e) {
       const message = e.response?.data?.message || e.message;
       confirmDialog({
         title: 'Houve um erro ao editar a unidade',

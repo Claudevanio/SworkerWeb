@@ -15,7 +15,10 @@ import { CustomSwitch } from '@/components/ui/switch';
 
 const schema = Yup.object({
   name: Yup.string().required('O nome é obrigatório'),
-  cnpj: Yup.string().required('O CNPJ é obrigatório').matches(regex.CNPJ, { message: 'CNPJ inválido' }).test('valid-cnpj', 'CNPJ inválido', value => validCNPJ(value)),
+  cnpj: Yup.string()
+    .required('O CNPJ é obrigatório')
+    .matches(regex.CNPJ, { message: 'CNPJ inválido' })
+    .test('valid-cnpj', 'CNPJ inválido', value => validCNPJ(value)),
   responsible: Yup.string().required('O responsável é obrigatório'),
   phone: Yup.string().required('O telefone é obrigatório').matches(regex.TELEFONE, 'Telefone inválido'),
   email: Yup.string().required('O email é obrigatório').email('Email inválido'),
@@ -44,13 +47,10 @@ export function ModalCompany({
     }
   });
 
-  const {
-    companies
-  } = useAdministrator();
- 
- 
+  const { companies } = useAdministrator();
+
   async function onSubmit(data: FormFields) {
-    debugger
+    debugger;
     const newData: ICompany = {
       ...data,
       cnpj: masks.CLEARMasks(data.cnpj),

@@ -106,9 +106,7 @@ export function Geradas({
       label: 'Data e Hora',
       key: 'registerDate',
       Formatter: (value: Date) => {
-        return ( 
-            <div>{dayjs(value).format('DD/MM/YYYY')}</div> 
-        );
+        return <div>{dayjs(value).format('DD/MM/YYYY')}</div>;
       }
     },
     {

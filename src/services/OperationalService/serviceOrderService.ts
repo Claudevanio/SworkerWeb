@@ -55,9 +55,7 @@ export const serviceOrderService = {
     return response.data;
   },
 
-  async listDay(
-    companyId: string,
-  ): Promise<any[]> {
+  async listDay(companyId: string): Promise<any[]> {
     const response = await api.get<any[]>(`companies/${companyId}/service-orders/list-day`);
     return response.data;
   },

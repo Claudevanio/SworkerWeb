@@ -187,7 +187,7 @@ export const HistoricoTab = ({ openFilterModal }: { openFilterModal: () => void 
         ]}
       />{' '}
       <Pagination
-        currentPage={serviceOrders.filter.page -1}
+        currentPage={serviceOrders.filter.page - 1}
         onChange={page => serviceOrders.setFilter(prev => ({ ...prev, page: page + 1 }))}
         totalPages={Math.ceil((serviceOrders?.data?.count ?? 0) / serviceOrders.filter.pageSize)}
       />

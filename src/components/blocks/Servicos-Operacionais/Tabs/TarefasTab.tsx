@@ -130,39 +130,36 @@ export function TarefasTab({ tasks, tasksIsLoading }: { tasks: ApiResponse; task
         <h2 className="text-base-7 text-lg md:text-2xl font-bold mt-8 mb-4">Evolução de procedimentos</h2>
         <div>
           <h2 className="text-base-7 text-lg md:text-2xl font-bold mt-8 mb-4">Linha do tempo</h2>
-          {
-            !dataArray || dataArray.length === 0 ? (
-              <div className="flex justify-center items-center h-56">
-                <p className="text-base-7 text-lg md:text-2xl font-bold">Não há dados da linha do tempo para exibir</p>
-              </div>
-            ) : 
-          <LineChart data={dataArray ?? []} xField="date" yField="value" height={300} color={COLORS.primary['700']} />
-          }
+          {!dataArray || dataArray.length === 0 ? (
+            <div className="flex justify-center items-center h-56">
+              <p className="text-base-7 text-lg md:text-2xl font-bold">Não há dados da linha do tempo para exibir</p>
+            </div>
+          ) : (
+            <LineChart data={dataArray ?? []} xField="date" yField="value" height={300} color={COLORS.primary['700']} />
+          )}
         </div>
 
         <div className="w-full ">
           <h2 className="text-base-7 text-lg md:text-2xl font-bold mt-8 mb-4 ">Evolução das atividades</h2>
-          
-          {
-            !dataForBarChart || dataForBarChart.length === 0 ? (
-              <div className="flex justify-center items-center h-56">
-                <p className="text-base-7 text-lg md:text-2xl font-bold">Não há dados da Evolução das atividades para exibir</p>
-              </div>
-            ) : 
-          <div className="w-full overflow-scroll">
-            <div className="min-w-[1200px] w-full mr-4">
-              <BarChart
-                data={dataForBarChart ?? []}
-                yField="label"
-                xField="value"
-                typeOrder={['Sob Demanda', 'Executado']}
-                height={300}
-                color={[COLORS.base['3'], COLORS.primary['700']]}
-              />
-            </div>
-          </div>
-          }
 
+          {!dataForBarChart || dataForBarChart.length === 0 ? (
+            <div className="flex justify-center items-center h-56">
+              <p className="text-base-7 text-lg md:text-2xl font-bold">Não há dados da Evolução das atividades para exibir</p>
+            </div>
+          ) : (
+            <div className="w-full overflow-scroll">
+              <div className="min-w-[1200px] w-full mr-4">
+                <BarChart
+                  data={dataForBarChart ?? []}
+                  yField="label"
+                  xField="value"
+                  typeOrder={['Sob Demanda', 'Executado']}
+                  height={300}
+                  color={[COLORS.base['3'], COLORS.primary['700']]}
+                />
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

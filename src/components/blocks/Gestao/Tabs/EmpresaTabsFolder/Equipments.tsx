@@ -118,8 +118,8 @@ export function EquipmentsTab() {
             value={equipments.filters.term}
             onChange={v =>
               equipments.setFilter(prev => ({
-                ...prev, 
-                uid: v,
+                ...prev,
+                uid: v
               }))
             }
           />

@@ -92,9 +92,7 @@ const Sidebar: React.FC<{}> = () => {
 
   const router = useRouter();
 
-  const {
-    confirmDialog,
-  } = useDialog();
+  const { confirmDialog } = useDialog();
 
   async function logout() {
     // await Authservice.logout(user.userId);
@@ -106,7 +104,7 @@ const Sidebar: React.FC<{}> = () => {
         Cookies.remove('token');
         router.replace('/login');
       },
-      onConfirmText: 'Sair',
+      onConfirmText: 'Sair'
     });
   }
 
@@ -132,7 +130,7 @@ const Sidebar: React.FC<{}> = () => {
       : currentPage.includes('perfil')
         ? 'Perfil'
         : 'Administração';
- 
+
   return (
     <Box
       sx={{
@@ -197,18 +195,14 @@ const Sidebar: React.FC<{}> = () => {
               </div>
             </div>
           </div>
-            <div>
-              <h2
-                className="text-primary-50 text-sm mt-[-1rem] font-bold text-center cursor-pointer hover:text-primary-700 hover:underline"
-                onClick={selectCompany}
-              >
-                {
-                  currentCompany
-                    ? currentCompany.name
-                    : 'Selecione uma empresa'
-                }
-              </h2>
-            </div>
+          <div>
+            <h2
+              className="text-primary-50 text-sm mt-[-1rem] font-bold text-center cursor-pointer hover:text-primary-700 hover:underline"
+              onClick={selectCompany}
+            >
+              {currentCompany ? currentCompany.name : 'Selecione uma empresa'}
+            </h2>
+          </div>
           <div className="flex flex-col gap-2">
             <h2 className="text-primary-50 text-xs font-bold">MENU</h2>
 
@@ -227,11 +221,8 @@ const Sidebar: React.FC<{}> = () => {
               {currentCompany && <span className="text-primary-50 text-xs font-bold"> - {currentCompany.name}</span>}
             </h2>
 
-            <LinkWithTooltip href={handleLinkPath('/gestao')} disabled={!currentCompany?.id} 
-            >
-              <MenuButton variant={currentPage === '/gestao' ? 'primary' : 'secondary'} className={`w-full gap-2 flex justify-start `}
-             
-              >
+            <LinkWithTooltip href={handleLinkPath('/gestao')} disabled={!currentCompany?.id}>
+              <MenuButton variant={currentPage === '/gestao' ? 'primary' : 'secondary'} className={`w-full gap-2 flex justify-start `}>
                 <ApartmentOutlined />
                 Gestão
               </MenuButton>
@@ -293,7 +284,7 @@ const Sidebar: React.FC<{}> = () => {
                     Ordens de serviço
                   </MenuButton>
                 </LinkWithTooltip>
-                <LinkWithTooltip href={handleLinkPath('/servicos-operacionais/config')} disabled={!currentCompany?.id} >
+                <LinkWithTooltip href={handleLinkPath('/servicos-operacionais/config')} disabled={!currentCompany?.id}>
                   <MenuButton variant={getButtonVariant('/servicos-operacionais/config')} className={`w-full gap-2 flex px-8 justify-start`}>
                     <SettingsOutlined />
                     Configurações
@@ -349,13 +340,13 @@ const Sidebar: React.FC<{}> = () => {
                     Dashboard
                   </MenuButton>
                 </LinkWithTooltip>
-                <LinkWithTooltip href={handleLinkPath('/ocorrencias')} disabled={!currentCompany?.id} >
+                <LinkWithTooltip href={handleLinkPath('/ocorrencias')} disabled={!currentCompany?.id}>
                   <MenuButton variant={currentPage === '/ocorrencias' ? 'primary' : 'secondary'} className={`w-full gap-2 px-8 flex justify-start`}>
                     <ReportGmailerrorredOutlined />
                     Ocorrências
                   </MenuButton>
                 </LinkWithTooltip>
-                <LinkWithTooltip href={handleLinkPath('/ocorrencias/config')} disabled={!currentCompany?.id} >
+                <LinkWithTooltip href={handleLinkPath('/ocorrencias/config')} disabled={!currentCompany?.id}>
                   <MenuButton
                     variant={currentPage === '/ocorrencias/config' ? 'primary' : 'secondary'}
                     className={`w-full gap-2 px-8 flex justify-start`}

@@ -9,8 +9,7 @@ export const companyUnityService = {
   },
 
   async listCompanyUnityAsync(term: string, currentPage: number, pageSize: number): Promise<basePagination<ICompanyUnity>> {
-    
-    const filter = getFilterParam({ name : term });
+    const filter = getFilterParam({ name: term });
     const response = await api.get<ICompanyUnity[]>('/unities', {
       params: { filter, currentPage, pageSize }
     });
@@ -38,7 +37,7 @@ export const companyUnityService = {
     currentPage: number;
     pageSize: number;
   }): Promise<basePagination<ICompanyUnity>> {
-    const filter = getFilterParam({ name : term });
+    const filter = getFilterParam({ name: term });
 
     const response = await api.get(`/companies/${companyId}/unities`, {
       params: { filter, itensPerPage: pageSize, offSet: currentPage + 1 }

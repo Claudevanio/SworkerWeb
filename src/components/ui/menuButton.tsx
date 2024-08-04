@@ -29,7 +29,7 @@ export const MenuButton: React.FC<MenuButtonProps> = ({ variant = 'primary', chi
               ? {
                   backgroundColor: COLORS.sidebarHighlight,
                   border: '2px solid ' + COLORS.primary['400'],
-                  borderRadius: '40px',
+                  borderRadius: '40px'
                 }
               : {}
           }
@@ -46,12 +46,21 @@ export const MenuButton: React.FC<MenuButtonProps> = ({ variant = 'primary', chi
 
 const disabledLinkClassNames = 'cursor-normal pointer-events-none text-primary-400';
 
-export function LinkWithTooltip({ href, children, className = '', disabled, ...props }:
-  { href: string; children: React.ReactNode; className?: string; disabled: boolean }
-) {
+export function LinkWithTooltip({
+  href,
+  children,
+  className = '',
+  disabled,
+  ...props
+}: {
+  href: string;
+  children: React.ReactNode;
+  className?: string;
+  disabled: boolean;
+}) {
   return (
     <Tooltip title={disabled ? 'Selecione uma empresa para prosseguir' : ''} placement="bottom">
-      <div> 
+      <div>
         <Link href={href} className={disabled ? disabledLinkClassNames : className} {...props}>
           {children}
         </Link>

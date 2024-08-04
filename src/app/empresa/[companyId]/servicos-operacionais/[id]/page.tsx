@@ -224,9 +224,7 @@ export default function ServicoDetailPage() {
 
   // }, [serviceDetail, fetchProfessionalDataPerProfessional])
 
-  const {
-    currentCompany
-  } = useUser();
+  const { currentCompany } = useUser();
 
   const router = useRouter();
 
@@ -266,11 +264,15 @@ export default function ServicoDetailPage() {
           <DetailCard.Field label="Check-out" className="" value={data?.checkOutEndereco ?? ''} />
           <DetailCard.Field label="" value={''} className="md:hidden" />
 
-          <DetailCard.Field label={"Equipe" + (serviceDetail?.sectorEquip ? ' - '  + serviceDetail?.sectorEquip?.name : '')}value={serviceDetail?.professionals.map(professional => professional.name) } />
+          <DetailCard.Field
+            label={'Equipe' + (serviceDetail?.sectorEquip ? ' - ' + serviceDetail?.sectorEquip?.name : '')}
+            value={serviceDetail?.professionals.map(professional => professional.name)}
+          />
 
-          <DetailCard.Field label="Responsável" value={serviceDetail?.professionals?.find(
-            professional => !!professional?.isResponsible
-          )?.name ?? ''} />
+          <DetailCard.Field
+            label="Responsável"
+            value={serviceDetail?.professionals?.find(professional => !!professional?.isResponsible)?.name ?? ''}
+          />
 
           <DetailCard.Field label="Data de encerramento" value={data?.checkOutDate ? dayjs(data.checkOutDate).format('DD/MM/YYYY : HH:mm') : ''} />
 
@@ -448,32 +450,34 @@ export default function ServicoDetailPage() {
             </div>
           ) : (
             <div className="flex flex-col gap-4 w-full">
-              {tasksSteps && !(tasksSteps?.length > 0) ? <div
-                className="flex flex-col gap-4 p-4 bg-primary-200"
-              >
-                <p className="text-base-6 font-semibold">Nenhuma atividade registrada</p>
-              </div> : tasksSteps?.map((task, index) => {
-                return (
-                  <div key={index} className="flex flex-col gap-4">
-                    <div className="w-full p-4 bg-primary-200">
-                      {task?.professional?.name} - {task?.description}
+              {tasksSteps && !(tasksSteps?.length > 0) ? (
+                <div className="flex flex-col gap-4 p-4 bg-primary-200">
+                  <p className="text-base-6 font-semibold">Nenhuma atividade registrada</p>
+                </div>
+              ) : (
+                tasksSteps?.map((task, index) => {
+                  return (
+                    <div key={index} className="flex flex-col gap-4">
+                      <div className="w-full p-4 bg-primary-200">
+                        {task?.professional?.name} - {task?.description}
+                      </div>
+                      {task.steps.map((step, stepIndex) => {
+                        return (
+                          <div key={stepIndex} className="flex flex-row gap-4 p-4">
+                            <div className="!w-8 !h-8 shrink-0 bg-primary-500 rounded-full flex justify-center items-center text-white">
+                              {step.number}
+                            </div>
+                            <div className="flex flex-col gap-2">
+                              <p className="text-base-5 font-semibold">{step.description}</p>
+                              <p className="text-base-6 font-bold">{step.result}</p>
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
-                    {task.steps.map((step, stepIndex) => {
-                      return (
-                        <div key={stepIndex} className="flex flex-row gap-4 p-4">
-                          <div className="!w-8 !h-8 shrink-0 bg-primary-500 rounded-full flex justify-center items-center text-white">
-                            {step.number}
-                          </div>
-                          <div className="flex flex-col gap-2">
-                            <p className="text-base-5 font-semibold">{step.description}</p>
-                            <p className="text-base-6 font-bold">{step.result}</p>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                );
-              })}
+                  );
+                })
+              )}
             </div>
           )}
         </div>

@@ -100,7 +100,7 @@ export function Reconhecidas({
           </div>
         );
       }
-    }, 
+    },
     {
       label: 'Data e Hora',
       key: 'registerDate',

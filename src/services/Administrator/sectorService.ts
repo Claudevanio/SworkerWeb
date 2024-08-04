@@ -9,8 +9,7 @@ export const SectorService = {
   },
 
   async listSectorAsync({ page, pageSize, term }: { page: number; pageSize: number; term: string }): Promise<basePagination<ISector>> {
-    
-    const filter = getFilterParam({ 
+    const filter = getFilterParam({
       name: term
     });
 
@@ -48,7 +47,7 @@ export const SectorService = {
   }): Promise<basePagination<ISector>> {
     const filter = getFilterParam({
       name: term
-    })
+    });
     const response = await api.get<{
       pageSize: number;
       term: string;
