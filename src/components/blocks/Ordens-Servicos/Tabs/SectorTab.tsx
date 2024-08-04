@@ -110,62 +110,61 @@ export const SectorTab = ({ openFilterModal, serviceOrders }: { openFilterModal:
     sector?: string;
   }
 
- 
-
   const {
     serviceOrders: {
       filter: { page, pageSize, term, ...filter }
     }
   } = useServiceOrder();
 
-  
-  const filterServiceOrders = useCallback((serviceOrders: IServiceOrderDay[], criteria: FilterCriteria): IServiceOrderDay[] => {
-    if (!serviceOrders) return [];
-    if (Object.keys(criteria).length === 0) return serviceOrders;
-    if (Object.values(criteria).every(value => !value || value === '')) return serviceOrders;
-    return serviceOrders.filter(order => {
-      if (criteria.sector && order.sectorId !== +criteria.sector) {
-        return false;
-      }
-      if (criteria.date && !dayjs(order.requestDate).isAfter(dayjs(formatDate(criteria.date)).toISOString())) {
-        return false;
-      }
-      if (criteria.code && !order.code.includes(criteria.code)) {
-        return false;
-      }
-      if (criteria.procedure && !order.description.includes(criteria.procedure)) {
-        return false;
-      }
-      if (criteria.executionDateStart && !dayjs(order.executionDate).isAfter(dayjs(formatDate(criteria.executionDateStart)).toISOString())) {
-        return false;
-      }
-      if (criteria.executionDateEnd && !dayjs(order.executionDate).isBefore(dayjs(formatDate(criteria.executionDateEnd)).toISOString())) {
-        return false;
-      }
-      if (criteria.start && !dayjs(order.requestDate).isAfter(dayjs(formatDate(criteria.start)).toISOString())) {
-        return false;
-      }
-      if (criteria.end && !dayjs(order.requestDate).isBefore(dayjs(formatDate(criteria.end)).toISOString())) {
-        return false;
-      }
-      if (criteria.responsavel && !order.responsible?.name.includes(criteria.responsavel)) {
-        return false;
-      }
-      if (criteria.team && !order.supervisor?.name.includes(criteria.team)) {
-        return false;
-      }
-      if (criteria.status !== undefined && order.status?.id !== criteria.status) {
-        return false;
-      }
-      return true;
-    });
-  }, [filter, serviceOrders]);
+  const filterServiceOrders = useCallback(
+    (serviceOrders: IServiceOrderDay[], criteria: FilterCriteria): IServiceOrderDay[] => {
+      if (!serviceOrders) return [];
+      if (Object.keys(criteria).length === 0) return serviceOrders;
+      if (Object.values(criteria).every(value => !value || value === '')) return serviceOrders;
+      return serviceOrders.filter(order => {
+        if (criteria.sector && order.sectorId !== +criteria.sector) {
+          return false;
+        }
+        if (criteria.date && !dayjs(order.requestDate).isAfter(dayjs(formatDate(criteria.date)).toISOString())) {
+          return false;
+        }
+        if (criteria.code && !order.code.includes(criteria.code)) {
+          return false;
+        }
+        if (criteria.procedure && !order.description.includes(criteria.procedure)) {
+          return false;
+        }
+        if (criteria.executionDateStart && !dayjs(order.executionDate).isAfter(dayjs(formatDate(criteria.executionDateStart)).toISOString())) {
+          return false;
+        }
+        if (criteria.executionDateEnd && !dayjs(order.executionDate).isBefore(dayjs(formatDate(criteria.executionDateEnd)).toISOString())) {
+          return false;
+        }
+        if (criteria.start && !dayjs(order.requestDate).isAfter(dayjs(formatDate(criteria.start)).toISOString())) {
+          return false;
+        }
+        if (criteria.end && !dayjs(order.requestDate).isBefore(dayjs(formatDate(criteria.end)).toISOString())) {
+          return false;
+        }
+        if (criteria.responsavel && !order.responsible?.name.includes(criteria.responsavel)) {
+          return false;
+        }
+        if (criteria.team && !order.supervisor?.name.includes(criteria.team)) {
+          return false;
+        }
+        if (criteria.status !== undefined && order.status?.id !== criteria.status) {
+          return false;
+        }
+        return true;
+      });
+    },
+    [filter, serviceOrders]
+  );
 
   const filteredData = filterServiceOrders(serviceOrders, {
     ...filter,
     sector: selectedGroup?.id.toString()
   });
- 
 
   const paginatedServiceOrders = usePagination(filteredData ?? [], 3);
 
@@ -216,9 +215,9 @@ export const SectorTab = ({ openFilterModal, serviceOrders }: { openFilterModal:
                   className={`flex gap-2 items-center p-6 cursor-pointer rounded-lg transition-all ${
                     selectedGroup?.id === item.id ? 'bg-primary-700' : 'bg-primary-50'
                   }`}
-                  onClick={() =>{
-                     setSelectedGroup(item)
-                    }}
+                  onClick={() => {
+                    setSelectedGroup(item);
+                  }}
                 >
                   <div className="bg-base-3 w-12 h-12 rounded-full flex-shrink-0" />
                   <div className={`font-medium ${selectedGroup?.id === item.id ? 'text-base-1' : 'text-base-7'}`}>{item.name}</div>
@@ -244,7 +243,7 @@ export const SectorTab = ({ openFilterModal, serviceOrders }: { openFilterModal:
                 label: 'Evolucao',
                 icon: <TrendingUp className="text-primary-700" />,
                 onClick: (data: ServiceOrder) => {
-                  router.push(`${data.id}`);;
+                  router.push(`${data.id}`);
                 }
               },
               {

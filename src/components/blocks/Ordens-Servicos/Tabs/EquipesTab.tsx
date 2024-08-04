@@ -108,7 +108,7 @@ export const EquipesTab = ({ openFilterModal, serviceOrders }: { openFilterModal
     team?: string;
     status?: number;
   }
- 
+
   useEffect(() => {
     if (paginatedProfessionals && paginatedProfessionals.currentTableData.length > 0 && !selectedGroup) {
       setSelectedGroup(paginatedProfessionals.currentTableData[0]);
@@ -119,45 +119,47 @@ export const EquipesTab = ({ openFilterModal, serviceOrders }: { openFilterModal
     serviceOrders: {
       filter: { page, pageSize, term, ...filter }
     }
-  } = useServiceOrder(); 
+  } = useServiceOrder();
 
-
-  const filterServiceOrders = useCallback((serviceOrders: IServiceOrderDay[], criteria: FilterCriteria): IServiceOrderDay[] => {
-    debugger
-    if (!serviceOrders) return [];
-    if (Object.keys(criteria).length === 0) return serviceOrders;
-    if (Object.values(criteria).every(value => !value || value === '')) return serviceOrders;
-    return serviceOrders.filter(order => {
-      if (criteria.date && !dayjs(order.requestDate).isAfter(dayjs(formatDate(criteria.date)).toISOString())) {
-        return false;
-      }
-      if (criteria.code && !order.code.includes(criteria.code)) {
-        return false;
-      } 
-      if (criteria.executionDateStart && !dayjs(order.executionDate).isAfter(dayjs(formatDate(criteria.executionDateStart)).toISOString())) {
-        return false;
-      }
-      if (criteria.executionDateEnd && !dayjs(order.executionDate).isBefore(dayjs(formatDate(criteria.executionDateEnd)).toISOString())) {
-        return false;
-      }
-      if (criteria.start && !dayjs(order.requestDate).isAfter(dayjs(formatDate(criteria.start)).toISOString())) {
-        return false;
-      }
-      if (criteria.end && !dayjs(order.requestDate).isBefore(dayjs(formatDate(criteria.end)).toISOString())) {
-        return false;
-      }
-      if(criteria.responsavel && !order.responsible.name.includes(criteria.responsavel)) {
-        return false;
-      }
-      if (criteria.team && !order.sectorEquipDescription.includes(criteria.team)) {
-        return false;
-      }
-      if (criteria.status !== undefined && order.status?.id !== criteria.status) {
-        return false;
-      }
-      return true;
-    });
-  }, [filter, serviceOrders]);
+  const filterServiceOrders = useCallback(
+    (serviceOrders: IServiceOrderDay[], criteria: FilterCriteria): IServiceOrderDay[] => {
+      debugger;
+      if (!serviceOrders) return [];
+      if (Object.keys(criteria).length === 0) return serviceOrders;
+      if (Object.values(criteria).every(value => !value || value === '')) return serviceOrders;
+      return serviceOrders.filter(order => {
+        if (criteria.date && !dayjs(order.requestDate).isAfter(dayjs(formatDate(criteria.date)).toISOString())) {
+          return false;
+        }
+        if (criteria.code && !order.code.includes(criteria.code)) {
+          return false;
+        }
+        if (criteria.executionDateStart && !dayjs(order.executionDate).isAfter(dayjs(formatDate(criteria.executionDateStart)).toISOString())) {
+          return false;
+        }
+        if (criteria.executionDateEnd && !dayjs(order.executionDate).isBefore(dayjs(formatDate(criteria.executionDateEnd)).toISOString())) {
+          return false;
+        }
+        if (criteria.start && !dayjs(order.requestDate).isAfter(dayjs(formatDate(criteria.start)).toISOString())) {
+          return false;
+        }
+        if (criteria.end && !dayjs(order.requestDate).isBefore(dayjs(formatDate(criteria.end)).toISOString())) {
+          return false;
+        }
+        if (criteria.responsavel && !order.responsible.name.includes(criteria.responsavel)) {
+          return false;
+        }
+        if (criteria.team && !order.sectorEquipDescription.includes(criteria.team)) {
+          return false;
+        }
+        if (criteria.status !== undefined && order.status?.id !== criteria.status) {
+          return false;
+        }
+        return true;
+      });
+    },
+    [filter, serviceOrders]
+  );
   const filteredData = filterServiceOrders(serviceOrders, {
     team: selectedGroup?.name,
     ...filter
@@ -223,7 +225,7 @@ export const EquipesTab = ({ openFilterModal, serviceOrders }: { openFilterModal
       </CustomizedGroupAccordion>
       <p className="text-base-4 font-medium md:mb-[-2rem]">{selectedGroup?.name}</p>
       {selectedGroup ? (
-        <> 
+        <>
           <BaseTable
             rows={paginatedServiceOrders.currentTableData ?? []}
             // isLoading={false}

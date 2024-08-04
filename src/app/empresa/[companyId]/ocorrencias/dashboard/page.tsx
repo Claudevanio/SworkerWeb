@@ -39,9 +39,7 @@ export default function OcorrenciasDashboard() {
 
   const { currentCompany } = useUser();
 
-  const getOcurrences = async (
-    count: number
-  ) => { 
+  const getOcurrences = async (count: number) => {
     if (!currentCompany || !count || !(count > 0)) return;
     const ocurrencesResponse = await ocurrenceService.getAllRecognizeOcurrenceAsync(currentCompany?.id, count);
     const items = ocurrencesResponse.items;
@@ -122,7 +120,7 @@ export default function OcorrenciasDashboard() {
 
   useEffect(() => {
     if (!currentCompany) return;
-    getCounts(); 
+    getCounts();
     getTypes();
   }, [currentCompany?.id]);
 

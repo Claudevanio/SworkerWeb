@@ -11,34 +11,27 @@ function removeTokenCookie(request: NextRequest) {
   return response;
 }
 
-export function middleware(request: NextRequest) { 
+export function middleware(request: NextRequest) {
   debugger;
   const token = request.cookies.get('token')?.value;
 
-  if(!token || typeof token !== 'string') {
-    if (request.nextUrl.pathname === '/login')
-      return NextResponse.next();
+  if (!token || typeof token !== 'string') {
+    if (request.nextUrl.pathname === '/login') return NextResponse.next();
 
     return removeTokenCookie(request);
   }
- 
-  const decoded = token ? jwtDecode(token) as decodedToken : undefined;
 
-  if (!decoded)
-    return removeTokenCookie(request);
+  const decoded = token ? (jwtDecode(token) as decodedToken) : undefined;
 
-  if (decoded.exp * 1000 < Date.now())
-    return removeTokenCookie(request);
+  if (!decoded) return removeTokenCookie(request);
 
-  if (request.nextUrl.pathname === '/login' && decoded)
-    return NextResponse.redirect(new URL('/', request.nextUrl));
-    
-  
+  if (decoded.exp * 1000 < Date.now()) return removeTokenCookie(request);
+
+  if (request.nextUrl.pathname === '/login' && decoded) return NextResponse.redirect(new URL('/', request.nextUrl));
+
   return NextResponse.next();
- 
 }
 
-
 export const config = {
-  matcher: ['/', '/empresa/:companyId*', '/perfil', '/login'],
+  matcher: ['/', '/empresa/:companyId*', '/perfil', '/login']
 };

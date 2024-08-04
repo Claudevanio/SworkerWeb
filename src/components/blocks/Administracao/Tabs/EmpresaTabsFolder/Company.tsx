@@ -85,12 +85,12 @@ export function CompanyTab() {
           },
           {
             label: 'Desativar',
-            onClick: (data) =>
+            onClick: data =>
               openDialog({
                 title: 'Desativar empresa',
                 subtitle: 'Deseja mesmo desativar a empresa?',
                 onConfirm: () => {
-                  companies.remove(data)
+                  companies.remove(data);
                 },
                 onConfirmText: 'Desativar'
               }),

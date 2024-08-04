@@ -28,9 +28,9 @@ export function SectorTab() {
       Formatter: (companyId: any) => {
         return companiesList?.find(c => c.id === companyId)?.name ?? 'Não encontrado';
       }
-    } 
+    }
   ];
-  
+
   return (
     <>
       <SearchInput
@@ -75,13 +75,9 @@ export function SectorTab() {
         rows={sectors?.data?.items ?? []}
       />
       <Pagination
-        currentPage={sectors?.filters?.page > 0 ? sectors?.filters?.page - 1 : 0
-
-        }
-        totalPages={
-          sectors?.data?.count ? Math.ceil(sectors?.data?.count / sectors?.filters?.pageSize) : 1
-        }
-        onChange={page => sectors.setFilter(prev => ({ ...prev, page: page > 0 ? page + 1 : 1}))}
+        currentPage={sectors?.filters?.page > 0 ? sectors?.filters?.page - 1 : 0}
+        totalPages={sectors?.data?.count ? Math.ceil(sectors?.data?.count / sectors?.filters?.pageSize) : 1}
+        onChange={page => sectors.setFilter(prev => ({ ...prev, page: page > 0 ? page + 1 : 1 }))}
       />
     </>
   );

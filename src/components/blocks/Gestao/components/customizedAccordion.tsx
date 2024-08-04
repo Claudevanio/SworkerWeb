@@ -54,11 +54,7 @@ export default function CustomizedAccordions({
         }
       }}
     >
-      <Accordion expanded={expanded} 
-        defaultExpanded={
-          defaultExpanded
-        }
-      onChange={handleChange('panel1')}>
+      <Accordion expanded={expanded} defaultExpanded={defaultExpanded} onChange={handleChange('panel1')}>
         <AccordionSummary
           aria-controls="panel1d-content"
           id="panel1d-header"

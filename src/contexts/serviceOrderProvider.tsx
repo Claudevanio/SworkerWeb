@@ -123,7 +123,7 @@ export const ServiceOrderProvider = ({ children }: { children: React.ReactNode }
     queryFn: () => serviceOrderService.getServiceOrderStatusAsync(),
     refetchOnWindowFocus: false,
     refetchOnMount: false,
-    refetchOnReconnect: false,    
+    refetchOnReconnect: false
   });
 
   // #endregion
@@ -148,13 +148,14 @@ export const ServiceOrderProvider = ({ children }: { children: React.ReactNode }
           setFilter: setServiceOrderFilters,
           filter: serviceOrderFilters,
           changeStatus,
-          resetFilter: () => setServiceOrderFilters({
-            term: '',
-            page: 0,
-            pageSize: 999,
-            start: dayjs().subtract(30, 'day').toDate().toISOString(),
-            end: dayjs().toDate().toISOString()
-          })
+          resetFilter: () =>
+            setServiceOrderFilters({
+              term: '',
+              page: 0,
+              pageSize: 999,
+              start: dayjs().subtract(30, 'day').toDate().toISOString(),
+              end: dayjs().toDate().toISOString()
+            })
         },
         status: {
           data: serviceOrderStatuses,

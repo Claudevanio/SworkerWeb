@@ -86,7 +86,7 @@ export interface singleTask {
   professionalName: string;
 }
 
-export interface  ServiceOrderTask {
+export interface ServiceOrderTask {
   id: number;
   code: string;
   name: string;

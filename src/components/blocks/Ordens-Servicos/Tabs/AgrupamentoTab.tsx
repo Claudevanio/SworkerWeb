@@ -62,10 +62,10 @@ export function AgrupamentoTab({ openFilterModal }: { openFilterModal: () => voi
       ...prev,
       start: undefined,
       pageSize: 10,
-      page: 1, 
+      page: 1,
       end: undefined
     }));
-  }, [])
+  }, []);
 
   return (
     <div className="flex flex-col gap-4 w-full">

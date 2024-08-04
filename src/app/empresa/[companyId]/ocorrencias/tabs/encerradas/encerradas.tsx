@@ -93,7 +93,7 @@ export function Encerradas({
           </div>
         );
       }
-    }, 
+    },
     {
       label: 'Data e Hora',
       key: 'registerDate',
@@ -142,7 +142,6 @@ export function Encerradas({
 
   const rows = ocurrences?.items ?? [];
 
-
   const handleChangeExportOcurrence = () => {
     const arrayOcurrence = selected.reduce((acc, current) => {
       const x = acc.find(item => item.id === current.id);
@@ -174,7 +173,6 @@ export function Encerradas({
   useEffect(() => {
     handleChangeExportOcurrence();
   }, [selected]);
-
 
   return (
     <Stack>

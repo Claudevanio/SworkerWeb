@@ -92,7 +92,7 @@ export function TaskGroupTab() {
         onChange={page =>
           taskGroups?.setFilter(prev => ({
             ...prev,
-            page: page > 0 ? page   : 0
+            page: page > 0 ? page : 0
           }))
         }
       />

@@ -43,7 +43,6 @@ export const CNPJ = /^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/;
 
 export const TELEFONE = /^\(?\d{2}\)?\s?9?\d{5}-?\d{4}$/;
 
-
 export const optionalTelefone = /^\(?\d{2}\)?\s?\d{4}-?\d{4}$/;
 
 export const CPF = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
@@ -51,4 +50,3 @@ export const CPF = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
 export const DATE = /^\d{2}\/\d{2}\/\d{4}$/;
 
 export const NUMBER = /^\d+$/;
-

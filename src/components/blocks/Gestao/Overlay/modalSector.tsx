@@ -26,9 +26,7 @@ export function ModalSector({ isOpen, onClose, current, readonly }: { isOpen: bo
 
   const { sectors } = useGestao();
 
-  const {
-    confirmDialog
-  } = useDialog();
+  const { confirmDialog } = useDialog();
 
   const methods = useForm<FormFields>({
     resolver: yupResolver(schema),
@@ -37,9 +35,8 @@ export function ModalSector({ isOpen, onClose, current, readonly }: { isOpen: bo
     }
   });
 
-  async function onSubmit(data: FormFields) { 
-    try 
-    {
+  async function onSubmit(data: FormFields) {
+    try {
       const newData: ISector = {
         description: data.name,
         companyId: data.companyId
@@ -51,8 +48,7 @@ export function ModalSector({ isOpen, onClose, current, readonly }: { isOpen: bo
       }
       await sectors.create(newData);
       onClose();
-  }
-    catch (e) {
+    } catch (e) {
       const message = e.response?.data?.message || e.message;
       confirmDialog({
         title: 'Houve um erro ao editar a categoria',
