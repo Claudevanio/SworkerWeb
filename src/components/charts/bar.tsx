@@ -25,6 +25,7 @@ export const BarChart = ({
     yField,
     height,
     autoFit: true,
+    animation: false,
     color,
     tooltip: {
       showCrosshairs: true,

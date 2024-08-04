@@ -24,8 +24,8 @@ const schema = Yup.object({
   userName: Yup.string().required('Email é obrigatório').email('O e-mail deve ser válido'),
   password: Yup.string()
     .required('A senha é obrigatória')
-    .min(6, 'A senha deve ter no mínimo 6 caracteres')
-    .matches(/^(?=.*[A-Za-z#@$!])(?=.*\d)[A-Za-z\d#@$!]{8,}$/, 'A senha deve corresponder ao padrão especificado')
+    .min(8, 'A senha deve ter no mínimo 8 caracteres')
+    .matches(/^(?=.*[A-Za-z#@$!])(?=.*\d)[A-Za-z\d#@$!]{8,}$/, 'A senha deve incluir ao menos uma letra e um número')
 });
 
 type FormFields = Yup.InferType<typeof schema>;

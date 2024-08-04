@@ -18,6 +18,7 @@ export const ColumnChart = ({
     data,
     xField,
     yField,
+    animation: false,
     height,
     autoFit: true,
     color,

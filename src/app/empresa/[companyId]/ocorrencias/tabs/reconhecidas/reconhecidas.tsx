@@ -41,7 +41,7 @@ export function Reconhecidas({
   const [filterOcurrences, setFilterOcurrences] = useState<IFilterOcurrences>({
     closed: 0
   } as IFilterOcurrences);
-  const [selected, setSelected] = useState<number[]>([]);
+  const [selected, setSelected] = useState<IOcurrence[]>([]);
   const [filter, setFilter] = useState({
     page: 0,
     pageSize: 10,
@@ -69,15 +69,15 @@ export function Reconhecidas({
 
   const columns = [
     {
-      label: 'Data e Hora',
-      key: 'registerDate',
+      label: 'Id',
+      key: 'id',
       rowFormatter: (ocurrence: IOcurrence) => {
         return (
           <div className="flex items-center gap-1 group" style={{ height: '70px' }}>
             <div
               className="w-0 group-hover:!w-12 overflow-hidden transition-all items-center gap-1"
               style={
-                selected.includes(ocurrence.id)
+                selected.find(v => v.id === ocurrence.id)
                   ? {
                       width: '2rem'
                     }
@@ -86,20 +86,26 @@ export function Reconhecidas({
             >
               <CheckBox
                 variant="secondary"
-                value={selected.includes(ocurrence.id)}
+                value={selected.find(v => v.id === ocurrence.id)}
                 onChange={() => {
-                  if (selected.includes(ocurrence.id)) {
-                    setSelected(prev => prev.filter(item => item !== ocurrence.id));
-                  }
-                  if (!selected.includes(ocurrence.id)) {
-                    setSelected(prev => [...prev, ocurrence.id]);
+                  if (selected.find(v => v.id === ocurrence.id)) {
+                    setSelected(prev => prev.filter(v => v.id !== ocurrence.id));
+                  } else {
+                    setSelected(prev => [...prev, ocurrence]);
                   }
                 }}
               />
             </div>
-            <div>{dayjs(ocurrence.registerDate).format('DD/MM/YYYY')}</div>
+            {ocurrence.id}
           </div>
         );
+      }
+    }, 
+    {
+      label: 'Data e Hora',
+      key: 'registerDate',
+      Formatter: (registerDate: string) => {
+        return <div>{dayjs(registerDate).format('DD/MM/YYYY')}</div>;
       }
     },
     {
@@ -144,24 +150,29 @@ export function Reconhecidas({
   const rows = ocurrences?.items ?? [];
 
   const handleChangeExportOcurrence = () => {
-    const arrayOcurrence = ocurrences?.items?.filter(item => {
-      return selected.includes(item.id);
-    });
+    const arrayOcurrence = selected.reduce((acc, current) => {
+      const x = acc.find(item => item.id === current.id);
+      if (!x) {
+        return acc.concat([current]);
+      } else {
+        return acc;
+      }
+    }, []);
 
     const csvData = [
       ['Data e Hora', 'Código OS', 'Profissional', 'Caracterização', 'Tipo', 'Origem', 'Status'],
       ...(arrayOcurrence?.map(ocurrence => {
         return [
           dayjs(ocurrence.registerDate).format('DD/MM/YYYY') ?? '',
-          ocurrence.occurrence?.registerNumber ?? '',
-          ocurrence.professional?.name ?? '',
-          ocurrence.characterization?.description ?? '',
-          ocurrence.occurrence?.occurrenceType?.typeName ?? '',
-          ocurrence.occurrence?.origin ?? '',
-          ocurrence.occurrence?.acknowledged ? 'Concluído' : 'Pendente'
+          ocurrence?.registerNumber ?? '',
+          ocurrence.professionalName ?? '',
+          ocurrence.characterizationDescription ?? '',
+          ocurrence?.occurrenceTypeName ?? '',
+          ocurrence?.origin ?? '',
+          ocurrence.acknowledged ? 'Concluído' : 'Pendente'
         ];
       }) ?? [])
-    ];
+    ] as string[][];
 
     setExportOcurrences(csvData);
   };

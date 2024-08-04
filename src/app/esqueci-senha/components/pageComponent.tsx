@@ -23,7 +23,7 @@ const schema = Yup.object({
 });
 
 const schemaRecuperarSenha = Yup.object({
-  password: Yup.string().required('Senha é obrigatória').min(6, 'A senha deve ter no mínimo 6 caracteres'),
+  password: Yup.string().required('Senha é obrigatória').min(8, 'A senha deve ter no mínimo 8 caracteres').matches(/^(?=.*[A-Za-z#@$!])(?=.*\d)[A-Za-z\d#@$!]{8,}$/, 'A senha deve incluir ao menos uma letra e um número'),
   confirmPassword: Yup.string().oneOf([Yup.ref('password'), null], 'As senhas devem ser iguais')
 });
 

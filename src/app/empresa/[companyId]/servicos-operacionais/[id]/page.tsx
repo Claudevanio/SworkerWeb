@@ -266,9 +266,11 @@ export default function ServicoDetailPage() {
           <DetailCard.Field label="Check-out" className="" value={data?.checkOutEndereco ?? ''} />
           <DetailCard.Field label="" value={''} className="md:hidden" />
 
-          <DetailCard.Field label="Equipe" value={serviceDetail?.professionals.map(professional => professional.name)} />
+          <DetailCard.Field label={"Equipe" + (serviceDetail?.sectorEquip ? ' - '  + serviceDetail?.sectorEquip?.name : '')}value={serviceDetail?.professionals.map(professional => professional.name) } />
 
-          <DetailCard.Field label="Responsável" value={serviceDetail?.supervisor ?? ''} />
+          <DetailCard.Field label="Responsável" value={serviceDetail?.professionals?.find(
+            professional => !!professional?.isResponsible
+          )?.name ?? ''} />
 
           <DetailCard.Field label="Data de encerramento" value={data?.checkOutDate ? dayjs(data.checkOutDate).format('DD/MM/YYYY : HH:mm') : ''} />
 
@@ -421,11 +423,11 @@ export default function ServicoDetailPage() {
             <RoundedTab
               tabs={[
                 {
-                  label: 'Gráfico',
+                  label: 'Resultados',
                   tabIndex: 0
                 },
                 {
-                  label: 'Resultados',
+                  label: 'Gráfico',
                   tabIndex: 1
                 }
               ]}
@@ -433,7 +435,7 @@ export default function ServicoDetailPage() {
               setActiveTab={setActiveTab}
             />
           </div>
-          {activeTab === 0 ? (
+          {activeTab === 1 ? (
             <div className="px-6">
               <BarChart
                 data={dataForTasks}
@@ -446,7 +448,11 @@ export default function ServicoDetailPage() {
             </div>
           ) : (
             <div className="flex flex-col gap-4 w-full">
-              {tasksSteps.map((task, index) => {
+              {tasksSteps && !(tasksSteps?.length > 0) ? <div
+                className="flex flex-col gap-4 p-4 bg-primary-200"
+              >
+                <p className="text-base-6 font-semibold">Nenhuma atividade registrada</p>
+              </div> : tasksSteps?.map((task, index) => {
                 return (
                   <div key={index} className="flex flex-col gap-4">
                     <div className="w-full p-4 bg-primary-200">
