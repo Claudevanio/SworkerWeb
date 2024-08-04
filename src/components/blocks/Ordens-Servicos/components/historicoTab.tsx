@@ -107,7 +107,7 @@ export const HistoricoTab = ({ openFilterModal }: { openFilterModal: () => void 
         columns={[
           {
             label: 'Código',
-            key: 'serviceCode',
+            key: 'code',
             rowFormatter: row => {
               return (
                 <>
@@ -135,12 +135,12 @@ export const HistoricoTab = ({ openFilterModal }: { openFilterModal: () => void 
                         }}
                       />
                     </div>
-                    <div>{row.serviceCode}</div>
+                    <div>{row.code}</div>
                   </div>
                   <div className="md:hidden">
                     <div className="flex items-center gap-3">
-                      {row.id && <Image className="md:hidden  shrink-0" src="/Warning.svg" width={20} height={20} alt="warning" />}
-                      {row.serviceCode}
+                      {row.id && <Image className="md:hidden" src="/Warning.svg" width={20} height={20} alt="warning" />}
+                      {row.code}
                     </div>
                   </div>
                 </>
@@ -151,6 +151,10 @@ export const HistoricoTab = ({ openFilterModal }: { openFilterModal: () => void 
           {
             label: 'Procedimento',
             key: 'description'
+          },
+          {
+            label: 'Equipe',
+            key: 'sectorEquipDescription'
           },
           {
             label: 'Data de Solicitação',

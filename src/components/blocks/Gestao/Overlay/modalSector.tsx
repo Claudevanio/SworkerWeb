@@ -22,7 +22,7 @@ const schema = Yup.object({
 type FormFields = Yup.InferType<typeof schema>;
 
 export function ModalSector({ isOpen, onClose, current, readonly }: { isOpen: boolean; onClose: () => void; current?: ISector; readonly?: boolean }) {
-  const { companiesList, currentCompany } = useUser();
+  const { currentCompany } = useUser();
 
   const { sectors } = useGestao();
 
@@ -83,14 +83,14 @@ export function ModalSector({ isOpen, onClose, current, readonly }: { isOpen: bo
     >
       <Form onSubmit={data => onSubmit(data as FormFields)} className="flex flex-col gap-4 pb-4" {...methods}>
         <Input name="name" label="Nome do setor" required placeholder="Nome" error={methods.formState.errors.name} disabled={readonly} />
-        <Dropdown
+        {/* <Dropdown
           name="companyId"
           label="Empresa"
           required
           options={companiesList?.map(unit => ({ label: unit.name, value: unit.id }))}
           error={methods.formState.errors.companyId}
           disabled={readonly}
-        />
+        /> */}
       </Form>
     </Modal>
   );

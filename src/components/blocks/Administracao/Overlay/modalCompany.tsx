@@ -4,13 +4,14 @@ import * as Yup from 'yup';
 import { Form } from '@/components/form/Form';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Input } from '@/components/ui';
+import { CheckBox, Input } from '@/components/ui';
 import { Dropdown } from '@/components/form';
 import React from 'react';
 import { useAdministrator } from '@/contexts/AdministrationProvider';
 import { masks, regex } from '@/utils';
 import { companyService } from '@/services';
 import { validCNPJ } from '@/utils/cnpj';
+import { CustomSwitch } from '@/components/ui/switch';
 
 const schema = Yup.object({
   name: Yup.string().required('O nome é obrigatório'),
@@ -129,6 +130,9 @@ export function ModalCompany({
             />
           </div>
           <Input name="email" label="E-mail" required placeholder="Email" error={methods.formState.errors.email} disabled={readonly} />
+        </div>
+        <div>
+          <CustomSwitch name="active" label="Ativo" disabled={readonly} />
         </div>
       </Form>
     </Modal>

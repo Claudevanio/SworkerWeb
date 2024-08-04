@@ -196,10 +196,7 @@ export function ModalEquipments({
       onSubmit={readonly ? undefined : () => methods.handleSubmit(onSubmit)()}
       SubmitText={currentStep === 3 ? 'Salvar' : 'Próximo'}
     >
-      {!readonly && <Stepper steps={steps} currentStep={currentStep} />}
-      {
-        JSON.stringify(methods.formState.errors)
-      }
+      {!readonly && <Stepper steps={steps} currentStep={currentStep} />} 
       <Form onSubmit={data => onSubmit(data as FormFields)} className="flex flex-col gap-4 pb-4" {...methods}>
         {currentStep === 1 && (
           <div className="flex flex-col gap-4">

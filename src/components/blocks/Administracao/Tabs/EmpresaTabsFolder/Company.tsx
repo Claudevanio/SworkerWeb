@@ -45,6 +45,13 @@ export function CompanyTab() {
       label: 'Email',
       key: 'email',
       hideOnDesktop: true
+    },
+    {
+      label: 'Status',
+      key: 'active',
+      Formatter: (active: boolean) => {
+        return active ? 'Ativo' : 'Inativo';
+      }
     }
   ];
 
@@ -77,16 +84,15 @@ export function CompanyTab() {
             icon: <EditOutlined />
           },
           {
-            label: 'Excluir',
+            label: 'Desativar',
             onClick: (data) =>
               openDialog({
-                title: 'Excluir empresa',
-                subtitle: 'Deseja mesmo excluir?',
-                message: 'Este item não poderá ser recuperado depois.',
+                title: 'Desativar empresa',
+                subtitle: 'Deseja mesmo desativar a empresa?',
                 onConfirm: () => {
                   companies.remove(data)
                 },
-                onConfirmText: 'Excluir'
+                onConfirmText: 'Desativar'
               }),
             icon: <DeleteOutline />
           }

@@ -45,6 +45,8 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [isModalOpen, openModal, closeModal] = useModal();
 
   React.useEffect(() => {
+    if (pathname === '/login' || pathname === '/esqueci-senha') return;
+
     api.interceptors.request.use(config => {
       const token = Cookies.get('token');
       if (token) {
@@ -58,6 +60,8 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         if (error.response?.status === 401) {
           setUser(null);
           Cookies.remove('token');
+          if (pathname === '/login' || pathname === '/esqueci-senha') return;
+
           confirmDialog({
             title: 'Sessão expirada',
             message: 'Sua sessão expirou, por favor faça login novamente',
@@ -100,7 +104,8 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   } = useQuery<ICompany[]>({
     queryKey: ['searchCompanies-UserProvider'],
     queryFn: () => companyService.getAll() as any,
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: false,
+    enabled: token && token?.length > 0
   });
 
   const methods = useForm<{ company: string }>({
@@ -113,7 +118,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     const cachedCompany = Cookies.get('currentCompany');
     const { companyId } = params;
 
-    if ((cachedCompany && !companyId) || (cachedCompany && companyId == JSON.parse(cachedCompany).id)) {
+    if ((cachedCompany && !companyId) || (cachedCompany && companyId == JSON.parse(cachedCompany)?.id)) {
       const company = JSON.parse(cachedCompany) as ICompany;
       setCurrentCompany(company);
       return;
@@ -157,6 +162,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     if (token) {
       const user = jwtDecode(token) as IUser;
       setUser(user);
+      refetchCompanies();
     }
   }, [user, token]);
 

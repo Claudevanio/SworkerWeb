@@ -19,7 +19,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import Image from 'next/image';
-import { MenuButton } from './ui/menuButton';
+import { LinkWithTooltip, MenuButton } from './ui/menuButton';
 import Link from 'next/link';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
@@ -51,6 +51,7 @@ import { useUser } from '@/hooks/useUser';
 import Cookies from 'js-cookie';
 import { Authservice } from '@/services';
 import { COLORS } from '@/utils';
+import { useDialog } from '@/hooks/use-dialog';
 
 const Sidebar: React.FC<{}> = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -91,11 +92,22 @@ const Sidebar: React.FC<{}> = () => {
 
   const router = useRouter();
 
+  const {
+    confirmDialog,
+  } = useDialog();
+
   async function logout() {
     // await Authservice.logout(user.userId);
-    setUser(null);
-    Cookies.remove('token');
-    router.replace('/login');
+    confirmDialog({
+      title: 'Deseja realmente sair?',
+      message: 'Ao sair você será redirecionado para a página de login.',
+      onConfirm: () => {
+        setUser(null);
+        Cookies.remove('token');
+        router.replace('/login');
+      },
+      onConfirmText: 'Sair',
+    });
   }
 
   // const isLoginPage = currentPage === '/login' || currentPage === "/esqueci-senha"
@@ -120,9 +132,7 @@ const Sidebar: React.FC<{}> = () => {
       : currentPage.includes('perfil')
         ? 'Perfil'
         : 'Administração';
-
-  const disabledLinkClassNames = !currentCompany?.id && 'cursor-normal pointer-events-none text-primary-400';
-
+ 
   return (
     <Box
       sx={{
@@ -217,12 +227,15 @@ const Sidebar: React.FC<{}> = () => {
               {currentCompany && <span className="text-primary-50 text-xs font-bold"> - {currentCompany.name}</span>}
             </h2>
 
-            <Link href={handleLinkPath('/gestao')} className={disabledLinkClassNames}>
-              <MenuButton variant={currentPage === '/gestao' ? 'primary' : 'secondary'} className={`w-full gap-2 flex justify-start `}>
+            <LinkWithTooltip href={handleLinkPath('/gestao')} disabled={!currentCompany?.id} 
+            >
+              <MenuButton variant={currentPage === '/gestao' ? 'primary' : 'secondary'} className={`w-full gap-2 flex justify-start `}
+             
+              >
                 <ApartmentOutlined />
                 Gestão
               </MenuButton>
-            </Link>
+            </LinkWithTooltip>
 
             <Accordion
               expanded={accordionExpanded}
@@ -262,7 +275,7 @@ const Sidebar: React.FC<{}> = () => {
                   gap: '8px'
                 }}
               >
-                <Link href={handleLinkPath('/servicos-operacionais')} className={disabledLinkClassNames}>
+                <LinkWithTooltip href={handleLinkPath('/servicos-operacionais')} disabled={!currentCompany?.id}>
                   <MenuButton
                     variant={currentPage === '/servicos-operacionais' ? 'primary' : 'secondary'}
                     className={`w-full gap-2 px-8 flex justify-start`}
@@ -270,8 +283,8 @@ const Sidebar: React.FC<{}> = () => {
                     <ViewKanbanOutlined />
                     Dashboard
                   </MenuButton>
-                </Link>
-                <Link href={handleLinkPath('/servicos-operacionais/ordens-servico')} className={disabledLinkClassNames}>
+                </LinkWithTooltip>
+                <LinkWithTooltip href={handleLinkPath('/servicos-operacionais/ordens-servico')} disabled={!currentCompany?.id}>
                   <MenuButton
                     variant={currentPage === '/servicos-operacionais/ordens-servico' ? 'primary' : 'secondary'}
                     className={`w-full gap-2 px-8  flex justify-start`}
@@ -279,13 +292,13 @@ const Sidebar: React.FC<{}> = () => {
                     <ListAltOutlined />
                     Ordens de serviço
                   </MenuButton>
-                </Link>
-                <Link href={handleLinkPath('/servicos-operacionais/config')} className={disabledLinkClassNames} passHref>
+                </LinkWithTooltip>
+                <LinkWithTooltip href={handleLinkPath('/servicos-operacionais/config')} disabled={!currentCompany?.id} >
                   <MenuButton variant={getButtonVariant('/servicos-operacionais/config')} className={`w-full gap-2 flex px-8 justify-start`}>
                     <SettingsOutlined />
                     Configurações
                   </MenuButton>
-                </Link>
+                </LinkWithTooltip>
               </AccordionDetails>
             </Accordion>
 
@@ -327,7 +340,7 @@ const Sidebar: React.FC<{}> = () => {
                   gap: '8px'
                 }}
               >
-                <Link href={handleLinkPath('/ocorrencias/dashboard')} className={disabledLinkClassNames}>
+                <LinkWithTooltip href={handleLinkPath('/ocorrencias/dashboard')} disabled={!currentCompany?.id}>
                   <MenuButton
                     variant={currentPage === '/ocorrencias/dashboard' ? 'primary' : 'secondary'}
                     className={`w-full gap-2 px-8 flex justify-start`}
@@ -335,14 +348,14 @@ const Sidebar: React.FC<{}> = () => {
                     <ViewKanbanOutlined />
                     Dashboard
                   </MenuButton>
-                </Link>
-                <Link href={handleLinkPath('/ocorrencias')} className={disabledLinkClassNames}>
+                </LinkWithTooltip>
+                <LinkWithTooltip href={handleLinkPath('/ocorrencias')} disabled={!currentCompany?.id} >
                   <MenuButton variant={currentPage === '/ocorrencias' ? 'primary' : 'secondary'} className={`w-full gap-2 px-8 flex justify-start`}>
                     <ReportGmailerrorredOutlined />
                     Ocorrências
                   </MenuButton>
-                </Link>
-                <Link href={handleLinkPath('/ocorrencias/config')} className={disabledLinkClassNames}>
+                </LinkWithTooltip>
+                <LinkWithTooltip href={handleLinkPath('/ocorrencias/config')} disabled={!currentCompany?.id} >
                   <MenuButton
                     variant={currentPage === '/ocorrencias/config' ? 'primary' : 'secondary'}
                     className={`w-full gap-2 px-8 flex justify-start`}
@@ -350,7 +363,7 @@ const Sidebar: React.FC<{}> = () => {
                     <SettingsOutlined />
                     Configurações
                   </MenuButton>
-                </Link>
+                </LinkWithTooltip>
               </AccordionDetails>
             </Accordion>
           </div>

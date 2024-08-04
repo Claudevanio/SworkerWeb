@@ -70,8 +70,8 @@ export function Geradas({
 
   const columns = [
     {
-      label: 'Data e Hora',
-      key: 'registerDate',
+      label: 'Id',
+      key: 'id',
       rowFormatter: (ocurrence: IOcurrence) => {
         return (
           <div className="flex items-center gap-1 group" style={{ height: '70px' }}>
@@ -97,8 +97,17 @@ export function Geradas({
                 }}
               />
             </div>
-            <div>{dayjs(ocurrence.registerDate).format('DD/MM/YYYY')}</div>
+            <div>{ocurrence.id}</div>
           </div>
+        );
+      }
+    },
+    {
+      label: 'Data e Hora',
+      key: 'registerDate',
+      Formatter: (value: Date) => {
+        return ( 
+            <div>{dayjs(value).format('DD/MM/YYYY')}</div> 
         );
       }
     },

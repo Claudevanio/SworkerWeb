@@ -5,29 +5,40 @@ interface decodedToken {
   exp: number;
 }
 
-export default function middleware(request: NextRequest) {
-  const token = request.cookies.get('token')?.value;
-  // const decoded = token ? jwtDecode(token) as decodedToken : undefined;
-  // return NextResponse.next();
-
-  // const decoded = undefined;
-
-  const signInUrl = new URL('/login', request.nextUrl);
-
-  if (
-    !token ||
-    typeof token !== 'string'
-    //  || !decoded || decoded?.exp * 1000 < Date.now()
-  ) {
-    if (allowedUrls.includes(request.nextUrl.pathname)) {
-      return NextResponse.next();
-    }
-    return NextResponse.redirect(signInUrl);
-  }
+function removeTokenCookie(request: NextRequest) {
+  const response = NextResponse.redirect(new URL('/login', request.nextUrl));
+  response.cookies.set('token', '', { maxAge: 0 });
+  return response;
 }
 
-const allowedUrls = ['/login', '/cadastro', '/esqueci-senha', '/servicos-operacionais'];
+export function middleware(request: NextRequest) { 
+  debugger;
+  const token = request.cookies.get('token')?.value;
+
+  if(!token || typeof token !== 'string') {
+    if (request.nextUrl.pathname === '/login')
+      return NextResponse.next();
+
+    return removeTokenCookie(request);
+  }
+ 
+  const decoded = token ? jwtDecode(token) as decodedToken : undefined;
+
+  if (!decoded)
+    return removeTokenCookie(request);
+
+  if (decoded.exp * 1000 < Date.now())
+    return removeTokenCookie(request);
+
+  if (request.nextUrl.pathname === '/login' && decoded)
+    return NextResponse.redirect(new URL('/', request.nextUrl));
+    
+  
+  return NextResponse.next();
+ 
+}
+
 
 export const config = {
-  matcher: ['/', '/dashboard/:path*']
+  matcher: ['/', '/empresa/:companyId*', '/perfil', '/login'],
 };
