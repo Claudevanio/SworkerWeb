@@ -23,7 +23,6 @@ export function SearchInput({ value, onChange, reset }: { value: string; onChang
     return debounced;
   }, [onChange]);
 
-
   React.useEffect(() => {
     setLocalValue('');
   }, [reset]);
