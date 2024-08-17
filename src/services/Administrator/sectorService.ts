@@ -46,7 +46,7 @@ export const SectorService = {
     companyId: string;
   }): Promise<basePagination<ISector>> {
     const filter = getFilterParam({
-      name: term
+      description: term
     });
     const response = await api.get<{
       pageSize: number;

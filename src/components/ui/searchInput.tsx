@@ -6,23 +6,22 @@ import React from 'react';
 export function SearchInput({ value, onChange, reset }: { value: string; onChange: (value: string) => void; reset?: boolean }) {
   const [localValue, setLocalValue] = React.useState(value);
 
-  function debounce(func: (...args: any[]) => void, wait: number = 800): (...args: any[]) => void & { clear: () => void } {
+  const debouncedOnChange = React.useMemo(() => {
     let timeout: ReturnType<typeof setTimeout>;
 
-    function debounced(...args: any[]) {
-      const later = () => {
-        func(...args);
-      };
+    const debounced = (value: string) => {
       clearTimeout(timeout);
-      timeout = setTimeout(later, wait);
-    }
+      timeout = setTimeout(() => {
+        onChange(value);
+      }, 800);
+    };
 
     debounced.clear = () => {
       clearTimeout(timeout);
     };
 
-    return debounced as any;
-  }
+    return debounced;
+  }, [onChange]);
 
   React.useEffect(() => {
     setLocalValue('');
@@ -49,7 +48,6 @@ export function SearchInput({ value, onChange, reset }: { value: string; onChang
       value={localValue}
       onChange={e => {
         setLocalValue(e.target.value);
-        const debouncedOnChange = debounce(onChange);
         debouncedOnChange(e.target.value);
       }}
     />

@@ -158,7 +158,7 @@ export function ModalEquipments({
         ...current,
         typeId: resetObj?.classification?.type?.id,
         classificationId: resetObj?.classification.id,
-        manufactureDate: resetObj.manufactureDate.split('T')[0]
+        manufactureDate: dayjs(resetObj.manufactureDate.split('T')[0]).format('DD/MM/YYYY')
       });
       return;
     }

@@ -20,15 +20,30 @@ interface IAccessLogsParams {
 }
 
 export const companyService = {
-  async countCompanyAsync(): Promise<number> {
-    const response = await api.get<number>('/companies/count');
+  async countCompanyAsync(term): Promise<number> {
+    const response = await api.get<number>('/companies/count', {
+      params: {
+        term
+      }
+    });
     return response.data;
   },
 
-  async listCompanyAsync(term: string, currentPage: number, pageSize: number): Promise<basePagination<ICompany>> {
-    const filter = getFilterParam({ name: term });
+  async listCompanyAsync(term: string, page: number, size: number): Promise<basePagination<ICompany>> {
+    // const filter = getFilterParam({ name: term });
+    let currentPage = page;
+    let pageSize = size;
+
+    const hasTerm = term && term !== '' && term?.length > 0;
+
+    // Regra adicionada pq o count não estava retornando o valor correto quando filtrado
+    if (hasTerm) {
+      currentPage = 0;
+      pageSize = 99;
+    }
+
     const response = await api.get<ICompany[]>('/companies', {
-      params: { filter, currentPage, pageSize, active: 1 }
+      params: { term, currentPage, pageSize, active: 1 }
     });
 
     const data = {
@@ -36,7 +51,12 @@ export const companyService = {
       count: 0
     };
 
-    const { count } = await this.countCompanyAsync();
+    if (hasTerm) {
+      data.count = data.items.length;
+      return data as basePagination<ICompany>;
+    }
+
+    const { count } = await this.countCompanyAsync(term);
 
     data.count = count;
 
